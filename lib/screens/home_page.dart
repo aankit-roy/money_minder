@@ -108,11 +108,14 @@ class ExpensesDataList extends StatelessWidget {
                 leading: Icon(transactionAmt.categoryData.icon,color: transactionAmt.categoryData.color,),
                 title: Text(
                   transactionAmt.categoryData.name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: TextSizes.mediumHeadingMin,
                   ),
                 ),
-                trailing: Text("₹${transactionAmt.expensesPrice}"),
+                trailing: Text("₹${transactionAmt.expensesPrice}",style: const TextStyle(
+                  fontSize: TextSizes.normalBodyTextMax,
+                  fontWeight: FontWeight.w800
+                ),),
               ),
             ),
           );

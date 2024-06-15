@@ -56,12 +56,12 @@ class ExpensesCategoryGrid extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(category.icon, size: 30, color: category.color),
+                        Icon(category.icon, size: 25, color: category.color),
                         const SizedBox(height: 10),
                         Text(category.name,
                             style: TextStyle(
                                 color: category.color,
-                                fontSize: TextSizes.normalBodyTextMax,
+                                fontSize: TextSizes.smallBodyTextMax,
                                 fontWeight: FontWeight.w800)),
                         if (isSelected) Icon(Icons.check, color: category.color),
                       ],
@@ -129,7 +129,7 @@ class TransactionBottomSheet extends StatelessWidget {
       final transaction = AddTransactionsData(categoryData: category, expensesPrice: amount);
       context.read<TransactionAmountProvider>().addTransactonsAmount(transaction);
       Navigator.pop(context); // Dismiss the bottom sheet
-      print("this is ankit kumar roy");
+
 
     }
   }

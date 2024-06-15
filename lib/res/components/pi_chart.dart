@@ -26,7 +26,7 @@ class PieChart2State extends State {
         const SizedBox(
           height: 18,
         ),
-        Container(
+        SizedBox(
           height: 100,
           width: 100,
           child: PieChart(

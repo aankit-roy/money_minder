@@ -6,6 +6,7 @@ import 'package:money_minder/models/pie_chart_data.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/ui/widgets/custome_Tran_add_app_bar.dart';
 import 'package:money_minder/ui/widgets/expenses_category_grid.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AddingData extends StatefulWidget {
   const AddingData({super.key});
@@ -23,46 +24,36 @@ class _AddingDataState extends State<AddingData> {
   CategoryData? selectedCategory;
   List<AddTransactionsData> transactions = [];
   List<CategoryData> categories = [
-    CategoryData(name: 'Food', icon: Icons.fastfood, color: Colors.orange),
-    CategoryData(
-        name: 'Transport', icon: Icons.directions_car, color: Colors.blue),
-    CategoryData(
-        name: 'Shopping', icon: Icons.shopping_cart, color: Colors.pink),
-    CategoryData(name: 'Food', icon: Icons.fastfood, color: Colors.orange),
-    CategoryData(
-        name: 'Transport', icon: Icons.directions_car, color: Colors.blue),
-    CategoryData(
-        name: 'Shopping', icon: Icons.shopping_cart, color: Colors.pink),
-    CategoryData(name: 'Food', icon: Icons.fastfood, color: Colors.orange),
-    CategoryData(
-        name: 'Transport', icon: Icons.directions_car, color: Colors.blue),
-    CategoryData(
-        name: 'Shopping', icon: Icons.shopping_cart, color: Colors.pink),
-    CategoryData(name: 'Food', icon: Icons.fastfood, color: Colors.orange),
-    CategoryData(
-        name: 'Transport', icon: Icons.directions_car, color: Colors.blue),
-    CategoryData(
-        name: 'Shopping', icon: Icons.shopping_cart, color: Colors.pink),
-    CategoryData(name: 'Food', icon: Icons.fastfood, color: Colors.orange),
-    CategoryData(
-        name: 'Transport', icon: Icons.directions_car, color: Colors.blue),
-    CategoryData(
-        name: 'Shopping', icon: Icons.shopping_cart, color: Colors.pink),
-    CategoryData(name: 'Food', icon: Icons.fastfood, color: Colors.orange),
-    CategoryData(
-        name: 'Transport', icon: Icons.directions_car, color: Colors.blue),
-    CategoryData(
-        name: 'Shopping', icon: Icons.shopping_cart, color: Colors.pink),
-    CategoryData(name: 'Food', icon: Icons.fastfood, color: Colors.orange),
-    CategoryData(
-        name: 'Transport', icon: Icons.directions_car, color: Colors.blue),
-    CategoryData(
-        name: 'Shopping', icon: Icons.shopping_cart, color: Colors.pink),
-    CategoryData(name: 'Food', icon: Icons.fastfood, color: Colors.orange),
-    CategoryData(
-        name: 'Transport', icon: Icons.directions_car, color: Colors.blue),
-    CategoryData(
-        name: 'Shopping', icon: Icons.shopping_cart, color: Colors.pink),
+    CategoryData(name: 'Rent', icon: Icons.home, color: Colors.blue),
+    CategoryData(name: 'Utilities', icon: Icons.lightbulb, color: Colors.orange),
+    CategoryData(name: 'Groceries', icon: Icons.shopping_cart, color: Colors.green),
+    CategoryData(name: 'Transportation', icon: Icons.directions_car, color: Colors.red),
+    CategoryData(name: 'Dining Out', icon: Icons.restaurant, color: Colors.purple),
+    CategoryData(name: 'Entertainment', icon: Icons.movie, color: Colors.teal),
+    CategoryData(name: 'Subscriptions', icon: Icons.subscriptions, color: Colors.amber),
+    CategoryData(name: 'Clothing', icon: Icons.shopping_bag, color: Colors.pink),
+    CategoryData(name: 'Fitness', icon: Icons.fitness_center, color: Colors.brown),
+    CategoryData(name: 'Education', icon: Icons.school, color: Colors.cyan),
+    CategoryData(name: 'Books ', icon: Icons.book, color: Colors.indigo),
+    CategoryData(name: 'Phone', icon: Icons.phone_android, color: Colors.lime),
+    CategoryData(name: 'Internet', icon: Icons.wifi, color: Colors.deepPurple),
+    CategoryData(name: 'Insurance', icon: Icons.policy, color: Colors.lightGreen),
+    CategoryData(name: 'Travel', icon: Icons.flight, color: Colors.deepOrange),
+    CategoryData(name: 'Savings', icon: Icons.savings, color: Colors.lightBlue),
+    CategoryData(name: 'Investments', icon: Icons.trending_up, color: Colors.green.shade800),
+    CategoryData(name: 'Gifts', icon: Icons.card_giftcard, color: Colors.pinkAccent),
+    CategoryData(name: 'Charity', icon: Icons.volunteer_activism, color: Colors.blueGrey),
+    CategoryData(name: 'Personal Care', icon: Icons.spa, color: Colors.green.shade500),
+    CategoryData(name: 'Medical', icon: Icons.local_hospital, color: Colors.redAccent),
+    CategoryData(name: 'Childcare', icon: Icons.child_care, color: Colors.purpleAccent),
+    CategoryData(name: 'Pet Care', icon: Icons.pets, color: Colors.tealAccent.shade700),
+    CategoryData(name: 'Debt Payments', icon: Icons.credit_card, color: Colors.amberAccent),
+    CategoryData(name: 'Alcohol', icon: FontAwesomeIcons.wineGlass, color: Colors.orangeAccent),
+    CategoryData(name: 'Coffee', icon: FontAwesomeIcons.codeFork, color: Colors.brown),
+    CategoryData(name: 'Fast Food', icon: FontAwesomeIcons.burger, color: Colors.limeAccent),
+    CategoryData(name: 'Laundry', icon: FontAwesomeIcons.soap, color: Colors.blueAccent),
+    CategoryData(name: 'Parking', icon: FontAwesomeIcons.squareParking, color: Colors.cyanAccent),
+    CategoryData(name: 'Miscellaneous', icon: Icons.more_horiz, color: Colors.grey),
     // Add more categories as needed
   ];
 
