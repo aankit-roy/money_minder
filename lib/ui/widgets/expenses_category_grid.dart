@@ -129,6 +129,7 @@ class TransactionBottomSheet extends StatelessWidget {
       final transaction = AddTransactionsData(categoryData: category, expensesPrice: amount);
       context.read<TransactionAmountProvider>().addTransactonsAmount(transaction);
       Navigator.pop(context); // Dismiss the bottom sheet
+      print("first commit testing");
     }
   }
 }
