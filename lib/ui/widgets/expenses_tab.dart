@@ -7,6 +7,6 @@ class ExpensesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  PieChartSample2();
+    return  const PieChartSample2();
   }
 }
