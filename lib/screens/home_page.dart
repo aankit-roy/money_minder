@@ -92,49 +92,88 @@ class ExpensesDataList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final transactionsProvider = context.watch<TransactionAmountProvider>();
-    final transactions = transactionsProvider.transactionList;
+    // final transactions = transactionsProvider.transactionList;
 
+    final transByDate = transactionsProvider.transactionsDataByDate;
     return SizedBox(
       height: size.height * .5,
       child: ListView.builder(
-        itemCount: transactions.length,
+        itemCount: transByDate.length,
         itemBuilder: (context, index) {
-          final transactionAmt = transactions[index];
+          String date = transByDate.keys.elementAt(index);
+          List<AddTransactionsData> transactions = transByDate[date]!;
+          double totalAmount =
+              transactions.fold(0.0, (sum, item) => sum + item.expensesPrice);
+          // final transactionAmt = transactions[index];
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Container(
-              height: size.height * .07,
-              decoration: BoxDecoration(
-                  color: ColorsPalette.white,
-                  borderRadius: BorderRadius.circular(8.0)),
-              child: ListTile(
-                leading: Icon(
-                  transactionAmt.categoryData.icon,
-                  color: transactionAmt.categoryData.color,
-                ),
-                title: Text(
-                  transactionAmt.categoryData.name,
-                  style: const TextStyle(
-                    fontSize: TextSizes.mediumHeadingMin,
+                // height: size.height * .07,
+                decoration: BoxDecoration(
+                    color: ColorsPalette.white,
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    // backgroundColor: ColorsPalette.primaryLight.withOpacity(.4),
+
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          date,
+                          style: const TextStyle(
+                              fontSize: TextSizes.normalBodyTextMax,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Expenses: \₹ ${totalAmount.toStringAsFixed(2)}',
+                              style: const TextStyle(color: Colors.red, fontSize: 16),
+                            ),
+                            Text(
+                              'Income: \₹ ${totalAmount.toStringAsFixed(2)}',
+                              style:
+                                  const TextStyle(color: Colors.green, fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    children: transactions.map((transaction) {
+                      return ListTile(
+                        leading: Icon(transaction.categoryData.icon,
+                            color: transaction.categoryData.color),
+                        title: Text(
+                          transaction.categoryData.name,
+                          style: const TextStyle(
+                            fontSize: TextSizes.normalBodyTextMax,
+                          ),
+                        ),
+                        trailing: Text(
+                          '\₹${transaction.expensesPrice.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                              fontSize: TextSizes.normalBodyTextMax,
+                              fontWeight: FontWeight.w800),
+                        ),
+                        onLongPress: () {
+                          _showDeleteConfirmationDialog(
+                              context, transactionsProvider, transaction);
+                        },
+                        onTap: () {
+                          _showUpdateDialog(
+                              context, transactionsProvider, transaction);
+                        },
+                      );
+                    }).toList(),
                   ),
-                ),
-                trailing: Text(
-                  "₹${transactionAmt.expensesPrice}",
-                  style: const TextStyle(
-                      fontSize: TextSizes.normalBodyTextMax,
-                      fontWeight: FontWeight.w800),
-                ),
-                onLongPress: () {
-                  _showDeleteConfirmationDialog(
-                      context, transactionsProvider, index);
-                },
-                onTap: (){
-
-                  _showUpdateDialog(context, transactionsProvider, index, transactionAmt);
-
-                },
-              ),
-            ),
+                )),
           );
         },
       ),
@@ -142,8 +181,10 @@ class ExpensesDataList extends StatelessWidget {
   }
 }
 
-void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider, int index, AddTransactionsData transaction) {
-  TextEditingController amountController = TextEditingController(text: transaction.expensesPrice.toString());
+void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
+    AddTransactionsData oldTransaction) {
+  TextEditingController amountController =
+      TextEditingController(text: oldTransaction.expensesPrice.toString());
 
   showDialog(
     context: context,
@@ -155,16 +196,13 @@ void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
           keyboardType: TextInputType.number,
           autofocus: true,
           decoration: InputDecoration(
-            label:    const Text("New Amount"),
-            prefixIcon:  Icon(transaction.categoryData.icon,color: transaction.categoryData.color,),
-
-
-            hintText: "100 e.g",
-
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10)
+            label: const Text("New Amount"),
+            prefixIcon: Icon(
+              oldTransaction.categoryData.icon,
+              color: oldTransaction.categoryData.color,
             ),
-
+            hintText: "100 e.g",
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
         actions: [
@@ -178,7 +216,11 @@ void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
             onPressed: () {
               final newAmount = double.tryParse(amountController.text);
               if (newAmount != null && newAmount > 0) {
-                provider.updateTransactonsAmount(index, newAmount);
+                final newTransaction = AddTransactionsData(
+                    categoryData: oldTransaction.categoryData,
+                    expensesPrice: newAmount,
+                    date: oldTransaction.date);
+                provider.updateTransaction(oldTransaction, newTransaction);
                 Navigator.pop(context);
               }
             },
@@ -191,7 +233,9 @@ void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
 }
 
 Future<void> _showDeleteConfirmationDialog(
-    BuildContext context, TransactionAmountProvider provider, int index) async {
+    BuildContext context,
+    TransactionAmountProvider provider,
+    AddTransactionsData transactionsData) async {
   showDialog(
     context: context,
     builder: (context) {
@@ -207,7 +251,7 @@ Future<void> _showDeleteConfirmationDialog(
           ),
           ElevatedButton(
             onPressed: () {
-              provider.removeTransactonsAmount(index);
+              provider.removeTransactonsAmount(transactionsData);
               Navigator.pop(context);
             },
             child: const Text('Delete'),
@@ -217,3 +261,31 @@ Future<void> _showDeleteConfirmationDialog(
     },
   );
 }
+
+// ListTile(
+// leading: Icon(
+// transactionAmt.categoryData.icon,
+// color: transactionAmt.categoryData.color,
+// ),
+// title: Text(
+// transactionAmt.categoryData.name,
+// style: const TextStyle(
+// fontSize: TextSizes.mediumHeadingMin,
+// ),
+// ),
+// trailing: Text(
+// "₹${transactionAmt.expensesPrice}",
+// style: const TextStyle(
+// fontSize: TextSizes.normalBodyTextMax,
+// fontWeight: FontWeight.w800),
+// ),
+// onLongPress: () {
+// _showDeleteConfirmationDialog(
+// context, transactionsProvider, index);
+// },
+// onTap: (){
+//
+// _showUpdateDialog(context, transactionsProvider, index, transactionAmt);
+//
+// },
+// ),

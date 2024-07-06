@@ -19,6 +19,7 @@ class ExpensesCategoryGrid extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
+
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -126,7 +127,7 @@ class TransactionBottomSheet extends StatelessWidget {
   void _addTransaction(BuildContext context, CategoryData category, TextEditingController amountController) {
     final amount = double.tryParse(amountController.text);
     if (amount != null && amount > 0) {
-      final transaction = AddTransactionsData(categoryData: category, expensesPrice: amount);
+      final transaction = AddTransactionsData(categoryData: category, expensesPrice: amount,date: DateTime.now());
       context.read<TransactionAmountProvider>().addTransactonsAmount(transaction);
       Navigator.pop(context); // Dismiss the bottom sheet
 

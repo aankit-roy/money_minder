@@ -75,61 +75,7 @@ class _AddingDataState extends State<AddingData> {
           body: TabBarView(
             children: [
               ExpensesCategoryGrid(categories: categories),
-              // Padding(
-              //   padding: const EdgeInsets.all(16.0),
-              //   child: Column(
-              //     children: [
-              //       Expanded(
-              //         child: GridView.builder(
-              //           gridDelegate:
-              //               const SliverGridDelegateWithFixedCrossAxisCount(
-              //             crossAxisCount: 4,
-              //             crossAxisSpacing: 8,
-              //             mainAxisSpacing: 8,
-              //           ),
-              //           itemCount: categories.length,
-              //           itemBuilder: (context, index) {
-              //             final category = categories[index];
-              //             final isSelected = context.watch<TransactionAmountProvider>().selectedCategory== category;
-              //             return GestureDetector(
-              //               onTap: () {
-              //                  context.read<TransactionAmountProvider>().selectCategory(category);
-              //                 _AddTransactionsData(categoryData: category);
-              //               },
-              //               child: Container(
-              //                 decoration: BoxDecoration(
-              //                   color: isSelected
-              //                       ? category.color.withOpacity(0.4)
-              //                       : category.color.withOpacity(0.2),
-              //                   borderRadius: BorderRadius.circular(10),
-              //                   border: isSelected
-              //                       ? Border.all(
-              //                           color: category.color, width: 2)
-              //                       : null,
-              //                 ),
-              //                 child: Column(
-              //                   mainAxisAlignment: MainAxisAlignment.center,
-              //                   children: [
-              //                     Icon(category.icon,
-              //                         size: 30, color: category.color),
-              //                     const SizedBox(height: 10),
-              //                     Text(category.name,
-              //                         style: TextStyle(
-              //                             color: category.color,
-              //                             fontSize: TextSizes.smallBodyTextMax,
-              //                             fontWeight: FontWeight.w400)),
-              //                     if (isSelected)
-              //                       Icon(Icons.check, color: category.color)
-              //                   ],
-              //                 ),
-              //               ),
-              //             );
-              //           },
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              // ),
+
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(

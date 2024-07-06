@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
+import 'package:intl/intl.dart';
 
 class TransactionAmountProvider extends ChangeNotifier{
   CategoryData? _selectedCategory;
@@ -36,16 +37,32 @@ class TransactionAmountProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void removeTransactonsAmount(int index){
+  void removeTransactonsAmount(AddTransactionsData removeTransactionsData){
 
-    _transactionList.removeAt(index);
+    _transactionList.remove(removeTransactionsData);
     notifyListeners();
   }
-  void updateTransactonsAmount(int index, double newAmount){
-
-    _transactionList[index].expensesPrice= newAmount;
-    notifyListeners();
-
-
+  void updateTransaction(AddTransactionsData oldTransaction, AddTransactionsData newTransaction) {
+    final index = _transactionList.indexOf(oldTransaction);
+    if (index != -1) {
+      _transactionList[index] = newTransaction;
+      notifyListeners();
+    }
   }
+
+
+
+  Map<String, List<AddTransactionsData>> get  transactionsDataByDate {
+
+    Map<String ,List<AddTransactionsData>> groupedTransactionsByDate= {};
+    for(var transaction in transactionList ){
+      String date= DateFormat('d MMM EEEE').format(transaction.date);
+      if(groupedTransactionsByDate[date]==null){
+        groupedTransactionsByDate[date]=[];
+      }
+      groupedTransactionsByDate[date]!.add(transaction);
+    }
+    return groupedTransactionsByDate;
+  }
+
 }

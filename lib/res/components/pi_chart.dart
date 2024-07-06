@@ -57,8 +57,9 @@ class PieChart2State extends State {
                     borderData: FlBorderData(
                       show: false,
                     ),
-                    sectionsSpace: 0,
-                    centerSpaceRadius: 50,
+                    sectionsSpace: 2,
+                    centerSpaceRadius: 60,
+
                     sections: showingSections(transactionList, totalAmount),
                   ),
 
