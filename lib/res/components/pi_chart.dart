@@ -2,7 +2,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
+import 'package:money_minder/models/category_list.dart';
+import 'package:money_minder/models/time_period.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/components/indicator.dart';
@@ -18,121 +21,105 @@ class PieChartSample2 extends StatefulWidget {
 
 class PieChart2State extends State {
   int touchedIndex = -1;
+  TimePeriod selectedPeriod= TimePeriod.daily;
 
   @override
   Widget build(BuildContext context) {
     final transactionProvider = context.watch<TransactionAmountProvider>();
+
+
+    final aggregatedData =
+    transactionProvider.getAggregatedData(selectedPeriod);
     final totalAmount = transactionProvider.totalAmount;
+    final sections = _generateSections(aggregatedData,totalAmount);
+
     final transactionList = transactionProvider.transactionList;
-    return Row(
+    return  Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        const SizedBox(
-          height: 18,
-        ),
-        Center(
-          child: Stack(
-            alignment: Alignment.center,
+      children: [
+
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SizedBox(
-                height: 100,
-                width: 100,
-                child: PieChart(
-                  PieChartData(
-                    pieTouchData: PieTouchData(
-                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                        setState(() {
-                          if (!event.isInterestedForInteractions ||
-                              pieTouchResponse == null ||
-                              pieTouchResponse.touchedSection == null) {
-                            touchedIndex = -1;
-                            return;
-                          }
-                          touchedIndex =
-                              pieTouchResponse.touchedSection!.touchedSectionIndex;
-                        });
-                      },
-                    ),
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
-                    sectionsSpace: 2,
-                    centerSpaceRadius: 60,
-
-                    sections: showingSections(transactionList, totalAmount),
-                  ),
-
-                ),
-              ),
-          Text(
-            '\₹${totalAmount.toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontSize: TextSizes.mediumHeadingMin,
-              fontWeight: FontWeight.bold,
-              color: ColorsPalette.textPrimary,
-            ),),
+              _buildPeriodButton('Daily', TimePeriod.daily),
+              _buildPeriodButton('Weekly', TimePeriod.weekly),
+              _buildPeriodButton('Monthly', TimePeriod.monthly),
             ],
           ),
         ),
-        // const Column(
-        //
-        //   children: <Widget>[
-        //
-        //     Indicator(color: ColorsPalette.primaryDark,text: "first",isSquare: true),
-        //
-        //     SizedBox(
-        //       height: 4,
-        //     ),
-        //     Indicator(
-        //       color:  Colors.green,
-        //       text: 'Second',
-        //       isSquare: true,
-        //     ),
-        //     SizedBox(
-        //       height: 4,
-        //     ),
-        //     Indicator(
-        //       color:  Colors.orange,
-        //       text: 'Third',
-        //       isSquare: true,
-        //     ),
-        //     SizedBox(
-        //       height: 4,
-        //     ),
-        //     Indicator(
-        //       color: Colors.blue,
-        //       text: 'Fourth',
-        //       isSquare: true,
-        //     ),
-        //     SizedBox(
-        //       height: 18,
-        //     ),
-        //   ],
-        // ),
+        Expanded(
+
+          child: Center(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  height: 100,
+                  width: 100,
+                  child: PieChart(
+                    PieChartData(
+                      pieTouchData: PieTouchData(
+                        touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                          setState(() {
+                            if (!event.isInterestedForInteractions ||
+                                pieTouchResponse == null ||
+                                pieTouchResponse.touchedSection == null) {
+                              touchedIndex = -1;
+                              return;
+                            }
+                            touchedIndex =
+                                pieTouchResponse.touchedSection!.touchedSectionIndex;
+                          });
+                        },
+                      ),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      sectionsSpace: 2,
+                      centerSpaceRadius: 60,
+
+                      // sections: showingSections(transactionList, totalAmount),
+                      sections: sections,
+                    ),
+
+                  ),
+                ),
+                Text(
+                  '\₹${totalAmount.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: TextSizes.mediumHeadingMin,
+                    fontWeight: FontWeight.bold,
+                    color: ColorsPalette.textPrimary,
+                  ),),
+              ],
+            ),
+          ),
+        ),
 
       ],
+
     );
   }
 
-  List<PieChartSectionData> showingSections(
-      List<AddTransactionsData> transactions, double totalAmount) {
-    if (totalAmount == 0) {
-      return [];
-    }
 
-    return List.generate(transactions.length, (i) {
-      final transaction = transactions[i];
-      final isTouched = i == touchedIndex;
+
+  List<PieChartSectionData> _generateSections(
+      Map<CategoryData, double> aggregatedData, double totalAmount) {
+    List<PieChartSectionData> sections = [];
+    int index = 0;
+
+    aggregatedData.forEach((category, amount) {
+      final isTouched = index == touchedIndex;
       final fontSize = isTouched ? 25.0 : 16.0;
       final radius = isTouched ? 60.0 : 50.0;
-      final percentage = (transaction.expensesPrice / totalAmount) * 100;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
 
-      return PieChartSectionData(
-        color: transaction.categoryData.color,
-        value: percentage,
-        title: '${percentage.toStringAsFixed(1)}%',
+      sections.add(PieChartSectionData(
+        color: category.color,
+        value: amount,
+        title: '${(amount / totalAmount * 100).toStringAsFixed(1)}%',
         radius: radius,
         titleStyle: TextStyle(
           fontSize: fontSize,
@@ -140,72 +127,50 @@ class PieChart2State extends State {
           color: ColorsPalette.textPrimary,
           shadows: shadows,
         ),
-      );
+      ));
+      index++;
     });
+
+    return sections;
+  }
+  Widget _buildPeriodButton(String text, TimePeriod period) {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          selectedPeriod = period;
+        });
+      },
+      child: Text(text),
+    );
   }
 
-  // List<PieChartSectionData> showingSections() {
-  //   return List.generate(4, (i) {
+  // List<PieChartSectionData> showingSections(
+  //     List<AddTransactionsData> transactions, double totalAmount) {
+  //   if (totalAmount == 0) {
+  //     return [];
+  //   }
+  //
+  //   return List.generate(transactions.length, (i) {
+  //     final transaction = transactions[i];
   //     final isTouched = i == touchedIndex;
   //     final fontSize = isTouched ? 25.0 : 16.0;
   //     final radius = isTouched ? 60.0 : 50.0;
+  //     final percentage = (transaction.expensesPrice / totalAmount) * 100;
   //     const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-  //     switch (i) {
-  //       case 0:
-  //         return PieChartSectionData(
-  //           color: Colors.blue,
-  //           value: 4,
-  //           title: '40%',
-  //           radius: radius,
-  //           titleStyle: TextStyle(
-  //             fontSize: fontSize,
-  //             fontWeight: FontWeight.bold,
-  //             color: ColorsPalette.textPrimary,
-  //             shadows: shadows,
-  //           ),
-  //         );
-  //       case 1:
-  //         return PieChartSectionData(
-  //           color: Colors.red,
-  //           value: 30,
-  //           title: '30%',
-  //           radius: radius,
-  //           titleStyle: TextStyle(
-  //             fontSize: fontSize,
-  //             fontWeight: FontWeight.bold,
-  //             color: ColorsPalette.textPrimary,
-  //             shadows: shadows,
-  //           ),
-  //         );
-  //       case 2:
-  //         return PieChartSectionData(
-  //           color: Colors.amber,
-  //           value: 15,
-  //           title: '15%',
-  //           radius: radius,
-  //           titleStyle: TextStyle(
-  //             fontSize: fontSize,
-  //             fontWeight: FontWeight.bold,
-  //             color: ColorsPalette.textPrimary,
-  //             shadows: shadows,
-  //           ),
-  //         );
-  //       case 3:
-  //         return PieChartSectionData(
-  //           color: Colors.deepPurple,
-  //           value: 15,
-  //           title: '15%',
-  //           radius: radius,
-  //           titleStyle: TextStyle(
-  //             fontSize: fontSize,
-  //             fontWeight: FontWeight.bold,
-  //             color: ColorsPalette.textPrimary,
-  //             shadows: shadows,
-  //           ),
-  //         );
-  //       default:
-  //         throw Error();
-  //     }
+  //
+  //     return PieChartSectionData(
+  //       color: transaction.categoryData.color,
+  //       value: percentage,
+  //       title: '${percentage.toStringAsFixed(1)}%',
+  //       radius: radius,
+  //       titleStyle: TextStyle(
+  //         fontSize: fontSize,
+  //         fontWeight: FontWeight.bold,
+  //         color: ColorsPalette.textPrimary,
+  //         shadows: shadows,
+  //       ),
+  //     );
   //   });
   // }
 }
+
