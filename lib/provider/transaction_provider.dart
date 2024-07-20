@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:money_minder/data/database/database_helper.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:intl/intl.dart';
@@ -6,8 +7,8 @@ import 'package:money_minder/models/time_period.dart';
 
 class TransactionAmountProvider extends ChangeNotifier {
   CategoryData? _selectedCategory;
-  final List<AddTransactionsData> _transactionList = [];
-  final List<CategoryData> _categories = [];
+  List<AddTransactionsData> _transactionList = [];
+  List<CategoryData> _categories = [];
   CategoryData? get selectedCategory => _selectedCategory;
 
   List<AddTransactionsData> get transactionList => _transactionList;
@@ -20,7 +21,23 @@ class TransactionAmountProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTransactonsAmount(AddTransactionsData transactionsData) {
+  // database  related working
+  TransactionAmountProvider() {
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    // _categories = await DatabaseHelper().getCategories();
+
+    // _transactionList = await DatabaseHelper().getTransactions();
+    _categories = await DatabaseHelper().getCategories2();
+    _transactionList = await _getTransactionsWithCategories();
+    // _transactionList = await DatabaseHelper().getTransactions2();
+    notifyListeners();
+  }
+
+  Future<void> addTransactonsAmount(
+      AddTransactionsData transactionsData) async {
     bool categoryExists = false;
 
     for (var existingTransaction in _transactionList) {
@@ -42,7 +59,10 @@ class TransactionAmountProvider extends ChangeNotifier {
 
     if (!categoryExists) {
       // print('Adding new transaction: ${transactionsData.categoryData.name} on ${DateFormat('d MMM EEEE').format(transactionsData.date)}');
-      _transactionList.add(transactionsData);
+      // _transactionList.add(transactionsData);
+      await DatabaseHelper().insertTransaction2(transactionsData);
+      _transactionList = await _getTransactionsWithCategories();
+      // _transactionList = await DatabaseHelper().getTransactions2();
     }
 
     notifyListeners();
@@ -62,14 +82,16 @@ class TransactionAmountProvider extends ChangeNotifier {
     }
   }
 
-
   //adding user category
   List<CategoryData> get categories => _categories;
 
-  void addCategory(CategoryData category) {
-    _categories.add(category);
+  Future<void> addCategory(CategoryData category) async {
+    await DatabaseHelper().insertCategory2(category.toMap());
+    _categories = await DatabaseHelper().getCategories2();
     notifyListeners();
   }
+
+
   // grouped expenses by date;
 
   Map<String, List<AddTransactionsData>> get transactionsDataByDate {
@@ -84,7 +106,7 @@ class TransactionAmountProvider extends ChangeNotifier {
     return groupedTransactionsByDate;
   }
 
-   // expenses by time period for pi chart;
+  // expenses by time period for pi chart;
   Map<CategoryData, double> getAggregatedData(TimePeriod timePeriod) {
     Map<CategoryData, double> aggregatedData = {};
 
@@ -98,7 +120,7 @@ class TransactionAmountProvider extends ChangeNotifier {
           break;
         case TimePeriod.weekly:
           final weekStart =
-          transactionDate.subtract(Duration(days: transactionDate.weekday));
+              transactionDate.subtract(Duration(days: transactionDate.weekday));
           key = DateFormat('d MMM yyyy').format(weekStart);
           break;
         case TimePeriod.monthly:
@@ -115,5 +137,23 @@ class TransactionAmountProvider extends ChangeNotifier {
     }
 
     return aggregatedData;
+  }
+
+  Future<List<AddTransactionsData>> _getTransactionsWithCategories() async {
+    final maps = await DatabaseHelper().getTransactionsWithCategory();
+    return maps.map((map) {
+      final category = CategoryData.fromMap({
+        'id': map['id'],
+        'name': map['name'],
+        'icon': map['icon'],
+        'color': map['color'],
+      });
+      return AddTransactionsData(
+        id: map['id'],
+        categoryData: category,
+        expensesPrice: map['amount'],
+        date: DateTime.parse(map['date']),
+      );
+    }).toList();
   }
 }

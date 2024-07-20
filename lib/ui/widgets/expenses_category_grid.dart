@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/data/database/database_helper.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
@@ -202,10 +203,10 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
     );
   }
 
-  void _addTransaction3(BuildContext context) {
+ _addTransaction3(BuildContext context)  {
     final amount = double.tryParse(amountController.text);
     if (selectedCategory == null) {
-      Fluttertoast.showToast(msg: "Please select a category");
+      Fluttertoast.showToast(msg: "Please select your category");
       categoryFocusNode.requestFocus();
       return;
     }
@@ -214,6 +215,11 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
           categoryData: selectedCategory!,
           expensesPrice: amount,
           date: DateTime.now());
+
+
+      // Insert transaction into the database
+      // DatabaseHelper dbHelper = DatabaseHelper();
+      //  dbHelper.insertTransaction2(transaction);
       context
           .read<TransactionAmountProvider>()
           .addTransactonsAmount(transaction);
