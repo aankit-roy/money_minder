@@ -30,6 +30,15 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
   final FocusNode amountFocusNode = FocusNode();
 
   @override
+  void dispose() {
+    categoryController.dispose();
+    amountController.dispose();
+    categoryFocusNode.dispose();
+    amountFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Padding(
@@ -66,7 +75,6 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
           const SizedBox(
             height: 12,
           ),
-
         ],
       ),
     );
@@ -111,8 +119,6 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
     }).toList();
   }
 
-
-
   Widget optionsViewBuilder(
       BuildContext context,
       AutocompleteOnSelected<CategoryData> onSelected,
@@ -131,9 +137,9 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
               return GestureDetector(
                 onTap: () {
                   onSelected(option);
-                  setState(() {
-                    selectedCategory = option;
-                  });
+                  // setState(() {
+                  //   selectedCategory = option;
+                  // });
                   FocusScope.of(context).requestFocus(amountFocusNode);
                   categoryController.text = option.name;
                 },
@@ -182,6 +188,7 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
       padding: const EdgeInsets.all(14.0),
       child: TextField(
         controller: amountController,
+        focusNode: amountFocusNode,
         // autofocus: true,
         keyboardType: TextInputType.number,
         // onSubmitted: onSubmitted ,
@@ -203,7 +210,7 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
     );
   }
 
- _addTransaction3(BuildContext context)  {
+  _addTransaction3(BuildContext context) async {
     final amount = double.tryParse(amountController.text);
     if (selectedCategory == null) {
       Fluttertoast.showToast(msg: "Please select your category");
@@ -216,10 +223,12 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
           expensesPrice: amount,
           date: DateTime.now());
 
-
       // Insert transaction into the database
       // DatabaseHelper dbHelper = DatabaseHelper();
       //  dbHelper.insertTransaction2(transaction);
+
+
+
       context
           .read<TransactionAmountProvider>()
           .addTransactonsAmount(transaction);
@@ -230,162 +239,28 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
     }
   }
 
-  //for user category options
-  // void _addTransaction4(BuildContext context) {
-  //   final amount = double.tryParse(amountController.text);
-  //   final transactionProvider = context.read<TransactionAmountProvider>();
-  //
-  //   if (categoryController.text.isEmpty) {
-  //     Fluttertoast.showToast(msg: "Please select a category");
-  //     categoryFocusNode.requestFocus();
-  //     return;
-  //   }
-  //
-  //   // Check if the category exists in the list
-  //   CategoryData? category = transactionProvider.categories.firstWhere(
-  //         (cat) => cat.name.toLowerCase() == categoryController.text.toLowerCase(),
-  //     orElse: () => CategoryData(
-  //       name: categoryController.text,
-  //       icon: Icons.category, // Default icon
-  //       color: Colors.blue, // Default color
-  //     ),
-  //   );
-  //
-  //   if (amount != null && amount > 0) {
-  //     final transaction = AddTransactionsData(
-  //       categoryData: category,
-  //       expensesPrice: amount,
-  //       date: DateTime.now(),
-  //     );
-  //
-  //     // Add the new category if it doesn't exist
-  //     if (!transactionProvider.categories.contains(category)) {
-  //       transactionProvider.addCategory(category);
-  //     }
-  //
-  //     transactionProvider.addTransactonsAmount(transaction);
-  //     Navigator.pop(context); // Go back to the previous screen
-  //   } else {
-  //     Fluttertoast.showToast(msg: "Please enter a valid amount");
-  //     amountFocusNode.requestFocus();
-  //   }
-  // }
-}
+  Future<bool> _updateExistingTransaction(
+      AddTransactionsData newTransaction) async {
+    // Assuming DatabaseHelper has a method to get transactions by category and date
+    DatabaseHelper dbHelper = DatabaseHelper();
+    final existingTransactions =
+        await dbHelper.getTransactionsByCategoryAndDate(
+      newTransaction.categoryData.name,
+      newTransaction.date,
+    );
 
-// class TransactionBottomSheet extends StatelessWidget {
-//   final CategoryData categoryData;
-//
-//   const TransactionBottomSheet({super.key, required this.categoryData});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     TextEditingController amountController = TextEditingController();
-//
-//     return Padding(
-//       padding: EdgeInsets.only(
-//         bottom: MediaQuery.of(context).viewInsets.bottom,
-//         top: 16,
-//         left: 16,
-//         right: 16,
-//       ),
-//       child: Column(
-//         // mainAxisSize: MainAxisSize.min,
-//         children: [
-//           const Text(
-//             "Expense",
-//             style: TextStyle(
-//               fontSize: TextSizes.mediumHeadingMin,
-//               fontWeight: FontWeight.bold,
-//             ),
-//           ),
-//           const SizedBox(height: 10),
-//           AmountTextField(
-//               amountController: amountController,
-//               categoryDataTextField: categoryData,
-//               onSubmitted: (value) {
-//                 _addTransaction(context, categoryData, amountController);
-//               }),
-//           const SizedBox(height: 10),
-//           ElevatedButton(
-//             onPressed: () {
-//               _addTransaction(context, categoryData, amountController);
-//             },
-//             child: const Text("Add Expense"),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   void _addTransaction(BuildContext context, CategoryData category,
-//       TextEditingController amountController) {
-//     final amount = double.tryParse(amountController.text);
-//     if (amount != null && amount > 0) {
-//       final transaction = AddTransactionsData(
-//           categoryData: category, expensesPrice: amount, date: DateTime.now());
-//       context
-//           .read<TransactionAmountProvider>()
-//           .addTransactonsAmount(transaction);
-//       Navigator.pop(context); // Dismiss the bottom sheet
-//     }
-//   }
-// }
-// Expanded(
-//   child: GridView.builder(
-//     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-//       crossAxisCount: 4,
-//       crossAxisSpacing: 14,
-//       mainAxisSpacing: 14,
-//     ),
-//     itemCount: widget.categories.length,
-//     itemBuilder: (context, index) {
-//       final category = widget.categories[index];
-//       final isSelected = context
-//               .watch<TransactionAmountProvider>()
-//               .selectedCategory ==
-//           category;
-//       return GestureDetector(
-//         onTap: () {
-//           context
-//               .read<TransactionAmountProvider>()
-//               .selectCategory(category);
-//           showModalBottomSheet(
-//             context: context,
-//             shape: const RoundedRectangleBorder(
-//               borderRadius:
-//                   BorderRadius.vertical(top: Radius.circular(30)),
-//             ),
-//             builder: (context) {
-//               return TransactionBottomSheet(categoryData: category);
-//             },
-//           );
-//         },
-//         child: Container(
-//           decoration: BoxDecoration(
-//             color: isSelected
-//                 ? category.color.withOpacity(0.4)
-//                 : category.color.withOpacity(0.2),
-//             borderRadius: BorderRadius.circular(10),
-//             border: isSelected
-//                 ? Border.all(color: category.color, width: 2)
-//                 : null,
-//           ),
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Icon(category.icon, size: 25, color: category.color),
-//               const SizedBox(height: 10),
-//               Text(category.name,
-//                   style: TextStyle(
-//                       color: category.color,
-//                       fontSize: TextSizes.smallBodyTextMax,
-//                       fontWeight: FontWeight.w800)),
-//               if (isSelected)
-//                 Icon(Icons.check, color: category.color),
-//             ],
-//           ),
-//         ),
-//       );
-//     },
-//   ),
-// ),
+    if (existingTransactions.isNotEmpty) {
+      // Update the existing entry with the new amount
+      final existingTransaction = existingTransactions.first;
+      existingTransaction.expensesPrice += newTransaction.expensesPrice;
+      await dbHelper.updateTransaction(
+          existingTransaction); // Assuming DatabaseHelper has an update method
+      context
+          .read<TransactionAmountProvider>()
+          .updateTransaction(existingTransaction); // Update provider data
+      return true;
+    }
+
+    return false;
+  }
+}

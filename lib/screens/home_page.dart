@@ -167,8 +167,10 @@ class ExpensesDataList extends StatelessWidget {
                               context, transactionsProvider, transaction);
                         },
                         onTap: () {
-                          _showUpdateDialog(
-                              context, transactionsProvider, transaction);
+                          // update is not working****************************
+
+                          // _showUpdateDialog(
+                          //     context, transactionsProvider, transaction);
                         },
                       );
                     }).toList(),
@@ -217,10 +219,11 @@ void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
               final newAmount = double.tryParse(amountController.text);
               if (newAmount != null && newAmount > 0) {
                 final newTransaction = AddTransactionsData(
+                    id: oldTransaction.id,
                     categoryData: oldTransaction.categoryData,
                     expensesPrice: newAmount,
                     date: oldTransaction.date);
-                provider.updateTransaction(oldTransaction, newTransaction);
+                provider.updateTransaction( newTransaction);
                 Navigator.pop(context);
               }
             },

@@ -156,15 +156,8 @@ class DatabaseHelper {
     categoryMaps.forEach((categoryMap) async {
       await db.insert('categories', categoryMap);
     });
-
-
   }
 
-
-
-
-
-//****************************************************************************************
   // Insert a category into the database
   Future<void> insertCategory2(Map<String, dynamic> category) async {
     Database db = await database;
@@ -183,9 +176,9 @@ class DatabaseHelper {
 
   Future<void> insertTransaction2(AddTransactionsData transaction) async {
     Database db = await database;
-    await db.insert('transactions', transaction.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert('transactions', transaction.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
-
 
   Future<List<Map<String, dynamic>>> getTransactionsWithCategory() async {
     final db = await database;
@@ -197,8 +190,6 @@ class DatabaseHelper {
     return maps;
   }
 
-
-
   Future<List<AddTransactionsData>> getTransactions2() async {
     Database db = await database;
     List<Map<String, dynamic>> maps = await db.query('transactions');
@@ -208,5 +199,49 @@ class DatabaseHelper {
     });
   }
 
+  Future<void> updateTransaction(AddTransactionsData transaction) async {
+    final db = await database;
+    print(
+        'Updating transaction in DB****************************************: ${transaction.id} with new amount: ${transaction.expensesPrice}');
+    await db.update(
+      'transactions',
+      transaction.toMap(),
+      where: 'id = ?',
+      whereArgs: [transaction.id],
+    );
+    print('Update complete******************************************');
+  }
 
+  Future<void> deleteTransaction(int id) async {
+    final db = await database;
+    await db.delete(
+      'transactions',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  //getting data by date
+  Future<List<AddTransactionsData>> getAllTransactionsSortedByDate() async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.query(
+      'transactions',
+      orderBy: 'date ASC', // or 'date DESC' for descending order
+    );
+    return results.map((e) => AddTransactionsData.fromMap(e)).toList();
+  }
+
+  // get data by date and category ************************
+
+  Future<List<AddTransactionsData>> getTransactionsByCategoryAndDate(
+      String categoryName, DateTime date) async {
+    final dateStr = DateFormat('yyyy-MM-dd').format(date);
+    final db = await database;
+    List<Map<String, dynamic>> maps = await db.query(
+      'transactions',
+      where: 'name = ? AND date(date) = ?',
+      whereArgs: [categoryName, dateStr],
+    );
+    return maps.map((e) => AddTransactionsData.fromMap(e)).toList();
+  }
 }

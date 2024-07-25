@@ -1,14 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:money_minder/models/time_period.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
-import 'package:money_minder/res/components/indicator.dart';
 import 'package:money_minder/res/constants/text_size.dart';
 import 'package:provider/provider.dart';
 
@@ -28,12 +24,16 @@ class PieChart2State extends State {
     final transactionProvider = context.watch<TransactionAmountProvider>();
 
 
+    // final aggregatedData =
+    // transactionProvider.getAggregatedData(selectedPeriod);
     final aggregatedData =
     transactionProvider.getAggregatedData(selectedPeriod);
-    final totalAmount = transactionProvider.totalAmount;
+    // final totalAmount = transactionProvider.totalAmount;
+    final totalAmount = transactionProvider.getTotalAmountForPeriod(selectedPeriod);
     final sections = _generateSections(aggregatedData,totalAmount);
 
-    final transactionList = transactionProvider.transactionList;
+    print("total daily amount***************************************$totalAmount");
+
     return  Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -87,7 +87,8 @@ class PieChart2State extends State {
                   ),
                 ),
                 Text(
-                  '\₹${totalAmount.toStringAsFixed(2)}',
+                  '₹${totalAmount.toStringAsFixed(2)}',
+
                   style: const TextStyle(
                     fontSize: TextSizes.mediumHeadingMin,
                     fontWeight: FontWeight.bold,
@@ -134,13 +135,39 @@ class PieChart2State extends State {
     return sections;
   }
   Widget _buildPeriodButton(String text, TimePeriod period) {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          selectedPeriod = period;
-        });
-      },
-      child: Text(text),
+
+    final isSelected = selectedPeriod == period;
+    final buttonColor = isSelected ? ColorsPalette.primaryDark: Colors.white;
+    final textColor = isSelected ? Colors.white : ColorsPalette.textPrimary;
+    final borderColor = isSelected ? ColorsPalette. primaryDark : ColorsPalette. primaryDark;
+    final buttonSize = isSelected ? 100.0 : 80.0;
+
+    return SizedBox(
+      height: 35,
+      width: buttonSize,
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            selectedPeriod = period;
+            context.read<TransactionAmountProvider>().setTimePeriod(period);
+          });
+
+
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: borderColor,width: 2)
+          )
+        ),
+        child: Text(text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: isSelected ? 18.0 : 16.0,
+          ),
+        ),
+      ),
     );
   }
 
@@ -172,5 +199,9 @@ class PieChart2State extends State {
   //     );
   //   });
   // }
+
+
+
 }
+
 
