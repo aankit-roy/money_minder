@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
 
-class CustomeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+
+
+class CustomeHomeAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Size size;
   final TabController tabController;
 
@@ -13,9 +15,15 @@ class CustomeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(140);
 
   @override
+  _CustomeHomeAppBarState createState() => _CustomeHomeAppBarState();
+}
+
+class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
+
+  @override
   Widget build(BuildContext context) {
     return PreferredSize(
-      preferredSize: preferredSize,
+      preferredSize: widget.preferredSize,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: const BoxDecoration(
@@ -27,43 +35,97 @@ class CustomeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               const SizedBox(height: 16),
               _TopBar(),
-              const SizedBox(height: 45),
-              HomeTabView(size: size, tabController: tabController),
+              const SizedBox(height: 5),
+              _TotalIncome(),
+              const SizedBox(height: 18),
+              HomeTabView(size: widget.size, tabController: widget.tabController),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _TotalIncome() {
+    return const Center(
+      child: Text(
+        "${"₹10009876543"}",
+        style: TextStyle(
+          color: Colors.green,
+          fontSize: TextSizes.mediumHeadingMax,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+
 }
 
-class _TopBar extends StatelessWidget {
+class _TopBar extends StatefulWidget {
+  @override
+  State<_TopBar> createState() => _TopBarState();
+}
+
+class _TopBarState extends State<_TopBar> {
+
+  DateTime selectedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         InkWell(
-          onTap: () {},
-          child: const Icon(
-            Icons.search_rounded,
-            color: ColorsPalette.textPrimary,
+          onTap: () {
+
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            child: const Icon(
+              Icons.search_rounded,
+              color: ColorsPalette.textPrimary,
+            ),
           ),
         ),
-        const Text(
-          "Money Minder",
-          style: TextStyle(
-            fontSize: TextSizes.mediumHeadingMax,
-            fontWeight: FontWeight.w400,
-          ),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.savings_outlined),
+            SizedBox(width: 5,),
+            Text(
+              "Total",
+              style: TextStyle(
+                fontSize: TextSizes.mediumHeadingMax,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ],
         ),
         InkWell(
-          onTap: () {},
-          child: const Icon(Icons.date_range_outlined),
+          onTap: () {
+            _selectDate(context);
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+              child: const Icon(Icons.date_range_outlined)),
         ),
       ],
     );
   }
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
 }
 
 class HomeTabView extends StatelessWidget {

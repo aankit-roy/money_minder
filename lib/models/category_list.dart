@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'dart:convert';
 
 class CategoryData {
@@ -9,6 +10,17 @@ class CategoryData {
   final Color color;
 
   CategoryData({this.id, required this.name, required this.icon, required this.color});
+
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is CategoryData &&
+              runtimeType == other.runtimeType &&
+              name == other.name; // Compare by name
+
+  @override
+  int get hashCode => name.hashCode; // Generate hashCode based on name
 
 
 

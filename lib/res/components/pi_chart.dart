@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:flutter/material.dart';
+
 import 'package:money_minder/models/category_list.dart';
 import 'package:money_minder/models/time_period.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
@@ -21,7 +22,13 @@ class PieChart2State extends State {
 
   @override
   Widget build(BuildContext context) {
+    Size size=MediaQuery.sizeOf(context);
     final transactionProvider = context.watch<TransactionAmountProvider>();
+
+
+
+
+
 
 
     // final aggregatedData =
@@ -35,11 +42,12 @@ class PieChart2State extends State {
     print("total daily amount***************************************$totalAmount");
 
     return  Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      // mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
 
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -49,55 +57,77 @@ class PieChart2State extends State {
             ],
           ),
         ),
-        Expanded(
-
-          child: Center(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: PieChart(
-                    PieChartData(
-                      pieTouchData: PieTouchData(
-                        touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                          setState(() {
-                            if (!event.isInterestedForInteractions ||
-                                pieTouchResponse == null ||
-                                pieTouchResponse.touchedSection == null) {
-                              touchedIndex = -1;
-                              return;
-                            }
-                            touchedIndex =
-                                pieTouchResponse.touchedSection!.touchedSectionIndex;
-                          });
-                        },
-                      ),
-                      borderData: FlBorderData(
-                        show: false,
-                      ),
-                      sectionsSpace: 2,
-                      centerSpaceRadius: 60,
-
-                      // sections: showingSections(transactionList, totalAmount),
-                      sections: sections,
-                    ),
-
+        SizedBox(height: size.height * .08,),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              height: 90,
+              width: 90,
+              child: PieChart(
+                PieChartData(
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions ||
+                            pieTouchResponse == null ||
+                            pieTouchResponse.touchedSection == null) {
+                          touchedIndex = -1;
+                          return;
+                        }
+                        touchedIndex =
+                            pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      });
+                    },
                   ),
-                ),
-                Text(
-                  '₹${totalAmount.toStringAsFixed(2)}',
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  sectionsSpace: 2,
+                  centerSpaceRadius: 60,
 
-                  style: const TextStyle(
-                    fontSize: TextSizes.mediumHeadingMin,
-                    fontWeight: FontWeight.bold,
-                    color: ColorsPalette.textPrimary,
-                  ),),
-              ],
+                  // sections: showingSections(transactionList, totalAmount),
+                  sections: sections,
+                ),
+
+              ),
             ),
-          ),
+            Text(
+              '₹${totalAmount.toStringAsFixed(2)}',
+
+              style: const TextStyle(
+                fontSize: TextSizes.mediumHeadingMin,
+                fontWeight: FontWeight.bold,
+                color: ColorsPalette.textPrimary,
+              ),),
+          ],
         ),
+        SizedBox(height: size.height* .1), // Add some space between the pie chart and the text below
+        Column(
+          children: [
+            const Text(
+              "Available balance",
+              style: TextStyle(
+                fontSize: TextSizes.mediumHeadingMax,
+                fontWeight: FontWeight.w800,
+                color: ColorsPalette.textSecondary,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: const Text(
+                "₹4000",
+                style: TextStyle(
+                  fontSize: TextSizes.mediumHeadingMin,
+                  fontWeight: FontWeight.w400,
+                  color: ColorsPalette.greencColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+
+
 
       ],
 
@@ -110,6 +140,11 @@ class PieChart2State extends State {
       Map<CategoryData, double> aggregatedData, double totalAmount) {
     List<PieChartSectionData> sections = [];
     int index = 0;
+    // Ensure totalAmount is not zero to avoid division by zero
+    // if (totalAmount == 0) {
+    //   print('Total amount is zero. No sections to generate.');
+    //   return sections;
+    // }
 
     aggregatedData.forEach((category, amount) {
       final isTouched = index == touchedIndex;
@@ -130,6 +165,12 @@ class PieChart2State extends State {
         ),
       ));
       index++;
+    });
+
+    // Debug: Print pie chart sections
+    print('**************************************Pie Chart Sections:');
+    sections.forEach((section) {
+      print('**********************${section.title}: ${section.value}');
     });
 
     return sections;
@@ -201,7 +242,68 @@ class PieChart2State extends State {
   // }
 
 
-
 }
+
+
+
+
+class PeriodButton extends StatefulWidget {
+  final String text;
+  final TimePeriod period;
+  final TimePeriod selectedPeriod;
+  final void Function(TimePeriod) onPeriodChanged;
+
+  const PeriodButton({
+    Key? key,
+    required this.text,
+    required this.period,
+    required this.selectedPeriod,
+    required this.onPeriodChanged,
+  }) : super(key: key);
+
+  @override
+  _PeriodButtonState createState() => _PeriodButtonState();
+}
+
+class _PeriodButtonState extends State<PeriodButton> {
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = widget.selectedPeriod == widget.period;
+    final buttonColor = isSelected ? ColorsPalette.primaryDark : Colors.white;
+    final textColor = isSelected ? Colors.white : ColorsPalette.textPrimary;
+    final borderColor = isSelected ? ColorsPalette.primaryDark : ColorsPalette.primaryDark;
+    final buttonSize = isSelected ? 100.0 : 80.0;
+
+    return SizedBox(
+      height: 35,
+      width: buttonSize,
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            widget.onPeriodChanged(widget.period);
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: borderColor, width: 2),
+          ),
+        ),
+        child: Text(
+          widget.text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: isSelected ? 18.0 : 16.0,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
 
 

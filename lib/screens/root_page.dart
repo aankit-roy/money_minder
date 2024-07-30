@@ -11,8 +11,6 @@ import 'package:money_minder/screens/profile_page.dart';
 import 'package:money_minder/screens/report_page.dart';
 import 'package:money_minder/screens/stat_page.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:money_minder/ui/widgets/custome_Tran_add_app_bar.dart';
 import 'package:provider/provider.dart';
 
 class RootPage extends StatefulWidget {
@@ -56,8 +54,23 @@ class _RootPageState extends State<RootPage> {
       floatingActionButton:  FloatingActionButton(
 
         onPressed: (){
-          Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: const AddingData()));
+          // Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: const AddingData()));
           // _showCategoryDialog(context);
+
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: ColorsPalette.backgroundLight,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(25)
+              )
+            ),
+            builder: (context) => FractionallySizedBox(
+              heightFactor: 0.9,
+              child: AddingData(),
+            ),
+          );
 
         },
         backgroundColor: ColorsPalette.primaryColor,

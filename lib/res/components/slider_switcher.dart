@@ -1,1 +1,0 @@
-import 'package:slide_switcher/slide_switcher.dart';

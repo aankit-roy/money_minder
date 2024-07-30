@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
@@ -26,7 +25,6 @@ class DatabaseHelper {
 // creating new database
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'money_minder.db');
-    print("Database path*********************************: $path");
     return openDatabase(
       path, version: 1,
       onCreate: _onCreate,
@@ -35,7 +33,6 @@ class DatabaseHelper {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    print("Creating tables*********************************...");
     await db.execute('''
     
      CREATE TABLE categories (
@@ -46,7 +43,6 @@ class DatabaseHelper {
      )
       ''');
 
-    print("Categories table created*********************************.");
     await db.execute('''
       CREATE TABLE transactions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,12 +54,10 @@ class DatabaseHelper {
       )
     ''');
 
-    print("Transactions table created********************************.");
     _insertInitialData(db);
   }
 
   Future<void> _insertInitialData(Database db) async {
-    print("Inserting initial data*********************************...");
     final List<CategoryData> categories = [
       CategoryData(name: 'Rent', icon: Icons.home, color: Colors.blue),
       CategoryData(
@@ -176,8 +170,7 @@ class DatabaseHelper {
 
   Future<void> insertTransaction2(AddTransactionsData transaction) async {
     Database db = await database;
-    await db.insert('transactions', transaction.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert('transactions', transaction.toMap());
   }
 
   Future<List<Map<String, dynamic>>> getTransactionsWithCategory() async {
@@ -199,6 +192,20 @@ class DatabaseHelper {
     });
   }
 
+  Future<void> updateExpensesSameCategoryTransactionBySameDate(AddTransactionsData transaction) async {
+    final db = await database;
+
+    // Only update the amount, do not alter category or date
+    await db.update(
+      'transactions',
+      {
+        'amount': transaction.expensesPrice,
+      },
+      where: 'id = ?',
+      whereArgs: [transaction.id],
+    );
+  }
+
   Future<void> updateTransaction(AddTransactionsData transaction) async {
     final db = await database;
     print(
@@ -209,7 +216,6 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [transaction.id],
     );
-    print('Update complete******************************************');
   }
 
   Future<void> deleteTransaction(int id) async {
@@ -226,7 +232,7 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> results = await db.query(
       'transactions',
-      orderBy: 'date ASC', // or 'date DESC' for descending order
+      orderBy: 'date DESC', // or 'date DESC' for descending order or 'date ASC' for ascending order
     );
     return results.map((e) => AddTransactionsData.fromMap(e)).toList();
   }

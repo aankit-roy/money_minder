@@ -5,6 +5,6 @@ class IncomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Center(child: Text("Income"));
+    return  const Center(child: Text("Income"));
   }
 }

@@ -1,1 +1,5 @@
-enum TimePeriod { daily, weekly, monthly }
+enum TimePeriod {
+  daily,
+  weekly,
+  monthly,
+}

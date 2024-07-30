@@ -6,8 +6,6 @@ import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
-import 'package:money_minder/res/constants/text_size.dart';
-import 'package:money_minder/ui/widgets/amount_text_field.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -255,9 +253,9 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
       existingTransaction.expensesPrice += newTransaction.expensesPrice;
       await dbHelper.updateTransaction(
           existingTransaction); // Assuming DatabaseHelper has an update method
-      context
-          .read<TransactionAmountProvider>()
-          .updateTransaction(existingTransaction); // Update provider data
+      // context
+      //     .read<TransactionAmountProvider>()
+      //     .updateTransaction(existingTransaction); // Update provider data
       return true;
     }
 
