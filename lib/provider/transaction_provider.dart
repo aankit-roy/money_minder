@@ -174,7 +174,7 @@ class TransactionAmountProvider extends ChangeNotifier {
         endDate = startDate.add(const Duration(days: 1));
         break;
       case TimePeriod.weekly:
-        startDate = now.subtract(Duration(days: now.weekday - 1));
+        startDate = now.subtract(Duration(days: now.weekday ));
         endDate = startDate.add(const Duration(days: 7));
         break;
       case TimePeriod.monthly:
@@ -198,6 +198,28 @@ class TransactionAmountProvider extends ChangeNotifier {
     return filteredTransactions;
 
 
+  }
+
+
+// ******************* this method no more required ***************************
+  List<AddTransactionsData> getAggregatedDataAsTransactions(TimePeriod timePeriod) {
+    List<AddTransactionsData> transactionsList = [];
+
+    // Filter transactions based on the selected time period
+    Map<CategoryData, double> aggregatedData = getAggregatedData(timePeriod);
+
+    for (var entry in aggregatedData.entries) {
+      transactionsList.add(
+        AddTransactionsData(
+          id: null, // or assign a default value if necessary
+          categoryData: entry.key,
+          expensesPrice: entry.value,
+          date: DateTime.now(), // or use a date specific to your use case
+        ),
+      );
+    }
+
+    return transactionsList;
   }
 
 

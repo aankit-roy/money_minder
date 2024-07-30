@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
@@ -85,6 +86,7 @@ class _HomePageState extends State<HomePage>
   }
 }
 
+
 class ExpensesDataList extends StatelessWidget {
   const ExpensesDataList({
     super.key,
@@ -100,7 +102,10 @@ class ExpensesDataList extends StatelessWidget {
   Widget build(BuildContext context) {
     final transactionsProvider = context.watch<TransactionAmountProvider>();
     // Filter expenses data by daily, weekly, monthly
+   // final transByCategory= transactionsProvider.getAggregatedDataAsTransactions(selectedPeriod);
     final transByDate = _filterTransactionsByPeriod(transactionsProvider.transactionList, selectedPeriod);
+    // final transByDate = transactionsProvider.getAggregatedData(selectedPeriod);
+
 
     // Convert keys (dates) to a list and sort it in descending order
     final sortedDates = transByDate.keys.toList()
@@ -137,17 +142,33 @@ class ExpensesDataList extends StatelessWidget {
                   ExpenseAndIncomeWidget(totalAmount: totalAmount),
                   ...transactions.map((transaction) {
                     return ListTile(
-                      leading: Icon(transaction.categoryData.icon, color: transaction.categoryData.color),
+                      leading: Container(
+                        width: 40.0, // Adjust the size as needed
+                        height: 40.0, // Adjust the size as needed
+                        decoration: BoxDecoration(
+                          color: transaction.categoryData.color.withOpacity(0.2), // Light background color for the icon
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Icon(
+                            transaction.categoryData.icon,
+                            color: transaction.categoryData.color,
+                            size: 24.0, // Adjust the icon size as needed
+                          ),
+                        ),
+                      ),
                       title: Text(
                         transaction.categoryData.name,
                         style: const TextStyle(
-                          fontSize: TextSizes.normalBodyTextMax,
+                          fontSize: TextSizes.smallHeadingMax,
+                          fontWeight: FontWeight.w600,
+                          color: ColorsPalette.textSecondary
                         ),
                       ),
                       trailing: Text(
                         '₹${transaction.expensesPrice.toStringAsFixed(2)}',
                         style: const TextStyle(
-                          fontSize: TextSizes.normalBodyTextMax,
+                          fontSize: TextSizes.smallHeadingMax,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -265,6 +286,7 @@ Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
 
   return filteredTransactions;
 }
+
 
 void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
     AddTransactionsData oldTransaction) {
