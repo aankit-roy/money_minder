@@ -33,5 +33,8 @@ class ColorsPalette{
   static const Color textSecondary = Color(0xFF2F4F4F); // Dark Slate Gray
   static const Color borderColor = Color(0xFFB0C4DE); // Light Steel Blue
   static const Color greencColor = Color(0xFF5EDE13); // Light Steel Blue
+  static const Color blueColor = Color(0xFF2196F3FF); // Light Steel Blue
+
+
 
 }
