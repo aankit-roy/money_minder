@@ -14,33 +14,33 @@ class StatPage extends StatefulWidget {
 
 class _StatPageState extends State<StatPage> {
   final List<FlSpot> incomeData = [
-    FlSpot(0, 1000),
-    FlSpot(1, 1500),
-    FlSpot(2, 2000),
-    FlSpot(3, 1200),
-    FlSpot(4, 1700),
-    FlSpot(5, 1800),
-    FlSpot(6, 2100),
-    FlSpot(7, 1000),
-    FlSpot(8, 1500),
-    FlSpot(9, 2000),
-    FlSpot(10, 1200),
-    FlSpot(11, 1700),
+    const FlSpot(0, 1000),
+    const FlSpot(1, 1500),
+    const FlSpot(2, 2000),
+    const FlSpot(3, 1200),
+    const FlSpot(4, 1700),
+    const FlSpot(5, 1800),
+    const FlSpot(6, 2100),
+    const FlSpot(7, 1000),
+    const FlSpot(8, 1500),
+    const FlSpot(9, 2000),
+    const FlSpot(10, 1200),
+    const FlSpot(11, 1700),
   ];
 
   final List<FlSpot> expenseData = [
-    FlSpot(0, 1200),
-    FlSpot(1, 1300),
-    FlSpot(2, 1600),
-    FlSpot(3, 1100),
-    FlSpot(4, 1500),
-    FlSpot(5, 1400),
-    FlSpot(6, 1100),
-    FlSpot(7, 800),
-    FlSpot(8, 900),
-    FlSpot(9, 300),
-    FlSpot(10, 900),
-    FlSpot(11, 1700),
+    const FlSpot(0, 1200),
+    const FlSpot(1, 1300),
+    const FlSpot(2, 1600),
+    const FlSpot(3, 1100),
+    const FlSpot(4, 1500),
+    const FlSpot(5, 1400),
+    const FlSpot(6, 1100),
+    const FlSpot(7, 800),
+    const FlSpot(8, 900),
+    const FlSpot(9, 300),
+    const FlSpot(10, 900),
+    const FlSpot(11, 1700),
   ];
   final PageController _pageController = PageController();
 
@@ -56,7 +56,7 @@ class _StatPageState extends State<StatPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               // Summary Cards
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -69,7 +69,7 @@ class _StatPageState extends State<StatPage> {
                       '${CurrencySymbols.rupee}2,000', Colors.blue),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               Container(
                 height: size.height * 0.5,
@@ -110,7 +110,7 @@ class _StatPageState extends State<StatPage> {
                         child: SmoothPageIndicator(
                           controller: _pageController,
                           count: 2, // Number of pages
-                          effect: WormEffect(
+                          effect: const WormEffect(
                             dotWidth: 10,
                             dotHeight: 10,
                             spacing: 8,
@@ -125,7 +125,7 @@ class _StatPageState extends State<StatPage> {
                 ),
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Top Spending Categories
               // Container(
               //   height: 200,
@@ -291,7 +291,7 @@ class _StatPageState extends State<StatPage> {
                     axisSide: meta.axisSide,
                     child: Text(
                       '$formattedValue ',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
                       ),
@@ -300,12 +300,12 @@ class _StatPageState extends State<StatPage> {
                 },
               ),
             ),
-            rightTitles: AxisTitles(
+            rightTitles: const AxisTitles(
               sideTitles: SideTitles(
                 showTitles: false,
               ),
             ),
-            topTitles: AxisTitles(
+            topTitles: const AxisTitles(
               sideTitles: SideTitles(
                 showTitles: false,
               ),
@@ -383,7 +383,7 @@ class _StatPageState extends State<StatPage> {
                     axisSide: meta.axisSide,
                     child: Text(
                       '$formattedValue ',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
                       ),
@@ -392,12 +392,12 @@ class _StatPageState extends State<StatPage> {
                 },
               )
             ),
-            rightTitles: AxisTitles(
+            rightTitles: const AxisTitles(
               sideTitles: SideTitles(
                 showTitles: false
               )
             ),
-            topTitles: AxisTitles(
+            topTitles: const AxisTitles(
                 sideTitles: SideTitles(
                     showTitles: false
                 )
@@ -476,8 +476,8 @@ class IncomeExpensesIcon extends StatelessWidget {
                 ),
 
               ),
-              SizedBox(width: 10,),
-              Text(
+              const SizedBox(width: 10,),
+              const Text(
                 "Income",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               )
@@ -497,8 +497,8 @@ class IncomeExpensesIcon extends StatelessWidget {
                 ),
 
               ),
-              SizedBox(width: 10,),
-              Text(
+              const SizedBox(width: 10,),
+              const Text(
                 "Expenses",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               )
