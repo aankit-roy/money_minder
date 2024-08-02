@@ -181,7 +181,7 @@ class PieChart2State extends State {
     final buttonColor = isSelected ? ColorsPalette.primaryDark: Colors.white;
     final textColor = isSelected ? Colors.white : ColorsPalette.textPrimary;
     final borderColor = isSelected ? ColorsPalette. primaryDark : ColorsPalette. primaryDark;
-    final buttonSize = isSelected ? 100.0 : 80.0;
+    final buttonSize = isSelected ? 110.0 : 100.0;
 
     return SizedBox(
       height: 35,

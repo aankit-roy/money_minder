@@ -33,11 +33,11 @@ class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
         child: SafeArea(
           child: Column(
             children: [
-              const SizedBox(height: 16),
+              const SizedBox(height: 15),
               _TopBar(),
               const SizedBox(height: 5),
               _TotalIncome(),
-              const SizedBox(height: 18),
+              const SizedBox(height: 8),
               HomeTabView(size: widget.size, tabController: widget.tabController),
             ],
           ),
