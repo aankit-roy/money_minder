@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:money_minder/data/database/database_helper.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
@@ -280,4 +281,155 @@ class TransactionAmountProvider extends ChangeNotifier {
 
     return aggregatedData;
   }
+
+
+
+
+
+  // for stat page ************************************* getting data***************************
+
+
+  Map<CategoryData, double> getAggregatedDataByMonths(TimePeriod timePeriod, {int? selectedMonth}) {
+    Map<CategoryData, double> aggregatedData = {};
+
+    // Filter transactions based on the selected time period
+    List<AddTransactionsData> filteredTransactions =
+    _filterTransactionsByTimePeriodByMonths(timePeriod, selectedMonth: selectedMonth);
+
+    for (var transaction in filteredTransactions) {
+      if (aggregatedData.containsKey(transaction.categoryData)) {
+        aggregatedData[transaction.categoryData] =
+            aggregatedData[transaction.categoryData]! +
+                transaction.expensesPrice;
+      } else {
+        aggregatedData[transaction.categoryData] = transaction.expensesPrice;
+      }
+    }
+
+    // Debug: Print aggregated data
+    // print('Aggregated Data for************************************************ $timePeriod:');
+    // aggregatedData.forEach((category, amount) {
+    //   print('*************${category.name}: $amount');
+    // });
+
+    return aggregatedData;
+  }
+
+  // List<AddTransactionsData> _filterTransactionsByTimePeriodByMonths(
+  //     TimePeriod timePeriod, {
+  //       int? selectedMonth,
+  //     }) {
+  //   DateTime now = DateTime.now();
+  //   DateTime startDate;
+  //   DateTime endDate;
+  //
+  //   switch (timePeriod) {
+  //     case TimePeriod.daily:
+  //       startDate = DateTime(now.year, now.month, now.day);
+  //       endDate = startDate.add(const Duration(days: 1));
+  //       break;
+  //     case TimePeriod.weekly:
+  //       startDate = now.subtract(Duration(days: now.weekday));
+  //       endDate = startDate.add(const Duration(days: 7));
+  //       break;
+  //     case TimePeriod.monthly:
+  //     // Use selectedMonth if provided, otherwise use the current month
+  //       int month = selectedMonth ?? now.month;
+  //       startDate = DateTime(now.year, month, 1);
+  //       endDate = DateTime(now.year, month + 1, 1);
+  //       break;
+  //   }
+  //   print("Filtering from######################################### $startDate to $endDate");
+  //   print('Filtering for period: $timePeriod');
+  //   // Filter transactions
+  //   List<AddTransactionsData> filteredTransactions = _transactionList.where((transaction) {
+  //     return transaction.date.isAfter(startDate) && transaction.date.isBefore(endDate);
+  //   }).toList();
+  //
+  //   // Debug prints to check filtered transactions count
+  //   print('Filtered transactions count: ${filteredTransactions.length}');
+  //   filteredTransactions.forEach((transaction) {
+  //     print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
+  //   });
+  //
+  //   return filteredTransactions;
+  // }
+
+  List<AddTransactionsData> _filterTransactionsByTimePeriodByMonths(
+      TimePeriod timePeriod, {
+        int? selectedMonth,
+      }) {
+    DateTime now = DateTime.now();
+    DateTime startDate;
+    DateTime endDate;
+
+    switch (timePeriod) {
+      case TimePeriod.daily:
+        startDate = DateTime(now.year, now.month, now.day);
+        endDate = startDate.add(const Duration(days: 1));
+        break;
+      case TimePeriod.weekly:
+        startDate = now.subtract(Duration(days: now.weekday - 1));
+        endDate = startDate.add(const Duration(days: 7));
+        break;
+      case TimePeriod.monthly:
+        int month = selectedMonth ?? now.month;
+        startDate = DateTime(now.year, month, 1);
+        endDate = DateTime(now.year, month + 1, 1);
+        break;
+    }
+
+    // // Debug: Print filtering range and period
+    // print("Filtering from&&&&&&&&&&&&&&&&&&&&&& $startDate to $endDate");
+    // print('Filtering for period:&&&&&&&&&&&&&&&&&&&&&&&&& $timePeriod');
+
+    // Filter transactions
+    List<AddTransactionsData> filteredTransactions = _transactionList.where((transaction) {
+      bool inRange = transaction.date.isAtSameMomentAs(startDate) ||
+          (transaction.date.isAfter(startDate) && transaction.date.isBefore(endDate));
+      if (!inRange) {
+        print('Transaction ${transaction.date} is out of range.');
+      }
+      return inRange;
+    }).toList();
+
+    // // Debug prints to check filtered transactions count
+    // print('Filtered transactions count: ${filteredTransactions.length}');
+    // filteredTransactions.forEach((transaction) {
+    //   print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
+    // });
+
+    return filteredTransactions;
+  }
+
+
+
+
+  Map<int, double> getAggregatedDataByYear(int year) {
+    final transactions = _transactionList.where((transaction) {
+      return transaction.date.year == year;
+    }).toList();
+
+    final monthlyData = <int, double>{};
+    for (int month = 1; month <= 12; month++) {
+      final monthlyTotal = transactions.where((transaction) {
+        return transaction.date.month == month;
+      }).fold(0.0, (sum, transaction) => sum + transaction.expensesPrice);
+
+      monthlyData[month] = monthlyTotal;
+    }
+
+    return monthlyData;
+  }
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -1,7 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/models/time_period.dart';
+import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/constants/currency_symbol.dart';
 import 'package:money_minder/ui/widgets/stat_app_bar.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 
@@ -13,43 +16,77 @@ class StatPage extends StatefulWidget {
 }
 
 class _StatPageState extends State<StatPage> {
-  final List<FlSpot> incomeData = [
-    const FlSpot(0, 1000),
-    const FlSpot(1, 1500),
-    const FlSpot(2, 2000),
-    const FlSpot(3, 1200),
-    const FlSpot(4, 1700),
-    const FlSpot(5, 1800),
-    const FlSpot(6, 2100),
-    const FlSpot(7, 1000),
-    const FlSpot(8, 1500),
-    const FlSpot(9, 2000),
-    const FlSpot(10, 1200),
-    const FlSpot(11, 1700),
-  ];
 
-  final List<FlSpot> expenseData = [
-    const FlSpot(0, 1200),
-    const FlSpot(1, 1300),
-    const FlSpot(2, 1600),
-    const FlSpot(3, 1100),
-    const FlSpot(4, 1500),
-    const FlSpot(5, 1400),
-    const FlSpot(6, 1100),
-    const FlSpot(7, 800),
-    const FlSpot(8, 900),
-    const FlSpot(9, 300),
-    const FlSpot(10, 900),
-    const FlSpot(11, 1700),
-  ];
+  int? _selectedMonth;
+  double _totalExpenses = 0.0;
+  int? _selectedYear;
+  Map<int, double> _monthlyExpenses = {};
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _selectedMonth = now.month;
+    _selectedYear = now.year;
+    _fetchTotalExpenses();
+    _fetchYearlyExpenses();
+  }
+  final Map<int, double> _yearlyMonthlyIncome = {
+    1: 1200.0,
+    2: 1400.0,
+    3: 1300.0,
+    4: 1100.0,
+    5: 1500.0,
+    6: 1600.0,
+    7: 1700.0,
+    8: 1800.0,
+    9: 1900.0,
+    10: 1500.0,
+    11: 1600.0,
+    12: 1400.0,
+  };
+
   final PageController _pageController = PageController();
+  TimePeriod selectedPeriod= TimePeriod.monthly;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
+    final transactionProvider = Provider.of<TransactionAmountProvider>(context);
+
+
+
+    // final statProvider=Provider.of<StatsPeriodsProvider>(context);
+    // String selectedPeriod2= statProvider.selectedPeriod;
+    // String selectedMonth= statProvider.selectedMonth;
+    // String selectedYear= statProvider.selectedYear;
+
+
+
+
+    transactionProvider.getAggregatedData(selectedPeriod);
+    // final totalAmount = transactionProvider.totalAmount;
+
+
+
+
     return Scaffold(
       appBar: StatAppBar(
-        size: size,
+        size: const Size.fromHeight(140),
+        onMonthSelected: (month) {
+          final monthNumber = int.tryParse(month.split('/').first) ?? DateTime.now().month;
+          setState(() {
+            _selectedMonth = monthNumber;
+            _fetchTotalExpenses();
+          });
+        },
+        onYearSelected: (year) {
+          final yearNumber = int.tryParse(year) ?? DateTime.now().year;
+          setState(() {
+            _selectedYear = yearNumber;
+            _fetchYearlyExpenses();
+          });
+        },
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -64,7 +101,7 @@ class _StatPageState extends State<StatPage> {
                   _buildSummaryCard('Total Income',
                       '${CurrencySymbols.rupee}12,000', Colors.green),
                   _buildSummaryCard('Total Expenses',
-                      '${CurrencySymbols.rupee}12,000', Colors.red),
+                      '${CurrencySymbols.rupee}$_totalExpenses', Colors.red),
                   _buildSummaryCard('Profit/Loss',
                       '${CurrencySymbols.rupee}2,000', Colors.blue),
                 ],
@@ -126,25 +163,7 @@ class _StatPageState extends State<StatPage> {
               ),
 
               const SizedBox(height: 20),
-              // Top Spending Categories
-              // Container(
-              //   height: 200,
-              //   child: BarChart(
-              //     BarChartData(
-              //       alignment: BarChartAlignment.spaceAround,
-              //       maxY: 5000,
-              //       barGroups: [
-              //         BarChartGroupData(x: 0, barRods: [
-              //           BarChartRodData(toY: 4000, color: Colors.orange)
-              //         ]),
-              //         BarChartGroupData(x: 1, barRods: [
-              //           BarChartRodData(toY: 3000, color: Colors.orange)
-              //         ]),
-              //         // Add more BarChartGroupData for other categories
-              //       ],
-              //     ),
-              //   ),
-              // ),
+
             ],
           ),
         ),
@@ -197,67 +216,79 @@ class _StatPageState extends State<StatPage> {
   }
 
 
-
   Widget _buildBarChart(Size size) {
-
     final List<String> monthNames = [
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
-    // Generate bar chart data for each month
+    // Example income data, replace with your actual income data if available
+    // final Map<int, double> _monthlyIncome = {
+    //   1: 1200.0,
+    //   2: 1400.0,
+    //   3: 1300.0,
+    //   4: 1100.0,
+    //   5: 1500.0,
+    //   6: 1600.0,
+    //   7: 1700.0,
+    //   8: 1800.0,
+    //   9: 1900.0,
+    //   10: 1500.0,
+    //   11: 1600.0,
+    //   12: 1400.0,
+    // };
+
+
+    // Generate bar chart data based on _monthlyExpenses
     final List<BarChartGroupData> barGroups = List.generate(
       monthNames.length,
-          (index) => BarChartGroupData(
-        x: index,
-        barRods: [
-          BarChartRodData(
-            toY: (index + 1) * 500, // Example values; replace with actual data
-            color: Colors.green,
-            borderRadius: BorderRadius.circular(2),
-            width: 10,
-            // backDrawRodData: BackgroundBarChartRodData(
-            //   show: true,
-            //   toY: 8000,
-            //   color: Colors.grey[300]!,
-            // ),
-          ),
-          BarChartRodData(
-            toY: (index + 1) * 400, // Example values; replace with actual data
-            color: Colors.red,
-            borderRadius: BorderRadius.circular(2),
-            width: 10,
-            // backDrawRodData: BackgroundBarChartRodData(
-            //   show: true,
-            //   toY: 8000,
-            //   color: Colors.grey[300]!,
-            // ),
-          ),
-        ],
-      ),
+          (index) {
+        final month = index + 1; // Month numbers are 1-based
+        final expense = _monthlyExpenses[month] ?? 00;
+        final income = _yearlyMonthlyIncome[month] ?? 0.0;
+        return BarChartGroupData(
+          x: index,
+          barRods: [
+            BarChartRodData(
+              toY: expense,
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(2),
+              width: 10,
+            ),
+            BarChartRodData(
+              toY: income,
+              color: Colors.green,
+              width: 10,
+              borderRadius: BorderRadius.circular(2),
+              backDrawRodData: BackgroundBarChartRodData(
+                toY: income, // This will display income as background
+                color: Colors.green.withOpacity(0.2),
+              ),
+            ),
+          ],
+        );
+      },
     );
-
-
 
     return SizedBox(
       height: size.height * 0.3,
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
-          maxY: 8000,
+          maxY: (_monthlyExpenses.values.isNotEmpty)
+              ? _monthlyExpenses.values.reduce((a, b) => a > b ? a : b)*2
+              : 10000,
           borderData: FlBorderData(
-            show: false, // Remove the border
+            show: false,
           ),
-          gridData: const FlGridData(show: false), // Remove the grid lines
-
+          gridData: const FlGridData(show: false),
           titlesData: FlTitlesData(
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 25,
-                interval: 1, // Ensure titles for each month
+                interval: 1,
                 getTitlesWidget: (value, meta) {
                   final monthIndex = value.toInt();
-                  // Ensure monthIndex is within range
                   final monthName = monthIndex >= 0 && monthIndex < monthNames.length
                       ? monthNames[monthIndex]
                       : '';
@@ -277,10 +308,9 @@ class _StatPageState extends State<StatPage> {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 30,
-                interval: 1000, // Adjust interval for y-axis titles
+                reservedSize: 45,
+                interval: 5000,
                 getTitlesWidget: (value, meta) {
-                  // Format the y-axis titles
                   String formattedValue;
                   if (value >= 1000) {
                     formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
@@ -311,12 +341,130 @@ class _StatPageState extends State<StatPage> {
               ),
             ),
           ),
-
           barGroups: barGroups,
         ),
       ),
     );
   }
+  // Widget _buildBarChart(Size size) {
+  //
+  //   final List<String> monthNames = [
+  //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  //   ];
+  //   // Generate bar chart data for each month
+  //   final List<BarChartGroupData> barGroups = List.generate(
+  //     monthNames.length,
+  //         (index) => BarChartGroupData(
+  //       x: index,
+  //       barRods: [
+  //         BarChartRodData(
+  //           toY: (index + 1) * 500, // Example values; replace with actual data
+  //           color: Colors.green,
+  //           borderRadius: BorderRadius.circular(2),
+  //           width: 10,
+  //           // backDrawRodData: BackgroundBarChartRodData(
+  //           //   show: true,
+  //           //   toY: 8000,
+  //           //   color: Colors.grey[300]!,
+  //           // ),
+  //         ),
+  //         BarChartRodData(
+  //           toY: (index + 1) * 400, // Example values; replace with actual data
+  //           color: Colors.red,
+  //           borderRadius: BorderRadius.circular(2),
+  //           width: 10,
+  //           // backDrawRodData: BackgroundBarChartRodData(
+  //           //   show: true,
+  //           //   toY: 8000,
+  //           //   color: Colors.grey[300]!,
+  //           // ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  //
+  //
+  //
+  //   return SizedBox(
+  //     height: size.height * 0.3,
+  //     child: BarChart(
+  //       BarChartData(
+  //         alignment: BarChartAlignment.spaceAround,
+  //         maxY: 8000,
+  //         borderData: FlBorderData(
+  //           show: false, // Remove the border
+  //         ),
+  //         gridData: const FlGridData(show: false), // Remove the grid lines
+  //
+  //         titlesData: FlTitlesData(
+  //           bottomTitles: AxisTitles(
+  //             sideTitles: SideTitles(
+  //               showTitles: true,
+  //               reservedSize: 25,
+  //               interval: 1, // Ensure titles for each month
+  //               getTitlesWidget: (value, meta) {
+  //                 final monthIndex = value.toInt();
+  //                 // Ensure monthIndex is within range
+  //                 final monthName = monthIndex >= 0 && monthIndex < monthNames.length
+  //                     ? monthNames[monthIndex]
+  //                     : '';
+  //                 return SideTitleWidget(
+  //                   axisSide: meta.axisSide,
+  //                   child: Text(
+  //                     monthName,
+  //                     style: const TextStyle(
+  //                       color: Colors.black,
+  //                       fontSize: 14,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //           leftTitles: AxisTitles(
+  //             sideTitles: SideTitles(
+  //               showTitles: true,
+  //               reservedSize: 30,
+  //               interval: 1000, // Adjust interval for y-axis titles
+  //               getTitlesWidget: (value, meta) {
+  //                 // Format the y-axis titles
+  //                 String formattedValue;
+  //                 if (value >= 1000) {
+  //                   formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
+  //                 } else {
+  //                   formattedValue = value.toInt().toString();
+  //                 }
+  //                 return SideTitleWidget(
+  //                   axisSide: meta.axisSide,
+  //                   child: Text(
+  //                     '$formattedValue ',
+  //                     style: const TextStyle(
+  //                       color: Colors.black,
+  //                       fontSize: 14,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //           rightTitles: const AxisTitles(
+  //             sideTitles: SideTitles(
+  //               showTitles: false,
+  //             ),
+  //           ),
+  //           topTitles: const AxisTitles(
+  //             sideTitles: SideTitles(
+  //               showTitles: false,
+  //             ),
+  //           ),
+  //         ),
+  //
+  //         barGroups: barGroups,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildLineChart(Size size) {
     final List<String> monthNames = [
@@ -324,34 +472,48 @@ class _StatPageState extends State<StatPage> {
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
 
+    // Convert _monthlyExpenses and _monthlyIncome to FlSpot
+    final List<FlSpot> expenseSpots = List.generate(
+      monthNames.length,
+          (index) {
+        final month = index + 1;
+        final expense = _monthlyExpenses[month] ?? 0.0;
+        return FlSpot(index.toDouble(), expense);
+      },
+    );
+
+    final List<FlSpot> incomeSpots = List.generate(
+      monthNames.length,
+          (index) {
+        final month = index + 1;
+        final income =  _yearlyMonthlyIncome[month] ?? 0.0;
+        return FlSpot(index.toDouble(), income);
+      },
+    );
+
     return SizedBox(
       height: size.height * 0.3,
       child: LineChart(
         LineChartData(
-          gridData: const FlGridData(show: false), // Remove the grid lines
-
+          gridData: const FlGridData(show: false),
           borderData: FlBorderData(
-            show: false, // Remove the border
+            show: false,
           ),
           titlesData: FlTitlesData(
             bottomTitles: AxisTitles(
-
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 30,
+                reservedSize: 20,
                 interval: 1,
-
                 getTitlesWidget: (value, meta) {
-
                   final monthIndex = value.toInt();
-                  // Ensure monthIndex is within range
                   final monthName = monthIndex >= 0 && monthIndex < monthNames.length
-                      ? monthNames[monthIndex % monthNames.length]
+                      ? monthNames[monthIndex]
                       : '';
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
                     child: Text(
-                       monthName,
+                      monthName,
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
@@ -359,26 +521,20 @@ class _StatPageState extends State<StatPage> {
                     ),
                   );
                 },
-              )
-
+              ),
             ),
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 40,
-                interval: 1000,
-
+                interval: 3000,
                 getTitlesWidget: (value, meta) {
-
-                  // Format the y-axis titles
                   String formattedValue;
-
                   if (value >= 1000) {
                     formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
                   } else {
                     formattedValue = value.toInt().toString();
                   }
-
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
                     child: Text(
@@ -390,26 +546,22 @@ class _StatPageState extends State<StatPage> {
                     ),
                   );
                 },
-              )
+              ),
             ),
             rightTitles: const AxisTitles(
               sideTitles: SideTitles(
-                showTitles: false
-              )
+                showTitles: false,
+              ),
             ),
             topTitles: const AxisTitles(
-                sideTitles: SideTitles(
-                    showTitles: false
-                )
-            )
-
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
           ),
-
-
-
           lineBarsData: [
             LineChartBarData(
-              spots: incomeData,
+              spots: incomeSpots,
               isCurved: true,
               color: Colors.green,
               belowBarData: BarAreaData(show: false),
@@ -422,13 +574,10 @@ class _StatPageState extends State<StatPage> {
                   strokeColor: Colors.white,
                 ),
               ),
-              // Customize line thickness and other properties
               aboveBarData: BarAreaData(show: false),
-              // color: Colors.green,
-              // belowBarData: BarAreaData(show: false),
             ),
             LineChartBarData(
-              spots: expenseData,
+              spots: expenseSpots,
               isCurved: true,
               color: Colors.red,
               belowBarData: BarAreaData(show: false),
@@ -441,15 +590,174 @@ class _StatPageState extends State<StatPage> {
                   strokeColor: Colors.white,
                 ),
               ),
-              // Customize line thickness and other properties
               aboveBarData: BarAreaData(show: false),
-              // colors: [Colors.red],
-              // belowBarData: BarAreaData(show: false),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // Widget _buildLineChart(Size size) {
+  //   final List<String> monthNames = [
+  //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  //   ];
+  //
+  //   return SizedBox(
+  //     height: size.height * 0.3,
+  //     child: LineChart(
+  //       LineChartData(
+  //         gridData: const FlGridData(show: false), // Remove the grid lines
+  //
+  //         borderData: FlBorderData(
+  //           show: false, // Remove the border
+  //         ),
+  //         titlesData: FlTitlesData(
+  //           bottomTitles: AxisTitles(
+  //
+  //             sideTitles: SideTitles(
+  //               showTitles: true,
+  //               reservedSize: 30,
+  //               interval: 1,
+  //
+  //               getTitlesWidget: (value, meta) {
+  //
+  //                 final monthIndex = value.toInt();
+  //                 // Ensure monthIndex is within range
+  //                 final monthName = monthIndex >= 0 && monthIndex < monthNames.length
+  //                     ? monthNames[monthIndex % monthNames.length]
+  //                     : '';
+  //                 return SideTitleWidget(
+  //                   axisSide: meta.axisSide,
+  //                   child: Text(
+  //                      monthName,
+  //                     style: const TextStyle(
+  //                       color: Colors.black,
+  //                       fontSize: 14,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             )
+  //
+  //           ),
+  //           leftTitles: AxisTitles(
+  //             sideTitles: SideTitles(
+  //               showTitles: true,
+  //               reservedSize: 40,
+  //               interval: 1000,
+  //
+  //               getTitlesWidget: (value, meta) {
+  //
+  //                 // Format the y-axis titles
+  //                 String formattedValue;
+  //
+  //                 if (value >= 1000) {
+  //                   formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
+  //                 } else {
+  //                   formattedValue = value.toInt().toString();
+  //                 }
+  //
+  //                 return SideTitleWidget(
+  //                   axisSide: meta.axisSide,
+  //                   child: Text(
+  //                     '$formattedValue ',
+  //                     style: const TextStyle(
+  //                       color: Colors.black,
+  //                       fontSize: 14,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             )
+  //           ),
+  //           rightTitles: const AxisTitles(
+  //             sideTitles: SideTitles(
+  //               showTitles: false
+  //             )
+  //           ),
+  //           topTitles: const AxisTitles(
+  //               sideTitles: SideTitles(
+  //                   showTitles: false
+  //               )
+  //           )
+  //
+  //         ),
+  //
+  //
+  //
+  //         lineBarsData: [
+  //           LineChartBarData(
+  //             spots: incomeData,
+  //             isCurved: true,
+  //             color: Colors.green,
+  //             belowBarData: BarAreaData(show: false),
+  //             dotData: FlDotData(
+  //               show: true,
+  //               getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
+  //                 radius: 4,
+  //                 color: Colors.green,
+  //                 strokeWidth: 1,
+  //                 strokeColor: Colors.white,
+  //               ),
+  //             ),
+  //             // Customize line thickness and other properties
+  //             aboveBarData: BarAreaData(show: false),
+  //             // color: Colors.green,
+  //             // belowBarData: BarAreaData(show: false),
+  //           ),
+  //           LineChartBarData(
+  //             spots: expenseData,
+  //             isCurved: true,
+  //             color: Colors.red,
+  //             belowBarData: BarAreaData(show: false),
+  //             dotData: FlDotData(
+  //               show: true,
+  //               getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
+  //                 radius: 4,
+  //                 color: Colors.red,
+  //                 strokeWidth: 1,
+  //                 strokeColor: Colors.white,
+  //               ),
+  //             ),
+  //             // Customize line thickness and other properties
+  //             aboveBarData: BarAreaData(show: false),
+  //             // colors: [Colors.red],
+  //             // belowBarData: BarAreaData(show: false),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // getting data  of expenses and income  ************
+  void _fetchTotalExpenses() {
+    if (_selectedMonth == null || _selectedYear == null) return;
+
+    final provider = Provider.of<TransactionAmountProvider>(context, listen: false);
+    final aggregatedData = provider.getAggregatedDataByMonths(
+      TimePeriod.monthly,
+      selectedMonth: _selectedMonth,
+      // selectedYear: _selectedYear,
+    );
+
+    setState(() {
+      _totalExpenses = aggregatedData.values.fold(0.0, (sum, amount) => sum + amount);
+    });
+  }
+
+  void _fetchYearlyExpenses() {
+    if (_selectedYear == null) return;
+
+    final provider = Provider.of<TransactionAmountProvider>(context, listen: false);
+    final aggregatedData = provider.getAggregatedDataByYear(_selectedYear!);
+
+    setState(() {
+      _totalExpenses = aggregatedData.values.fold(0.0, (sum, amount) => sum + amount);
+      _monthlyExpenses = aggregatedData;
+    });
   }
 }
 
