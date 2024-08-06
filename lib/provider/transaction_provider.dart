@@ -1,3 +1,6 @@
+import 'dart:core';
+import 'dart:core';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/data/database/database_helper.dart';
@@ -163,6 +166,7 @@ class TransactionAmountProvider extends ChangeNotifier {
     return aggregatedData;
   }
 
+
   List<AddTransactionsData> _filterTransactionsByTimePeriod(
       TimePeriod timePeriod) {
     DateTime now = DateTime.now();
@@ -175,14 +179,19 @@ class TransactionAmountProvider extends ChangeNotifier {
         endDate = startDate.add(const Duration(days: 1));
         break;
       case TimePeriod.weekly:
-        startDate = now.subtract(Duration(days: now.weekday ));
+        startDate = now.subtract(Duration(days: now.weekday - 1));
         endDate = startDate.add(const Duration(days: 7));
         break;
       case TimePeriod.monthly:
         startDate = DateTime(now.year, now.month, 1);
         endDate = DateTime(now.year, now.month + 1, 1);
         break;
+      case TimePeriod.yearly:
+        startDate = DateTime(now.year, 1, 1);
+        endDate = DateTime(now.year + 1, 1, 1);
+        break;
     }
+
     print("Filtering from######################################### $startDate to $endDate");
     print('Filtering for period: $timePeriod');
     // Filter transactions
@@ -197,9 +206,45 @@ class TransactionAmountProvider extends ChangeNotifier {
     });
 
     return filteredTransactions;
-
-
   }
+  // without yearly enum
+  // List<AddTransactionsData> _filterTransactionsByTimePeriod(
+  //     TimePeriod timePeriod) {
+  //   DateTime now = DateTime.now();
+  //   DateTime startDate;
+  //   DateTime endDate;
+  //
+  //   switch (timePeriod) {
+  //     case TimePeriod.daily:
+  //       startDate = DateTime(now.year, now.month, now.day);
+  //       endDate = startDate.add(const Duration(days: 1));
+  //       break;
+  //     case TimePeriod.weekly:
+  //       startDate = now.subtract(Duration(days: now.weekday ));
+  //       endDate = startDate.add(const Duration(days: 7));
+  //       break;
+  //     case TimePeriod.monthly:
+  //       startDate = DateTime(now.year, now.month, 1);
+  //       endDate = DateTime(now.year, now.month + 1, 1);
+  //       break;
+  //   }
+  //   print("Filtering from######################################### $startDate to $endDate");
+  //   print('Filtering for period: $timePeriod');
+  //   // Filter transactions
+  //   List<AddTransactionsData> filteredTransactions = _transactionList.where((transaction) {
+  //     return transaction.date.isAfter(startDate) && transaction.date.isBefore(endDate);
+  //   }).toList();
+  //
+  //   // Debug prints to check filtered transactions count
+  //   print('Filtered transactions count: ${filteredTransactions.length}');
+  //   filteredTransactions.forEach((transaction) {
+  //     print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
+  //   });
+  //
+  //   return filteredTransactions;
+  //
+  //
+  // }
 
 
 // ******************* this method no more required ***************************
@@ -306,13 +351,23 @@ class TransactionAmountProvider extends ChangeNotifier {
       }
     }
 
+
+
     // Debug: Print aggregated data
-    // print('Aggregated Data for************************************************ $timePeriod:');
-    // aggregatedData.forEach((category, amount) {
-    //   print('*************${category.name}: $amount');
-    // });
+    print('Aggregated Data for************************************************ $timePeriod:');
+    aggregatedData.forEach((category, amount) {
+      print('*************${category.name}: $amount');
+    });
 
     return aggregatedData;
+  }
+
+  void printYearlyExpenses() async {
+    final yearlyExpenses = await getYearlyExpenses();
+
+    yearlyExpenses.forEach((year, expense) {
+      print('Year: $year, Expenses: $expense');
+    });
   }
 
   // List<AddTransactionsData> _filterTransactionsByTimePeriodByMonths(
@@ -355,9 +410,11 @@ class TransactionAmountProvider extends ChangeNotifier {
   //   return filteredTransactions;
   // }
 
+
   List<AddTransactionsData> _filterTransactionsByTimePeriodByMonths(
       TimePeriod timePeriod, {
         int? selectedMonth,
+        int? selectedYear,
       }) {
     DateTime now = DateTime.now();
     DateTime startDate;
@@ -377,11 +434,12 @@ class TransactionAmountProvider extends ChangeNotifier {
         startDate = DateTime(now.year, month, 1);
         endDate = DateTime(now.year, month + 1, 1);
         break;
+      case TimePeriod.yearly:
+        int year = selectedYear ?? now.year;
+        startDate = DateTime(year, 1, 1);
+        endDate = DateTime(year + 1, 1, 1);
+        break;
     }
-
-    // // Debug: Print filtering range and period
-    // print("Filtering from&&&&&&&&&&&&&&&&&&&&&& $startDate to $endDate");
-    // print('Filtering for period:&&&&&&&&&&&&&&&&&&&&&&&&& $timePeriod');
 
     // Filter transactions
     List<AddTransactionsData> filteredTransactions = _transactionList.where((transaction) {
@@ -393,14 +451,49 @@ class TransactionAmountProvider extends ChangeNotifier {
       return inRange;
     }).toList();
 
-    // // Debug prints to check filtered transactions count
-    // print('Filtered transactions count: ${filteredTransactions.length}');
-    // filteredTransactions.forEach((transaction) {
-    //   print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
-    // });
-
     return filteredTransactions;
   }
+  // without yearly enum
+  //
+  // List<AddTransactionsData> _filterTransactionsByTimePeriodByMonths(
+  //     TimePeriod timePeriod, {
+  //       int? selectedMonth,
+  //     }) {
+  //   DateTime now = DateTime.now();
+  //   DateTime startDate;
+  //   DateTime endDate;
+  //
+  //   switch (timePeriod) {
+  //     case TimePeriod.daily:
+  //       startDate = DateTime(now.year, now.month, now.day);
+  //       endDate = startDate.add(const Duration(days: 1));
+  //       break;
+  //     case TimePeriod.weekly:
+  //       startDate = now.subtract(Duration(days: now.weekday - 1));
+  //       endDate = startDate.add(const Duration(days: 7));
+  //       break;
+  //     case TimePeriod.monthly:
+  //       int month = selectedMonth ?? now.month;
+  //       startDate = DateTime(now.year, month, 1);
+  //       endDate = DateTime(now.year, month + 1, 1);
+  //       break;
+  //   }
+  //
+  //
+  //
+  //   // Filter transactions
+  //   List<AddTransactionsData> filteredTransactions = _transactionList.where((transaction) {
+  //     bool inRange = transaction.date.isAtSameMomentAs(startDate) ||
+  //         (transaction.date.isAfter(startDate) && transaction.date.isBefore(endDate));
+  //     if (!inRange) {
+  //       print('Transaction ${transaction.date} is out of range.');
+  //     }
+  //     return inRange;
+  //   }).toList();
+  //
+  //
+  //   return filteredTransactions;
+  // }
 
 
 
@@ -421,6 +514,119 @@ class TransactionAmountProvider extends ChangeNotifier {
 
     return monthlyData;
   }
+
+
+  // getting total expenses yearly basis
+
+
+  Future<Map<int, double>> getYearlyExpenses() async {
+    final currentYear = DateTime.now().year;
+    final years = List.generate(8, (index) => currentYear - index);
+
+    final yearlyExpenses = <int, double>{};
+    for (final year in years) {
+      final expensesForYear = _getTotalExpensesForYear(year);
+      yearlyExpenses[year] = expensesForYear;
+    }
+
+    print('Yearly Expenses from Provider: $yearlyExpenses'); // Debug print
+    return yearlyExpenses;
+  }
+
+  double _getTotalExpensesForYear(int year) {
+    return _transactionList
+        .where((transaction) => transaction.date.year == year)
+        .fold(0.0, (sum, transaction) => sum + transaction.expensesPrice);
+  }
+
+
+
+
+
+
+
+
+
+// testing purpose *************************** testing purpose************ this data is working fine;
+
+
+//   Method to get data on a monthly basis for the current year
+  Map<int, double> getMonthlyDataForCurrentYear() {
+    final now = DateTime.now();
+    final year = now.year;
+
+    final monthlyData = <int, double>{};
+    final transactions = _transactionList.where((transaction) {
+      return transaction.date.year == year;
+    }).toList();
+
+    for (int month = 1; month <= 12; month++) {
+      final monthlyTotal = transactions.where((transaction) {
+        return transaction.date.month == month;
+      }).fold(0.0, (sum, transaction) => sum + transaction.expensesPrice);
+
+      monthlyData[month] = monthlyTotal;
+    }
+
+    return monthlyData;
+  }
+  double getTotalExpensesForPast10Years() {
+    final yearlyData = getYearlyDataForPast10Years();
+    return yearlyData.values.fold(0.0, (sum, value) => sum + value);
+  }
+
+  // Method to get data on a yearly basis for the past 10 years
+  Map<int, double> getYearlyDataForPast10Years() {
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final startYear = currentYear - 5;
+
+    final yearlyData = <int, double>{};
+    final transactions = _transactionList.where((transaction) {
+      return transaction.date.year >= startYear && transaction.date.year <= currentYear;
+    }).toList();
+
+    for (int year = startYear; year <= currentYear; year++) {
+      final yearlyTotal = transactions.where((transaction) {
+        return transaction.date.year == year;
+      }).fold(0.0, (sum, transaction) => sum + transaction.expensesPrice);
+
+      yearlyData[year] = yearlyTotal;
+    }
+
+    return yearlyData;
+  }
+  double getTotalExpensesForCurrentYear() {
+    final monthlyData = getMonthlyDataForCurrentYear();
+    return monthlyData.values.fold(0.0, (sum, value) => sum + value);
+  }
+  void printMonthlyExpenses() async {
+    print('Monthly Data for the Current Year:');
+    final monthlyData = getMonthlyDataForCurrentYear();
+
+    final monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    monthlyData.forEach((month, total) {
+      final monthName = monthNames[month - 1]; // Adjust for zero-based index
+      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$monthName: \$${total.toStringAsFixed(2)}');
+    });
+  }
+  void printYearlyMonthExpenses() async {
+
+    // Print Yearly Data for the Past 10 Years
+    print('Yearly Data for the Past 10 Years:');
+    final yearlyData = getYearlyDataForPast10Years();
+
+    yearlyData.forEach((year, total) {
+      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$year: \$${total.toStringAsFixed(2)}');
+    });
+  }
+
+
+
 
 
 

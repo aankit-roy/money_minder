@@ -1,5 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/models/bar_chart_data.dart';
+import 'package:money_minder/models/line_chart_datamodel.dart';
 import 'package:money_minder/models/time_period.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/constants/currency_symbol.dart';
@@ -26,11 +28,13 @@ class _StatPageState extends State<StatPage> {
   void initState() {
     super.initState();
     final now = DateTime.now();
-    _selectedMonth = now.month;
+    // _selectedMonth = now.year;
     _selectedYear = now.year;
     _fetchTotalExpenses();
     _fetchYearlyExpenses();
   }
+
+
   final Map<int, double> _yearlyMonthlyIncome = {
     1: 1200.0,
     2: 1400.0,
@@ -74,11 +78,16 @@ class _StatPageState extends State<StatPage> {
       appBar: StatAppBar(
         size: const Size.fromHeight(140),
         onMonthSelected: (month) {
-          final monthNumber = int.tryParse(month.split('/').first) ?? DateTime.now().month;
-          setState(() {
-            _selectedMonth = monthNumber;
-            _fetchTotalExpenses();
-          });
+
+
+
+          print("getting data on monthly basis********************************");
+
+          // final monthNumber = int.tryParse(month.split('/').first) ?? DateTime.now().month;
+          // setState(() {
+          //   _selectedMonth = monthNumber;
+          //   _fetchTotalExpenses();
+          // });
         },
         onYearSelected: (year) {
           final yearNumber = int.tryParse(year) ?? DateTime.now().year;
@@ -86,6 +95,8 @@ class _StatPageState extends State<StatPage> {
             _selectedYear = yearNumber;
             _fetchYearlyExpenses();
           });
+          
+          print("Clicking  getting yearly data **********************************************************");
         },
       ),
       body: SingleChildScrollView(
@@ -126,13 +137,13 @@ class _StatPageState extends State<StatPage> {
                             padding:
                             const EdgeInsets.symmetric(horizontal: 8.0),
                             child: _buildChartCard(
-                                'Bar Chart', _buildBarChart(size), size),
+                                'Bar Chart', _buildBarChart(size), size,_selectedYear),
                           ),
                           Padding(
                             padding:
                             const EdgeInsets.symmetric(horizontal: 8.0),
                             child: _buildChartCard(
-                                'Line Chart', _buildLineChart(size), size),
+                                'Line Chart', _buildLineChart(size), size,_selectedYear),
                           ),
 
 
@@ -192,7 +203,7 @@ class _StatPageState extends State<StatPage> {
     );
   }
 
-  Widget _buildChartCard(String title, Widget chart, Size size) {
+  Widget _buildChartCard(String title, Widget chart, Size size,int? selectedYear) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -207,6 +218,15 @@ class _StatPageState extends State<StatPage> {
           padding: const EdgeInsets.all(16.0),
           child: chart,
         ),
+
+        if (selectedYear != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              'Year: $selectedYear',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
         const IncomeExpensesIcon(),
         const SizedBox(height: 5,),
 
@@ -216,263 +236,37 @@ class _StatPageState extends State<StatPage> {
   }
 
 
+
+
   Widget _buildBarChart(Size size) {
-    final List<String> monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    // Example income data, replace with your actual income data if available
-    // final Map<int, double> _monthlyIncome = {
-    //   1: 1200.0,
-    //   2: 1400.0,
-    //   3: 1300.0,
-    //   4: 1100.0,
-    //   5: 1500.0,
-    //   6: 1600.0,
-    //   7: 1700.0,
-    //   8: 1800.0,
-    //   9: 1900.0,
-    //   10: 1500.0,
-    //   11: 1600.0,
-    //   12: 1400.0,
-    // };
-
-
-    // Generate bar chart data based on _monthlyExpenses
-    final List<BarChartGroupData> barGroups = List.generate(
-      monthNames.length,
+    final List<StatBarChartData> chartData = List.generate(
+      12,
           (index) {
-        final month = index + 1; // Month numbers are 1-based
-        final expense = _monthlyExpenses[month] ?? 00;
+        int month = index + 1; // Month numbers are 1-based
+        final expense = _monthlyExpenses[month] ?? 0.0;
         final income = _yearlyMonthlyIncome[month] ?? 0.0;
-        return BarChartGroupData(
-          x: index,
-          barRods: [
-            BarChartRodData(
-              toY: expense,
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(2),
-              width: 10,
-            ),
-            BarChartRodData(
-              toY: income,
-              color: Colors.green,
-              width: 10,
-              borderRadius: BorderRadius.circular(2),
-              backDrawRodData: BackgroundBarChartRodData(
-                toY: income, // This will display income as background
-                color: Colors.green.withOpacity(0.2),
-              ),
-            ),
-          ],
+        return StatBarChartData(
+          month: month,
+          income: income,
+          expense: expense
+
+
         );
       },
     );
 
-    return SizedBox(
-      height: size.height * 0.3,
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: (_monthlyExpenses.values.isNotEmpty)
-              ? _monthlyExpenses.values.reduce((a, b) => a > b ? a : b)*2
-              : 10000,
-          borderData: FlBorderData(
-            show: false,
-          ),
-          gridData: const FlGridData(show: false),
-          titlesData: FlTitlesData(
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 25,
-                interval: 1,
-                getTitlesWidget: (value, meta) {
-                  final monthIndex = value.toInt();
-                  final monthName = monthIndex >= 0 && monthIndex < monthNames.length
-                      ? monthNames[monthIndex]
-                      : '';
-                  return SideTitleWidget(
-                    axisSide: meta.axisSide,
-                    child: Text(
-                      monthName,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 45,
-                interval: 5000,
-                getTitlesWidget: (value, meta) {
-                  String formattedValue;
-                  if (value >= 1000) {
-                    formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
-                  } else {
-                    formattedValue = value.toInt().toString();
-                  }
-                  return SideTitleWidget(
-                    axisSide: meta.axisSide,
-                    child: Text(
-                      '$formattedValue ',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-              ),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-              ),
-            ),
-          ),
-          barGroups: barGroups,
-        ),
-      ),
+    return BarChartWidget(
+      chartData: chartData,
+      size: size,
     );
   }
-  // Widget _buildBarChart(Size size) {
-  //
-  //   final List<String> monthNames = [
-  //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-  //   ];
-  //   // Generate bar chart data for each month
-  //   final List<BarChartGroupData> barGroups = List.generate(
-  //     monthNames.length,
-  //         (index) => BarChartGroupData(
-  //       x: index,
-  //       barRods: [
-  //         BarChartRodData(
-  //           toY: (index + 1) * 500, // Example values; replace with actual data
-  //           color: Colors.green,
-  //           borderRadius: BorderRadius.circular(2),
-  //           width: 10,
-  //           // backDrawRodData: BackgroundBarChartRodData(
-  //           //   show: true,
-  //           //   toY: 8000,
-  //           //   color: Colors.grey[300]!,
-  //           // ),
-  //         ),
-  //         BarChartRodData(
-  //           toY: (index + 1) * 400, // Example values; replace with actual data
-  //           color: Colors.red,
-  //           borderRadius: BorderRadius.circular(2),
-  //           width: 10,
-  //           // backDrawRodData: BackgroundBarChartRodData(
-  //           //   show: true,
-  //           //   toY: 8000,
-  //           //   color: Colors.grey[300]!,
-  //           // ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  //
-  //
-  //
-  //   return SizedBox(
-  //     height: size.height * 0.3,
-  //     child: BarChart(
-  //       BarChartData(
-  //         alignment: BarChartAlignment.spaceAround,
-  //         maxY: 8000,
-  //         borderData: FlBorderData(
-  //           show: false, // Remove the border
-  //         ),
-  //         gridData: const FlGridData(show: false), // Remove the grid lines
-  //
-  //         titlesData: FlTitlesData(
-  //           bottomTitles: AxisTitles(
-  //             sideTitles: SideTitles(
-  //               showTitles: true,
-  //               reservedSize: 25,
-  //               interval: 1, // Ensure titles for each month
-  //               getTitlesWidget: (value, meta) {
-  //                 final monthIndex = value.toInt();
-  //                 // Ensure monthIndex is within range
-  //                 final monthName = monthIndex >= 0 && monthIndex < monthNames.length
-  //                     ? monthNames[monthIndex]
-  //                     : '';
-  //                 return SideTitleWidget(
-  //                   axisSide: meta.axisSide,
-  //                   child: Text(
-  //                     monthName,
-  //                     style: const TextStyle(
-  //                       color: Colors.black,
-  //                       fontSize: 14,
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //           ),
-  //           leftTitles: AxisTitles(
-  //             sideTitles: SideTitles(
-  //               showTitles: true,
-  //               reservedSize: 30,
-  //               interval: 1000, // Adjust interval for y-axis titles
-  //               getTitlesWidget: (value, meta) {
-  //                 // Format the y-axis titles
-  //                 String formattedValue;
-  //                 if (value >= 1000) {
-  //                   formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
-  //                 } else {
-  //                   formattedValue = value.toInt().toString();
-  //                 }
-  //                 return SideTitleWidget(
-  //                   axisSide: meta.axisSide,
-  //                   child: Text(
-  //                     '$formattedValue ',
-  //                     style: const TextStyle(
-  //                       color: Colors.black,
-  //                       fontSize: 14,
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //           ),
-  //           rightTitles: const AxisTitles(
-  //             sideTitles: SideTitles(
-  //               showTitles: false,
-  //             ),
-  //           ),
-  //           topTitles: const AxisTitles(
-  //             sideTitles: SideTitles(
-  //               showTitles: false,
-  //             ),
-  //           ),
-  //         ),
-  //
-  //         barGroups: barGroups,
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildLineChart(Size size) {
     final List<String> monthNames = [
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
 
-    // Convert _monthlyExpenses and _monthlyIncome to FlSpot
+    // Convert _monthlyExpenses and _yearlyMonthlyIncome to FlSpot
     final List<FlSpot> expenseSpots = List.generate(
       monthNames.length,
           (index) {
@@ -486,253 +280,25 @@ class _StatPageState extends State<StatPage> {
       monthNames.length,
           (index) {
         final month = index + 1;
-        final income =  _yearlyMonthlyIncome[month] ?? 0.0;
+        final income = _yearlyMonthlyIncome[month] ?? 0.0;
         return FlSpot(index.toDouble(), income);
       },
     );
 
-    return SizedBox(
-      height: size.height * 0.3,
-      child: LineChart(
-        LineChartData(
-          gridData: const FlGridData(show: false),
-          borderData: FlBorderData(
-            show: false,
-          ),
-          titlesData: FlTitlesData(
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 20,
-                interval: 1,
-                getTitlesWidget: (value, meta) {
-                  final monthIndex = value.toInt();
-                  final monthName = monthIndex >= 0 && monthIndex < monthNames.length
-                      ? monthNames[monthIndex]
-                      : '';
-                  return SideTitleWidget(
-                    axisSide: meta.axisSide,
-                    child: Text(
-                      monthName,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 40,
-                interval: 3000,
-                getTitlesWidget: (value, meta) {
-                  String formattedValue;
-                  if (value >= 1000) {
-                    formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
-                  } else {
-                    formattedValue = value.toInt().toString();
-                  }
-                  return SideTitleWidget(
-                    axisSide: meta.axisSide,
-                    child: Text(
-                      '$formattedValue ',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-              ),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-              ),
-            ),
-          ),
-          lineBarsData: [
-            LineChartBarData(
-              spots: incomeSpots,
-              isCurved: true,
-              color: Colors.green,
-              belowBarData: BarAreaData(show: false),
-              dotData: FlDotData(
-                show: true,
-                getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
-                  radius: 4,
-                  color: Colors.green,
-                  strokeWidth: 1,
-                  strokeColor: Colors.white,
-                ),
-              ),
-              aboveBarData: BarAreaData(show: false),
-            ),
-            LineChartBarData(
-              spots: expenseSpots,
-              isCurved: true,
-              color: Colors.red,
-              belowBarData: BarAreaData(show: false),
-              dotData: FlDotData(
-                show: true,
-                getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
-                  radius: 4,
-                  color: Colors.red,
-                  strokeWidth: 1,
-                  strokeColor: Colors.white,
-                ),
-              ),
-              aboveBarData: BarAreaData(show: false),
-            ),
-          ],
-        ),
-      ),
+    final chartData = LineChartDataModel(
+      incomeSpots: incomeSpots,
+      expenseSpots: expenseSpots,
+    );
+
+    return LineChartWidget(
+      chartData: chartData,
+      size: size,
     );
   }
 
-  // Widget _buildLineChart(Size size) {
-  //   final List<String> monthNames = [
-  //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-  //   ];
-  //
-  //   return SizedBox(
-  //     height: size.height * 0.3,
-  //     child: LineChart(
-  //       LineChartData(
-  //         gridData: const FlGridData(show: false), // Remove the grid lines
-  //
-  //         borderData: FlBorderData(
-  //           show: false, // Remove the border
-  //         ),
-  //         titlesData: FlTitlesData(
-  //           bottomTitles: AxisTitles(
-  //
-  //             sideTitles: SideTitles(
-  //               showTitles: true,
-  //               reservedSize: 30,
-  //               interval: 1,
-  //
-  //               getTitlesWidget: (value, meta) {
-  //
-  //                 final monthIndex = value.toInt();
-  //                 // Ensure monthIndex is within range
-  //                 final monthName = monthIndex >= 0 && monthIndex < monthNames.length
-  //                     ? monthNames[monthIndex % monthNames.length]
-  //                     : '';
-  //                 return SideTitleWidget(
-  //                   axisSide: meta.axisSide,
-  //                   child: Text(
-  //                      monthName,
-  //                     style: const TextStyle(
-  //                       color: Colors.black,
-  //                       fontSize: 14,
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //             )
-  //
-  //           ),
-  //           leftTitles: AxisTitles(
-  //             sideTitles: SideTitles(
-  //               showTitles: true,
-  //               reservedSize: 40,
-  //               interval: 1000,
-  //
-  //               getTitlesWidget: (value, meta) {
-  //
-  //                 // Format the y-axis titles
-  //                 String formattedValue;
-  //
-  //                 if (value >= 1000) {
-  //                   formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
-  //                 } else {
-  //                   formattedValue = value.toInt().toString();
-  //                 }
-  //
-  //                 return SideTitleWidget(
-  //                   axisSide: meta.axisSide,
-  //                   child: Text(
-  //                     '$formattedValue ',
-  //                     style: const TextStyle(
-  //                       color: Colors.black,
-  //                       fontSize: 14,
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //             )
-  //           ),
-  //           rightTitles: const AxisTitles(
-  //             sideTitles: SideTitles(
-  //               showTitles: false
-  //             )
-  //           ),
-  //           topTitles: const AxisTitles(
-  //               sideTitles: SideTitles(
-  //                   showTitles: false
-  //               )
-  //           )
-  //
-  //         ),
-  //
-  //
-  //
-  //         lineBarsData: [
-  //           LineChartBarData(
-  //             spots: incomeData,
-  //             isCurved: true,
-  //             color: Colors.green,
-  //             belowBarData: BarAreaData(show: false),
-  //             dotData: FlDotData(
-  //               show: true,
-  //               getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
-  //                 radius: 4,
-  //                 color: Colors.green,
-  //                 strokeWidth: 1,
-  //                 strokeColor: Colors.white,
-  //               ),
-  //             ),
-  //             // Customize line thickness and other properties
-  //             aboveBarData: BarAreaData(show: false),
-  //             // color: Colors.green,
-  //             // belowBarData: BarAreaData(show: false),
-  //           ),
-  //           LineChartBarData(
-  //             spots: expenseData,
-  //             isCurved: true,
-  //             color: Colors.red,
-  //             belowBarData: BarAreaData(show: false),
-  //             dotData: FlDotData(
-  //               show: true,
-  //               getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
-  //                 radius: 4,
-  //                 color: Colors.red,
-  //                 strokeWidth: 1,
-  //                 strokeColor: Colors.white,
-  //               ),
-  //             ),
-  //             // Customize line thickness and other properties
-  //             aboveBarData: BarAreaData(show: false),
-  //             // colors: [Colors.red],
-  //             // belowBarData: BarAreaData(show: false),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
-  // getting data  of expenses and income  ************
+
+
   void _fetchTotalExpenses() {
     if (_selectedMonth == null || _selectedYear == null) return;
 
@@ -818,15 +384,248 @@ class IncomeExpensesIcon extends StatelessWidget {
   }
 }
 
-// class Titles {
-//   static getTitlesData()=> const FlTitlesData(
-//     show: true,
-//     bottomTitles: SideTitles(
-//
-//
-//     )
-//
-//
-//   );
-//
-// }
+
+
+class BarChartWidget extends StatelessWidget {
+  final List<StatBarChartData> chartData;
+  final Size size;
+
+  const BarChartWidget({
+    Key? key,
+    required this.chartData,
+    required this.size,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final List<BarChartGroupData> barGroups = chartData.map((data) {
+      return BarChartGroupData(
+        x: data.month - 1, // Adjust month index to zero-based for the chart
+        barRods: [
+          BarChartRodData(
+            toY: data.expense,
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(2),
+            width: 10,
+          ),
+          BarChartRodData(
+            toY: data.income,
+            color: Colors.green,
+            width: 10,
+            borderRadius: BorderRadius.circular(2),
+            backDrawRodData: BackgroundBarChartRodData(
+              toY: data.income, // This will display income as background
+              color: Colors.green.withOpacity(0.2),
+            ),
+          ),
+        ],
+      );
+    }).toList();
+
+    return SizedBox(
+      height: size.height * 0.3,
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          maxY: (chartData.isNotEmpty)
+              ? chartData.map((data) => data.expense).reduce((a, b) => a > b ? a : b) * 2
+              : 10000,
+          borderData: FlBorderData(
+            show: false,
+          ),
+          gridData: const FlGridData(show: false),
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 25,
+                interval: 1,
+                getTitlesWidget: (value, meta) {
+                  final monthIndex = value.toInt();
+                  final monthNames = [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                  ];
+                  final monthName = monthIndex >= 0 && monthIndex < monthNames.length
+                      ? monthNames[monthIndex]
+                      : '';
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Text(
+                      monthName,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 45,
+                interval: 5000,
+                getTitlesWidget: (value, meta) {
+                  String formattedValue;
+                  if (value >= 1000) {
+                    formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
+                  } else {
+                    formattedValue = value.toInt().toString();
+                  }
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Text(
+                      '$formattedValue ',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+          ),
+          barGroups: barGroups,
+        ),
+      ),
+    );
+  }
+}
+
+class LineChartWidget extends StatelessWidget {
+  final LineChartDataModel chartData;
+  final Size size;
+
+  const LineChartWidget({
+    super.key,
+    required this.chartData,
+    required this.size,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: size.height * 0.3,
+      child: LineChart(
+        LineChartData(
+          gridData: const FlGridData(show: false),
+          borderData: FlBorderData(
+            show: false,
+          ),
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 20,
+                interval: 1,
+                getTitlesWidget: (value, meta) {
+                  final monthIndex = value.toInt();
+                  final monthNames = [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                  ];
+                  final monthName = monthIndex >= 0 && monthIndex < monthNames.length
+                      ? monthNames[monthIndex]
+                      : '';
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Text(
+                      monthName,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 40,
+                interval: 3000,
+                getTitlesWidget: (value, meta) {
+                  String formattedValue;
+                  if (value >= 1000) {
+                    formattedValue = '${(value / 1000).toStringAsFixed(1)}k';
+                  } else {
+                    formattedValue = value.toInt().toString();
+                  }
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Text(
+                      '$formattedValue ',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+          ),
+          lineBarsData: [
+            LineChartBarData(
+              spots: chartData.incomeSpots,
+              isCurved: true,
+              color: Colors.green,
+              belowBarData: BarAreaData(show: false),
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
+                  radius: 4,
+                  color: Colors.green,
+                  strokeWidth: 1,
+                  strokeColor: Colors.white,
+                ),
+              ),
+              aboveBarData: BarAreaData(show: false),
+            ),
+            LineChartBarData(
+              spots: chartData.expenseSpots,
+              isCurved: true,
+              color: Colors.red,
+              belowBarData: BarAreaData(show: false),
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
+                  radius: 4,
+                  color: Colors.red,
+                  strokeWidth: 1,
+                  strokeColor: Colors.white,
+                ),
+              ),
+              aboveBarData: BarAreaData(show: false),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

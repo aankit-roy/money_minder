@@ -256,8 +256,10 @@ class DateWidget extends StatelessWidget {
   }
 }
 
+
+
 Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
-    List<AddTransactionsData> transactions, TimePeriod period) {
+    List<AddTransactionsData> transactions, TimePeriod period, {int? selectedMonth, int? selectedYear}) {
   Map<String, List<AddTransactionsData>> filteredTransactions = {};
 
   for (var transaction in transactions) {
@@ -268,12 +270,14 @@ Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
         key = DateFormat('d MMM yyyy').format(transaction.date);
         break;
       case TimePeriod.weekly:
-        final weekStart =
-            transaction.date.subtract(Duration(days: transaction.date.weekday));
+        final weekStart = transaction.date.subtract(Duration(days: transaction.date.weekday - 1));
         key = DateFormat('d MMM yyyy').format(weekStart);
         break;
       case TimePeriod.monthly:
         key = DateFormat('MMM yyyy').format(transaction.date);
+        break;
+      case TimePeriod.yearly:
+        key = DateFormat('yyyy').format(transaction.date);
         break;
     }
 
@@ -286,6 +290,39 @@ Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
 
   return filteredTransactions;
 }
+
+
+// without  yearly enum class
+// Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
+//     List<AddTransactionsData> transactions, TimePeriod period) {
+//   Map<String, List<AddTransactionsData>> filteredTransactions = {};
+//
+//   for (var transaction in transactions) {
+//     String key = '';
+//
+//     switch (period) {
+//       case TimePeriod.daily:
+//         key = DateFormat('d MMM yyyy').format(transaction.date);
+//         break;
+//       case TimePeriod.weekly:
+//         final weekStart =
+//             transaction.date.subtract(Duration(days: transaction.date.weekday));
+//         key = DateFormat('d MMM yyyy').format(weekStart);
+//         break;
+//       case TimePeriod.monthly:
+//         key = DateFormat('MMM yyyy').format(transaction.date);
+//         break;
+//     }
+//
+//     if (filteredTransactions[key] == null) {
+//       filteredTransactions[key] = [];
+//     }
+//
+//     filteredTransactions[key]!.add(transaction);
+//   }
+//
+//   return filteredTransactions;
+// }
 
 
 void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
