@@ -579,14 +579,15 @@ class TransactionAmountProvider extends ChangeNotifier {
   Map<int, double> getYearlyDataForPast10Years() {
     final now = DateTime.now();
     final currentYear = now.year;
-    final startYear = currentYear - 5;
+    final startYear = currentYear - 3;
+    final endYear = currentYear + 3;
 
     final yearlyData = <int, double>{};
     final transactions = _transactionList.where((transaction) {
-      return transaction.date.year >= startYear && transaction.date.year <= currentYear;
+      return transaction.date.year >= startYear && transaction.date.year <= endYear;
     }).toList();
 
-    for (int year = startYear; year <= currentYear; year++) {
+    for (int year = startYear; year <= endYear; year++) {
       final yearlyTotal = transactions.where((transaction) {
         return transaction.date.year == year;
       }).fold(0.0, (sum, transaction) => sum + transaction.expensesPrice);
