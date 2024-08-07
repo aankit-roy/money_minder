@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:money_minder/provider/stats_periods_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
@@ -489,11 +488,6 @@ import 'package:provider/provider.dart';
 
 
 
-import 'package:flutter/material.dart';
-import 'package:money_minder/provider/stats_periods_provider.dart';
-import 'package:money_minder/res/colors/color_palette.dart';
-import 'package:money_minder/res/constants/text_size.dart';
-import 'package:provider/provider.dart';
 
 class StatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Size size;
