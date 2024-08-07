@@ -8,7 +8,6 @@ import 'package:money_minder/models/line_chart_datamodel.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/currency_symbol.dart';
-import 'package:money_minder/res/constants/text_size.dart';
 import 'package:money_minder/ui/widgets/custome_period_button.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
