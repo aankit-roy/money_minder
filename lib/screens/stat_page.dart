@@ -9,6 +9,7 @@ import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/currency_symbol.dart';
 import 'package:money_minder/res/constants/text_size.dart';
+import 'package:money_minder/ui/widgets/custome_period_button.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -104,57 +105,7 @@ class _StatPageState extends State<StatPage> {
 
                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     setState(() {
-                      //       _showMonthly = true;
-                      //     });
-                      //   },
-                      //   style: ElevatedButton.styleFrom(
-                      //     backgroundColor: _showMonthly ? ColorsPalette.primaryDark
-                      //         : Colors.white,
-                      //     foregroundColor: _showMonthly? ColorsPalette.white
-                      //         : ColorsPalette.textPrimary,
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(20),
-                      //     ),
-                      //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      //
-                      //
-                      //   ),
-                      //   child: const Text('Monthly',
-                      //     style: TextStyle(
-                      //       fontSize: TextSizes.mediumHeadingMax,
-                      //       fontWeight: FontWeight.w600,
-                      //     ),
-                      //   ),
-                      // ),
-                      // SizedBox(width: size.width*.1,),
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     setState(() {
-                      //       _showMonthly = false;
-                      //     });
-                      //   },
-                      //   style: ElevatedButton.styleFrom(
-                      //     backgroundColor: !_showMonthly ? ColorsPalette.primaryDark
-                      //         : Colors.white,
-                      //     foregroundColor: !_showMonthly? ColorsPalette.white
-                      //         : ColorsPalette.textPrimary,
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(20),
-                      //     ),
-                      //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      //
-                      //
-                      //   ),
-                      //   child: const Text('Yearly',
-                      //     style: TextStyle(
-                      //       fontSize: TextSizes.mediumHeadingMax,
-                      //       fontWeight: FontWeight.w600,
-                      //     ),
-                      //   ),
-                      // ),
+
 
                       CustomPeriodButton(
                         isSelected: _showMonthly,
@@ -491,40 +442,7 @@ class IncomeExpensesIcon extends StatelessWidget {
     );
   }
 }
-class CustomPeriodButton extends StatelessWidget {
-  final bool isSelected;
-  final String label;
-  final VoidCallback onPressed;
 
-  const CustomPeriodButton({
-    Key? key,
-    required this.isSelected,
-    required this.label,
-    required this.onPressed,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? ColorsPalette.primaryDark : Colors.white,
-        foregroundColor: isSelected ? ColorsPalette.white : ColorsPalette.textPrimary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: TextSizes.mediumHeadingMax,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
 
 
 

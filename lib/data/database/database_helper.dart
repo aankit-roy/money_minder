@@ -183,14 +183,7 @@ class DatabaseHelper {
     return maps;
   }
 
-  Future<List<AddTransactionsData>> getTransactions2() async {
-    Database db = await database;
-    List<Map<String, dynamic>> maps = await db.query('transactions');
 
-    return List.generate(maps.length, (i) {
-      return AddTransactionsData.fromMap(maps[i]);
-    });
-  }
 
   Future<void> updateExpensesSameCategoryTransactionBySameDate(AddTransactionsData transaction) async {
     final db = await database;
@@ -227,15 +220,7 @@ class DatabaseHelper {
     );
   }
 
-  //getting data by date
-  Future<List<AddTransactionsData>> getAllTransactionsSortedByDate() async {
-    final db = await database;
-    final List<Map<String, dynamic>> results = await db.query(
-      'transactions',
-      orderBy: 'date DESC', // or 'date DESC' for descending order or 'date ASC' for ascending order
-    );
-    return results.map((e) => AddTransactionsData.fromMap(e)).toList();
-  }
+
 
   // get data by date and category ************************
 

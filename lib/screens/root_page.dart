@@ -54,23 +54,8 @@ class _RootPageState extends State<RootPage> {
       floatingActionButton:  FloatingActionButton(
 
         onPressed: (){
-          // Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: const AddingData()));
-          // _showCategoryDialog(context);
 
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: ColorsPalette.backgroundLight,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(25)
-              )
-            ),
-            builder: (context) => FractionallySizedBox(
-              heightFactor: 0.9,
-              child: AddingData(),
-            ),
-          );
+          ShoeBottomSheet(context);
 
         },
         backgroundColor: ColorsPalette.primaryColor,
@@ -106,6 +91,24 @@ class _RootPageState extends State<RootPage> {
 
 
     );
+  }
+
+  Future<dynamic> ShoeBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: ColorsPalette.backgroundLight,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(30)
+            )
+          ),
+          builder: (context) => FractionallySizedBox(
+            heightFactor: 0.9,
+            // child: Center(child: Text("Bottom sheet")),
+            child: AddingData(),
+          ),
+        );
   }
 }
 
