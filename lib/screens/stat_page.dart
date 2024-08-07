@@ -3,7 +3,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
 import 'package:money_minder/models/bar_chart_data.dart';
 import 'package:money_minder/models/line_chart_datamodel.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
