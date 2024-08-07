@@ -143,12 +143,12 @@ class _StatPageState extends State<StatPage> {
                             child: _buildChartCard(
                                 'Bar Chart', _buildBarChart(size), size,_selectedYear),
                           ),
-                          Padding(
-                            padding:
-                            const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: _buildChartCard(
-                                'Line Chart', _buildLineChart(size), size,_selectedYear),
-                          ),
+                          // Padding(
+                          //   padding:
+                          //   const EdgeInsets.symmetric(horizontal: 8.0),
+                          //   child: _buildChartCard(
+                          //       'Line Chart', _buildLineChart(size), size,_selectedYear),
+                          // ),
 
 
                         ],
@@ -266,42 +266,42 @@ class _StatPageState extends State<StatPage> {
 
     );
   }
-  Widget _buildLineChart(Size size) {
-    final List<String> monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-
-    // Convert _monthlyExpenses and _yearlyMonthlyIncome to FlSpot
-    final List<FlSpot> expenseSpots = List.generate(
-      monthNames.length,
-          (index) {
-        final month = index + 1;
-        final expense = _monthlyExpenses[month] ?? 0.0;
-        return FlSpot(index.toDouble(), expense);
-      },
-    );
-
-    final List<FlSpot> incomeSpots = List.generate(
-      monthNames.length,
-          (index) {
-        final month = index + 1;
-        final income = _yearlyMonthlyIncome[month] ?? 0.0;
-        return FlSpot(index.toDouble(), income);
-      },
-    );
-
-    final chartData = LineChartDataModel(
-      incomeSpots: incomeSpots,
-      expenseSpots: expenseSpots,
-    );
-
-    return LineChartWidget(
-      chartData: chartData,
-      size: size,
-      isMonthly: _showMonthly,
-    );
-  }
+  // Widget _buildLineChart(Size size) {
+  //   final List<String> monthNames = [
+  //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  //   ];
+  //
+  //   // Convert _monthlyExpenses and _yearlyMonthlyIncome to FlSpot
+  //   final List<FlSpot> expenseSpots = List.generate(
+  //     monthNames.length,
+  //         (index) {
+  //       final month = index + 1;
+  //       final expense = _monthlyExpenses[month] ?? 0.0;
+  //       return FlSpot(index.toDouble(), expense);
+  //     },
+  //   );
+  //
+  //   final List<FlSpot> incomeSpots = List.generate(
+  //     monthNames.length,
+  //         (index) {
+  //       final month = index + 1;
+  //       final income = _yearlyMonthlyIncome[month] ?? 0.0;
+  //       return FlSpot(index.toDouble(), income);
+  //     },
+  //   );
+  //
+  //   final chartData = LineChartDataModel(
+  //     incomeSpots: incomeSpots,
+  //     expenseSpots: expenseSpots,
+  //   );
+  //
+  //   return LineChartWidget(
+  //     chartData: chartData,
+  //     size: size,
+  //     isMonthly: _showMonthly,
+  //   );
+  // }
 
   // Widget _buildLineChart(Size size) {
   //   final List<String> monthNames = [
