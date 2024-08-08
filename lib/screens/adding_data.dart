@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/data/database/database_helper.dart';
+import 'package:money_minder/data/database/income_database_helper.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:money_minder/models/pie_chart_data.dart';
 import 'package:money_minder/provider/general_provider.dart';
+import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/ui/widgets/custome_period_button.dart';
 import 'package:money_minder/ui/widgets/expenses_category_grid.dart';
+import 'package:money_minder/ui/widgets/incomes_category_grid.dart';
 import 'package:provider/provider.dart';
 
 class AddingData extends StatefulWidget {
@@ -24,6 +27,8 @@ class _AddingDataState extends State<AddingData> {
   CategoryData? selectedCategory;
   List<AddTransactionsData> transactions = [];
   List<CategoryData> categories = [];
+  List<CategoryData> incomeCategories = [];
+
   late bool _isExpensesSelected;
 
   @override
@@ -33,12 +38,39 @@ class _AddingDataState extends State<AddingData> {
   }
 
   Future<void> _loadCategories() async {
-    DatabaseHelper dbHelper = DatabaseHelper();
-    List<CategoryData> loadedCategories = await dbHelper.getCategories2();
-    setState(() {
-      categories = loadedCategories;
-    });
+    final generalProvider = context.read<GeneralProvider>();
+    if (generalProvider.isExpensesSelected) {
+      DatabaseHelper dbHelper = DatabaseHelper();
+      List<CategoryData> loadedCategories = await dbHelper.getCategories2();
+      setState(() {
+        categories = loadedCategories;
+      });
+    } else {
+      // Fetch income categories
+      // final incomeProvider = context.read<IncomeTransactionProvider>();
+      // List<CategoryData> loadedIncomeCategories = await incomeProvider
+      //     .getIncomeCategories();
+      IncomeDatabaseHelper ibHelper =  IncomeDatabaseHelper();
+      List<CategoryData> loadedIncomeCategories = await ibHelper.getCategories();
+
+      setState(() {
+        incomeCategories = loadedIncomeCategories;
+      });
+    }
   }
+
+
+  // Future<void> _loadCategories() async {
+  //   DatabaseHelper dbHelper = DatabaseHelper();
+  //   IncomeDatabaseHelper ibHelper= IncomeDatabaseHelper();
+  //   List<CategoryData> loadedCategories = await dbHelper.getCategories2();
+  //   // List<CategoryData> loadedIncomeCategories = await ibHelper.getCategories();
+  //
+  //   setState(() {
+  //     categories = loadedCategories;
+  //
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -73,6 +105,7 @@ class _AddingDataState extends State<AddingData> {
                 label: 'Expenses',
                 onPressed: () {
                   generalProvider.toggleSelection();
+                  _loadCategories();
                 },
               ),
               SizedBox(width: size.width * 0.1),
@@ -81,6 +114,8 @@ class _AddingDataState extends State<AddingData> {
                 label: 'Income',
                 onPressed: () {
                   generalProvider.toggleSelection();
+                  _loadCategories();
+
                 },
               ),
             ],
@@ -143,10 +178,7 @@ class _AddingDataState extends State<AddingData> {
         Expanded(
           child: _isExpensesSelected
               ? ExpensesCategoryGrid(categories: categories)
-              : const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text("Income"),
-          ),
+              :  IncomeCategoryGrid(categories: incomeCategories)
         ),
       ],
     );

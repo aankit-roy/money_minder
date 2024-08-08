@@ -25,6 +25,7 @@ class DatabaseHelper {
 // creating new database
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'money_minder.db');
+    print('Database path*********************************************************: $path');  // Add this line
     return openDatabase(
       path, version: 1,
       onCreate: _onCreate,

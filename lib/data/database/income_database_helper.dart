@@ -23,6 +23,7 @@ class IncomeDatabaseHelper {
 
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'income_minder.db');
+    print('Database path ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++: $path');  // Add this line
     return openDatabase(
       path, version: 1,
       onCreate: _onCreate,
@@ -31,6 +32,7 @@ class IncomeDatabaseHelper {
   }
 
   Future<void> _onCreate(Database db, int version) async {
+    print(' its time to create second database **********************((((((((((((((((((((((((((((((( Creating database and tables');
     await db.execute('''
       CREATE TABLE categories (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/provider/general_provider.dart';
+import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/stats_periods_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
@@ -21,7 +22,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: ( context)=>TransactionAmountProvider()),
         ChangeNotifierProvider(create: ( context)=>StatsPeriodsProvider()),
-        ChangeNotifierProvider(create: (context)=> GeneralProvider())
+        ChangeNotifierProvider(create: (context)=> GeneralProvider()),
+        ChangeNotifierProvider(create: (context)=> IncomeTransactionProvider()),
+
 
 
 

@@ -14,23 +14,7 @@ class AddTransactionsData {
     required this.date,
   });
 
-  // Map<String, dynamic> toMap() {
-  //   return {
-  //     'id': id,
-  //     'category_id': categoryData.id,
-  //     'amount': expensesPrice,
-  //     'date': date.toIso8601String(),
-  //   };
-  // }
-  //
-  // factory AddTransactionsData.fromMap(Map<String, dynamic> map) {
-  //   return AddTransactionsData(
-  //     id: map['id'],
-  //     categoryData: map['category_id'],
-  //     expensesPrice: map['amount'],
-  //     date: DateTime.parse(map['date']),
-  //   );
-  // }
+ 
 
 
 
