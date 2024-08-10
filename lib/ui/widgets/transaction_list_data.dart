@@ -101,8 +101,11 @@ class TransactionDataList extends StatelessWidget {
                         ),
                       ),
                       onLongPress: () {
-                        // _showDeleteConfirmationDialog(
-                        //     context, transactionProvider, transaction);
+                        final provider = isExpenses
+                            ? expensesProvider
+                            : incomeProvider;
+                        _showDeleteConfirmationDialog(
+                            context, isExpenses, provider, transaction);
                       },
                       onTap: () {
                         // _showUpdateDialog(context, transactionProvider, transaction);
@@ -279,16 +282,19 @@ void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
   );
 }
 
+
+
 Future<void> _showDeleteConfirmationDialog(
     BuildContext context,
-    TransactionAmountProvider provider,
+    bool isExpenses, // Added parameter
+    dynamic provider, // Changed to dynamic type
     AddTransactionsData transactionsData) async {
   showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Delete Expense'),
-        content: const Text('Are you sure you want to delete this expense?'),
+        title: const Text('Delete Data'),
+        content: const Text('Are you sure you want to delete this item?'),
         actions: [
           TextButton(
             onPressed: () {
@@ -298,7 +304,13 @@ Future<void> _showDeleteConfirmationDialog(
           ),
           ElevatedButton(
             onPressed: () {
-              provider.removeTransactonsAmount(transactionsData);
+              if (isExpenses) {
+                // Remove expense data
+                (provider as TransactionAmountProvider).removeTransactonsAmount(transactionsData);
+              } else {
+                // Remove income data
+                (provider as IncomeTransactionProvider).removeIncome(transactionsData);
+              }
               Navigator.pop(context);
             },
             child: const Text('Delete'),
@@ -308,3 +320,4 @@ Future<void> _showDeleteConfirmationDialog(
     },
   );
 }
+

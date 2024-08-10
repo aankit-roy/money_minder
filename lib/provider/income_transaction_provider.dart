@@ -5,7 +5,6 @@ import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:intl/intl.dart';
 import 'package:money_minder/models/time_period.dart';
-import 'package:money_minder/provider/general_provider.dart';
 
 
 class IncomeTransactionProvider extends ChangeNotifier {

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:money_minder/models/bar_chart_data.dart';
 import 'package:money_minder/models/line_chart_datamodel.dart';
+import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/currency_symbol.dart';
@@ -28,6 +29,10 @@ class _StatPageState extends State<StatPage> {
   Map<int, double> _yearlyExpenses = {};  // Initialize with empty map
 
 
+  Map<int, double> _monthlyIncome = {};
+  Map<int, double> _yearlyIncome = {};
+
+
   late TransactionAmountProvider provider;
   bool _showMonthly = true;
 
@@ -38,43 +43,17 @@ class _StatPageState extends State<StatPage> {
     // _updateExpenses();
   }
 
-
-  final Map<int, double> monthlyIncome = {
-    1: 1200.0,
-    2: 1400.0,
-    3: 1300.0,
-    4: 1100.0,
-    5: 1500.0,
-    6: 1600.0,
-    7: 1700.0,
-    8: 1800.0,
-    9: 1900.0,
-    10: 1500.0,
-    11: 1600.0,
-    12: 1400.0,
-  };
-  final Map<int, double> yearlyIncome = {
-    1: 1200.0,
-    2: 1400.0,
-    3: 1400.0,
-    4: 1100.0,
-    5: 1800.0,
-    6: 1000.0,
-    7: 1900.0,
-    8: 1810.0,
-    9: 1110.0,
-    10: 1100.0,
-    11: 1600.0,
-    12: 1400.0,
-  };
-
   @override
 
   Widget build(BuildContext context) {
 
-    final provider = context.read<TransactionAmountProvider>();
+    final provider = context.watch<TransactionAmountProvider>();
+    final incomeProvider= context.watch<IncomeTransactionProvider>();
     _monthlyExpenses = provider.getMonthlyDataForCurrentYear();
     _yearlyExpenses = provider.getYearlyDataForPast10Years();
+
+    _monthlyIncome=incomeProvider.getMonthlyIncomesForCurrentYear();
+    _yearlyIncome= incomeProvider.getYearlyIncomesForPast10Years();
 
 
 
@@ -82,7 +61,12 @@ class _StatPageState extends State<StatPage> {
     final PageController pageController = PageController();
     double totalExpensesCurrentYear= provider.getTotalExpensesForCurrentYear();
     double totalExpensesAllYear= provider.getTotalExpensesForCurrentYear();
+
+    double totalIncomesCurrentYear= incomeProvider.getTotalIncomesForCurrentYear();
+    double totalIncomesAllYear= incomeProvider.getTotalIncomesForPast10Years();
+
     double totalExpenses=_showMonthly?totalExpensesCurrentYear :totalExpensesAllYear;
+    double totalIncomes= _showMonthly? totalIncomesCurrentYear :totalIncomesAllYear;
     return Scaffold(
 
       body: Column(
@@ -140,7 +124,7 @@ class _StatPageState extends State<StatPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildSummaryCard('Total Income',
-                        '${CurrencySymbols.rupee}12,000', Colors.green),
+                        '${CurrencySymbols.rupee}$totalIncomes', Colors.green),
                     _buildSummaryCard('Total Expenses',
                         '${CurrencySymbols.rupee}$totalExpenses', Colors.red),
                     _buildSummaryCard('Profit/Loss',
@@ -282,7 +266,7 @@ class _StatPageState extends State<StatPage> {
           (index) {
         int month = index + 1; // Month numbers are 1-based
         final expense = _monthlyExpenses[month] ?? 0.0;
-        final income = monthlyIncome[month] ?? 0.0;
+        final income = _monthlyIncome[month] ?? 0.0;
         return StatBarChartData(
             month: month,
             income: income,
@@ -294,7 +278,7 @@ class _StatPageState extends State<StatPage> {
           (index) {
         final year = _yearlyExpenses.keys.elementAt(index);
         final expense = _yearlyExpenses[year] ?? 0.0;
-        final income = yearlyIncome[year] ?? 0.0;
+        final income = _yearlyIncome[year] ?? 0.0;
         return StatBarChartData(
             month: year, // Use year as x-axis label for yearly view
             income: income,
@@ -351,7 +335,7 @@ class _StatPageState extends State<StatPage> {
       12,
           (index) {
         final month = index + 1;
-        final income = monthlyIncome[month] ?? 0.0;
+        final income = _monthlyIncome[month] ?? 0.0;
         return FlSpot(index.toDouble(), income);
       },
     )
@@ -359,7 +343,7 @@ class _StatPageState extends State<StatPage> {
       _yearlyExpenses.length,
           (index) {
         final year = _yearlyExpenses.keys.elementAt(index);
-        final income = yearlyIncome[year] ?? 0.0;
+        final income = _yearlyIncome[year] ?? 0.0;
         return FlSpot(index.toDouble(), income);
       },
     );

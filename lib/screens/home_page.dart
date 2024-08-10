@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/time_period.dart';
 import 'package:money_minder/provider/general_provider.dart';
 import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
-import 'package:money_minder/res/colors/color_palette.dart';
-import 'package:money_minder/res/constants/text_size.dart';
 import 'package:money_minder/ui/widgets/custome_home_app_bar.dart';
 import 'package:money_minder/ui/widgets/pie_chart_widget.dart';
 import 'package:money_minder/ui/widgets/transaction_list_data.dart';
