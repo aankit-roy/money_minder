@@ -5,7 +5,6 @@ import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:money_minder/models/pie_chart_data.dart';
 import 'package:money_minder/provider/general_provider.dart';
-import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/ui/widgets/custome_period_button.dart';
 import 'package:money_minder/ui/widgets/expenses_category_grid.dart';
@@ -60,17 +59,7 @@ class _AddingDataState extends State<AddingData> {
   }
 
 
-  // Future<void> _loadCategories() async {
-  //   DatabaseHelper dbHelper = DatabaseHelper();
-  //   IncomeDatabaseHelper ibHelper= IncomeDatabaseHelper();
-  //   List<CategoryData> loadedCategories = await dbHelper.getCategories2();
-  //   // List<CategoryData> loadedIncomeCategories = await ibHelper.getCategories();
-  //
-  //   setState(() {
-  //     categories = loadedCategories;
-  //
-  //   });
-  // }
+
 
   @override
   void dispose() {
@@ -104,7 +93,9 @@ class _AddingDataState extends State<AddingData> {
                 isSelected: _isExpensesSelected,
                 label: 'Expenses',
                 onPressed: () {
-                  generalProvider.toggleSelection();
+                  if(!generalProvider.isExpensesSelected){
+                    generalProvider.toggleSelection();
+                  }
                   _loadCategories();
                 },
               ),
@@ -113,7 +104,10 @@ class _AddingDataState extends State<AddingData> {
                 isSelected: !_isExpensesSelected,
                 label: 'Income',
                 onPressed: () {
-                  generalProvider.toggleSelection();
+                  if(generalProvider.isExpensesSelected){
+                    generalProvider.toggleSelection();
+                  }
+
                   _loadCategories();
 
                 },

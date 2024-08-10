@@ -1,18 +1,15 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/time_period.dart';
+import 'package:money_minder/provider/general_provider.dart';
+import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
 import 'package:money_minder/ui/widgets/custome_home_app_bar.dart';
-import 'package:money_minder/ui/widgets/expenses_tab.dart';
-import 'package:money_minder/ui/widgets/income_tab.dart';
+import 'package:money_minder/ui/widgets/pie_chart_widget.dart';
+import 'package:money_minder/ui/widgets/transaction_list_data.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,7 +38,13 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    TimePeriod timePeriod= context.watch<TransactionAmountProvider>().currentPeriod;
+    // TimePeriod timePeriod =
+        // context.watch<TransactionAmountProvider>().currentPeriod;
+    final generalProvider = context.watch<GeneralProvider>();
+    TimePeriod timePeriod =
+        generalProvider.selectedPeriod;
+    final transactionProvider = context.watch<TransactionAmountProvider>();
+    final incomeProvider = context.watch<IncomeTransactionProvider>();
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -65,19 +68,30 @@ class _HomePageState extends State<HomePage>
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20)),
-                  child: TabBarView(
-                    controller: tabController,
-                    children: const [ExpensesTab(), IncomeTab()],
+
+                  child: PieChartWidget(
+                    aggregatedData: generalProvider.isExpensesSelected
+                        ? transactionProvider.getAggregatedData(generalProvider.selectedPeriod)
+                        : incomeProvider.getAggregatedData(generalProvider.selectedPeriod),
+                    totalAmount: generalProvider.isExpensesSelected
+                        ? transactionProvider.getTotalAmountForPeriod(generalProvider.selectedPeriod)
+                        : incomeProvider.getTotalAmountForPeriod(generalProvider.selectedPeriod),
+                    selectedPeriod: generalProvider.selectedPeriod,
+                    onPeriodChanged: (newPeriod) {
+                      setState(() {
+                        generalProvider.SelectedPeriod= newPeriod;
+                      });
+                    },
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ExpensesDataList(
-                  size: size,
-                  selectedPeriod: timePeriod,
-                ),
-                SizedBox(height: 20), // Add some space between the pie chart and the text below
+                const SizedBox(height: 20),
+
+                 // ExpensesDataList(size: size, selectedPeriod: timePeriod),
+                TransactionDataList(size: size, isExpenses: generalProvider.isExpensesSelected),
+
+                 const SizedBox(height: 20),
+
+
 
               ],
             ),
@@ -85,212 +99,6 @@ class _HomePageState extends State<HomePage>
         ));
   }
 }
-
-
-class ExpensesDataList extends StatelessWidget {
-  const ExpensesDataList({
-    super.key,
-    required this.size,
-    required this.selectedPeriod,
-  });
-
-  final Size size;
-  final TimePeriod selectedPeriod;
-  // final transactions;
-
-  @override
-  Widget build(BuildContext context) {
-    final transactionsProvider = context.watch<TransactionAmountProvider>();
-    // Filter expenses data by daily, weekly, monthly
-   // final transByCategory= transactionsProvider.getAggregatedDataAsTransactions(selectedPeriod);
-    final transByDate = _filterTransactionsByPeriod(transactionsProvider.transactionList, selectedPeriod);
-    // final transByDate = transactionsProvider.getAggregatedData(selectedPeriod);
-
-
-    // Convert keys (dates) to a list and sort it in descending order
-    final sortedDates = transByDate.keys.toList()
-      ..sort((a, b) => b.compareTo(a)); // Sort dates in descending order
-
-    return SizedBox(
-      height: size.height * .5,
-      child: ListView.builder(
-        itemCount: sortedDates.length,
-        itemBuilder: (context, index) {
-          String date = sortedDates[index];
-          List<AddTransactionsData> transactions = transByDate[date]!;
-          double totalAmount = transactions.fold(0.0, (sum, item) => sum + item.expensesPrice);
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                color: ColorsPalette.white,
-                borderRadius: BorderRadius.circular(18.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 5.0,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-
-                children: [
-                  DateWidget(date: date),
-                  ExpenseAndIncomeWidget(totalAmount: totalAmount),
-                  ...transactions.map((transaction) {
-                    return ListTile(
-                      leading: Container(
-                        width: 40.0, // Adjust the size as needed
-                        height: 40.0, // Adjust the size as needed
-                        decoration: BoxDecoration(
-                          color: transaction.categoryData.color.withOpacity(0.2), // Light background color for the icon
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            transaction.categoryData.icon,
-                            color: transaction.categoryData.color,
-                            size: 24.0, // Adjust the icon size as needed
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        transaction.categoryData.name,
-                        style: const TextStyle(
-                          fontSize: TextSizes.smallHeadingMax,
-                          fontWeight: FontWeight.w600,
-                          color: ColorsPalette.textSecondary
-                        ),
-                      ),
-                      trailing: Text(
-                        '₹${transaction.expensesPrice.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: TextSizes.smallHeadingMax,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      onLongPress: () {
-                        _showDeleteConfirmationDialog(context, transactionsProvider, transaction);
-                      },
-                      onTap: () {
-                        // Update functionality
-                        // _showUpdateDialog(context, transactionsProvider, transaction);
-                      },
-                    );
-                  }),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-
-
-
-}
-
-class ExpenseAndIncomeWidget extends StatelessWidget {
-  const ExpenseAndIncomeWidget({
-    super.key,
-    required this.totalAmount,
-  });
-
-  final double totalAmount;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Expenses: ₹ ${totalAmount.toStringAsFixed(2)}',
-            style: const TextStyle(
-              color: ColorsPalette.textPrimary,
-              fontWeight: FontWeight.w600,
-              fontSize: TextSizes.smallHeadingMin,
-            ),
-          ),
-          Text(
-            'Income: ₹ ${totalAmount.toStringAsFixed(2)}',
-            style: const TextStyle(
-              color: ColorsPalette.textPrimary,
-              fontWeight: FontWeight.w600,
-              fontSize: TextSizes.smallHeadingMin,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class DateWidget extends StatelessWidget {
-  const DateWidget({
-    super.key,
-    required this.date,
-  });
-
-  final String date;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Text(
-        date,
-        style: const TextStyle(
-          fontSize: TextSizes.normalBodyTextMax,
-          fontWeight: FontWeight.bold,
-          color: ColorsPalette.textSecondary
-        ),
-      ),
-    );
-  }
-}
-
-
-
-Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
-    List<AddTransactionsData> transactions, TimePeriod period, {int? selectedMonth, int? selectedYear}) {
-  Map<String, List<AddTransactionsData>> filteredTransactions = {};
-
-  for (var transaction in transactions) {
-    String key = '';
-
-    switch (period) {
-      case TimePeriod.daily:
-        key = DateFormat('d MMM yyyy').format(transaction.date);
-        break;
-      case TimePeriod.weekly:
-        final weekStart = transaction.date.subtract(Duration(days: transaction.date.weekday - 1));
-        key = DateFormat('d MMM yyyy').format(weekStart);
-        break;
-      case TimePeriod.monthly:
-        key = DateFormat('MMM yyyy').format(transaction.date);
-        break;
-      case TimePeriod.yearly:
-        key = DateFormat('yyyy').format(transaction.date);
-        break;
-    }
-
-    if (filteredTransactions[key] == null) {
-      filteredTransactions[key] = [];
-    }
-
-    filteredTransactions[key]!.add(transaction);
-  }
-
-  return filteredTransactions;
-}
-
 
 
 void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
@@ -374,4 +182,3 @@ Future<void> _showDeleteConfirmationDialog(
     },
   );
 }
-

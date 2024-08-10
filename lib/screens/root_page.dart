@@ -25,10 +25,10 @@ class _RootPageState extends State<RootPage> {
   int bottomNavIndex=0;
 
   List<Widget> pages=[
-    HomePage(),
-    StatPage(),
-    ReportPage(),
-    ProfilePage()
+    const HomePage(),
+    const StatPage(),
+    const ReportPage(),
+    const ProfilePage()
 
   ];
 
@@ -103,7 +103,7 @@ class _RootPageState extends State<RootPage> {
               top: Radius.circular(30)
             )
           ),
-          builder: (context) => FractionallySizedBox(
+          builder: (context) => const FractionallySizedBox(
             heightFactor: 0.9,
             // child: Center(child: Text("Bottom sheet")),
             child: AddingData(),
@@ -152,12 +152,12 @@ void _showCategoryDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('Select Category'),
+        title: const Text('Select Category'),
         content: SizedBox(
           width: double.maxFinite,
           child: GridView.builder(
             shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
@@ -174,7 +174,7 @@ void _showCategoryDialog(BuildContext context) {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(category.icon, size: 30, color: category.color),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(category.name,
                         style: TextStyle(
                           color: category.color,
@@ -197,11 +197,11 @@ void _showAddExpenseDialog(BuildContext context, CategoryData category) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('Add Expense'),
+        title: const Text('Add Expense'),
         content: TextField(
           controller: amountController,
           keyboardType: TextInputType.number,
-          decoration: InputDecoration(hintText: 'Enter amount'),
+          decoration: const InputDecoration(hintText: 'Enter amount'),
           onSubmitted: (value) {
             _addTransaction(context, category, amountController);
           },
@@ -211,13 +211,13 @@ void _showAddExpenseDialog(BuildContext context, CategoryData category) {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
               _addTransaction(context, category, amountController);
             },
-            child: Text('Add'),
+            child: const Text('Add'),
           ),
         ],
       );

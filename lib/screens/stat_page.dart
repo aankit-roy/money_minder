@@ -79,7 +79,7 @@ class _StatPageState extends State<StatPage> {
 
 
     Size size= MediaQuery.sizeOf(context);
-    final PageController _pageController = PageController();
+    final PageController pageController = PageController();
     double totalExpensesCurrentYear= provider.getTotalExpensesForCurrentYear();
     double totalExpensesAllYear= provider.getTotalExpensesForCurrentYear();
     double totalExpenses=_showMonthly?totalExpensesCurrentYear :totalExpensesAllYear;
@@ -168,7 +168,7 @@ class _StatPageState extends State<StatPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(18.0),
                     child: PageView(
-                      controller: _pageController,
+                      controller: pageController,
                       children: [
 
                         _buildChartCard(
@@ -194,7 +194,7 @@ class _StatPageState extends State<StatPage> {
                     right: 0,
                     child: Center(
                       child: SmoothPageIndicator(
-                        controller: _pageController,
+                        controller: pageController,
                         count: 2, // Number of pages
                         effect: const WormEffect(
                           dotWidth: 10,

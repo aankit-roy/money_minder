@@ -130,10 +130,10 @@ class TransactionAmountProvider extends ChangeNotifier {
     }
 
     // Debug: Print aggregated data
-    print('Aggregated Data for************************************************ $timePeriod:');
-    aggregatedData.forEach((category, amount) {
-      print('*************${category.name}: $amount');
-    });
+    // print('Aggregated Data for************************************************ $timePeriod:');
+    // aggregatedData.forEach((category, amount) {
+    //   print('*************${category.name}: $amount');
+    // });
 
     return aggregatedData;
   }
@@ -164,18 +164,18 @@ class TransactionAmountProvider extends ChangeNotifier {
         break;
     }
 
-    print("Filtering from######################################### $startDate to $endDate");
-    print('Filtering for period: $timePeriod');
+    // print("Filtering from######################################### $startDate to $endDate");
+    // print('Filtering for period: $timePeriod');
     // Filter transactions
     List<AddTransactionsData> filteredTransactions = _transactionList.where((transaction) {
       return transaction.date.isAfter(startDate) && transaction.date.isBefore(endDate);
     }).toList();
 
     // Debug prints to check filtered transactions count
-    print('Filtered transactions count: ${filteredTransactions.length}');
-    filteredTransactions.forEach((transaction) {
-      print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
-    });
+    // print('Filtered transactions count: ${filteredTransactions.length}');
+    // for (var transaction in filteredTransactions) {
+    //   print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
+    // }
 
     return filteredTransactions;
   }
@@ -186,6 +186,9 @@ class TransactionAmountProvider extends ChangeNotifier {
   double getTotalAmountForPeriod(TimePeriod timePeriod) {
     return _filterTransactionsByTimePeriod(timePeriod)
         .fold(0.0, (sum, item) => sum + item.expensesPrice);
+  }
+  double getTotalExpensesOfAllTime() {
+    return _transactionList.fold(0.0, (sum, item) => sum + item.expensesPrice);
   }
 
 

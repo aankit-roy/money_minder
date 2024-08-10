@@ -5,6 +5,8 @@ import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:intl/intl.dart';
 import 'package:money_minder/models/time_period.dart';
+import 'package:money_minder/provider/general_provider.dart';
+
 
 class IncomeTransactionProvider extends ChangeNotifier {
   CategoryData? _selectedCategory;
@@ -28,7 +30,7 @@ class IncomeTransactionProvider extends ChangeNotifier {
   }
 
   void setTimePeriod(TimePeriod timePeriod) {
-    _currentPeriod = timePeriod;
+    // GeneralProvider().setPeriod(timePeriod);
     _updateAggregatedData();
     notifyListeners();
   }
@@ -62,7 +64,7 @@ class IncomeTransactionProvider extends ChangeNotifier {
       if (existingIncome.categoryData.name == incomeData.categoryData.name &&
           existingDate == newDate) {
         existingIncome.expensesPrice += incomeData.expensesPrice;
-        updateIncomeSameCategoryByDate(existingIncome);
+        updateIncomeSameCategoryExpenses(existingIncome);
         categoryExists = true;
         break;
       }
@@ -82,9 +84,14 @@ class IncomeTransactionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateIncomeSameCategoryByDate(AddTransactionsData income) async {
-    await IncomeDatabaseHelper().updateTransaction(income);
+  Future<void> updateIncomeSameCategoryExpenses(AddTransactionsData transaction) async {
+    await IncomeDatabaseHelper().updateIncomesSameCategoryTransactionBySameDate(transaction);
+
     notifyListeners();
+
+
+    // Only update the amount, do not alter category or date
+
   }
 
   List<CategoryData> get categories => _categories;
@@ -107,6 +114,11 @@ class IncomeTransactionProvider extends ChangeNotifier {
         aggregatedData[income.categoryData] = income.expensesPrice;
       }
     }
+    print('Income Aggregated Data for************************************************ $timePeriod:');
+    aggregatedData.forEach((category, amount) {
+      print('*************${category.name}: $amount');
+    });
+
 
     return aggregatedData;
   }
@@ -135,14 +147,32 @@ class IncomeTransactionProvider extends ChangeNotifier {
         break;
     }
 
-    return _incomeList.where((income) {
-      return income.date.isAfter(startDate) && income.date.isBefore(endDate);
+    print("Filtering from######################################### $startDate to $endDate");
+    print('Filtering for period: $timePeriod');
+    // Filter transactions
+    List<AddTransactionsData> filteredTransactions = _incomeList.where((transaction) {
+      return transaction.date.isAfter(startDate) && transaction.date.isBefore(endDate);
     }).toList();
+
+    // Debug prints to check filtered transactions count
+    print('Filtered Income  transactions count: ${filteredTransactions.length}');
+    for (var transaction in filteredTransactions) {
+      print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
+    }
+
+    return filteredTransactions;
+
+    // return _incomeList.where((income) {
+    //   return income.date.isAfter(startDate) && income.date.isBefore(endDate);
+    // }).toList();
   }
 
   double getTotalAmountForPeriod(TimePeriod timePeriod) {
     return _filterIncomesByTimePeriod(timePeriod)
         .fold(0.0, (sum, item) => sum + item.expensesPrice);
+  }
+  double getTotalIncomeOfAllTime() {
+    return _incomeList.fold(0.0, (sum, item) => sum + item.expensesPrice);
   }
 
   Future<List<AddTransactionsData>> _getTransactionsWithCategories() async {
@@ -163,4 +193,93 @@ class IncomeTransactionProvider extends ChangeNotifier {
       );
     }).toList();
   }
+
+  // for stat page ************************************* getting data***************************
+
+
+//   Method to get data on a monthly basis for the current year
+  Map<int, double> getMonthlyIncomesForCurrentYear() {
+    final now = DateTime.now();
+    final year = now.year;
+
+    final monthlyData = <int, double>{};
+    final transactions = _incomeList.where((transaction) {
+      return transaction.date.year == year;
+    }).toList();
+
+    for (int month = 1; month <= 12; month++) {
+      final monthlyTotal = transactions.where((transaction) {
+        return transaction.date.month == month;
+      }).fold(0.0, (sum, transaction) => sum + transaction.expensesPrice);
+
+      monthlyData[month] = monthlyTotal;
+    }
+
+    return monthlyData;
+  }
+  double getTotalIncomesForPast10Years() {
+    final yearlyData = getYearlyIncomesForPast10Years();
+    return yearlyData.values.fold(0.0, (sum, value) => sum + value);
+  }
+
+  // Method to get data on a yearly basis for the past 10 years
+  Map<int, double> getYearlyIncomesForPast10Years() {
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final startYear = currentYear - 3;
+    final endYear = currentYear + 3;
+
+    final yearlyData = <int, double>{};
+    final transactions = incomeList.where((transaction) {
+      return transaction.date.year >= startYear && transaction.date.year <= endYear;
+    }).toList();
+
+    for (int year = startYear; year <= endYear; year++) {
+      final yearlyTotal = transactions.where((transaction) {
+        return transaction.date.year == year;
+      }).fold(0.0, (sum, transaction) => sum + transaction.expensesPrice);
+
+      yearlyData[year] = yearlyTotal;
+    }
+
+    return yearlyData;
+  }
+  double getTotalIncomesForCurrentYear() {
+    final monthlyData = getMonthlyIncomesForCurrentYear();
+    return monthlyData.values.fold(0.0, (sum, value) => sum + value);
+  }
+  void printMonthlyExpenses() async {
+    print('Monthly Data for the Current Year:');
+    final monthlyData = getMonthlyIncomesForCurrentYear();
+
+    final monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    monthlyData.forEach((month, total) {
+      final monthName = monthNames[month - 1]; // Adjust for zero-based index
+      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$monthName: \$${total.toStringAsFixed(2)}');
+    });
+  }
+  void printYearlyMonthExpenses() async {
+
+    // Print Yearly Data for the Past 10 Years
+    print('Yearly Data for the Past 10 Years:');
+    final yearlyData = getYearlyIncomesForPast10Years();
+
+    yearlyData.forEach((year, total) {
+      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$year: \$${total.toStringAsFixed(2)}');
+    });
+  }
+
+
+
+
+
+
+
 }
+
+
+

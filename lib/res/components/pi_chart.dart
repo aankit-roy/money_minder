@@ -9,6 +9,9 @@ import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
 import 'package:provider/provider.dart';
 
+
+// ************************* this is not more required class , just for testing purpose********************
+// i can delete it;
 class PieChartSample2 extends StatefulWidget {
   const PieChartSample2({super.key});
 
@@ -103,9 +106,9 @@ class PieChart2State extends State {
           ],
         ),
         SizedBox(height: size.height* .1), // Add some space between the pie chart and the text below
-        Column(
+        const Column(
           children: [
-            const Text(
+            Text(
               "Available balance",
               style: TextStyle(
                 fontSize: TextSizes.mediumHeadingMax,
@@ -114,8 +117,8 @@ class PieChart2State extends State {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: const Text(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
                 "₹4000",
                 style: TextStyle(
                   fontSize: TextSizes.mediumHeadingMin,
@@ -169,9 +172,9 @@ class PieChart2State extends State {
 
     // Debug: Print pie chart sections
     print('**************************************Pie Chart Sections:');
-    sections.forEach((section) {
+    for (var section in sections) {
       print('**********************${section.title}: ${section.value}');
-    });
+    }
 
     return sections;
   }
@@ -212,34 +215,6 @@ class PieChart2State extends State {
     );
   }
 
-  // List<PieChartSectionData> showingSections(
-  //     List<AddTransactionsData> transactions, double totalAmount) {
-  //   if (totalAmount == 0) {
-  //     return [];
-  //   }
-  //
-  //   return List.generate(transactions.length, (i) {
-  //     final transaction = transactions[i];
-  //     final isTouched = i == touchedIndex;
-  //     final fontSize = isTouched ? 25.0 : 16.0;
-  //     final radius = isTouched ? 60.0 : 50.0;
-  //     final percentage = (transaction.expensesPrice / totalAmount) * 100;
-  //     const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-  //
-  //     return PieChartSectionData(
-  //       color: transaction.categoryData.color,
-  //       value: percentage,
-  //       title: '${percentage.toStringAsFixed(1)}%',
-  //       radius: radius,
-  //       titleStyle: TextStyle(
-  //         fontSize: fontSize,
-  //         fontWeight: FontWeight.bold,
-  //         color: ColorsPalette.textPrimary,
-  //         shadows: shadows,
-  //       ),
-  //     );
-  //   });
-  // }
 
 
 }
@@ -254,12 +229,12 @@ class PeriodButton extends StatefulWidget {
   final void Function(TimePeriod) onPeriodChanged;
 
   const PeriodButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.period,
     required this.selectedPeriod,
     required this.onPeriodChanged,
-  }) : super(key: key);
+  });
 
   @override
   _PeriodButtonState createState() => _PeriodButtonState();

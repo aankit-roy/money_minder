@@ -119,6 +119,20 @@ class IncomeDatabaseHelper {
     );
   }
 
+  Future<void> updateIncomesSameCategoryTransactionBySameDate(AddTransactionsData transaction) async {
+    final db = await database;
+
+    // Only update the amount, do not alter category or date
+    await db.update(
+      'transactions',
+      {
+        'amount': transaction.expensesPrice,
+      },
+      where: 'id = ?',
+      whereArgs: [transaction.id],
+    );
+  }
+
   Future<List<AddTransactionsData>> getTransactionsByCategoryAndDate(
       String categoryName, DateTime date) async {
     final dateStr = DateFormat('yyyy-MM-dd').format(date);

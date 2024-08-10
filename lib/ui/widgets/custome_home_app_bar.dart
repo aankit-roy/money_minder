@@ -1,7 +1,10 @@
 
 import 'package:flutter/material.dart';
+import 'package:money_minder/provider/general_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
+import 'package:money_minder/ui/widgets/custome_period_button.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -22,6 +25,8 @@ class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.sizeOf(context);
+    final generalProvider= context.watch<GeneralProvider>();
     return PreferredSize(
       preferredSize: widget.preferredSize,
       child: Container(
@@ -35,10 +40,11 @@ class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
             children: [
               const SizedBox(height: 15),
               _TopBar(),
-              const SizedBox(height: 5),
-              _TotalIncome(),
-              const SizedBox(height: 8),
-              HomeTabView(size: widget.size, tabController: widget.tabController),
+              const SizedBox(height: 20),
+              // _TotalIncome(),
+
+              // HomeTabView(size: widget.size, tabController: widget.tabController),
+              _buildExpensesIncomesButton(generalProvider,size),
             ],
           ),
         ),
@@ -49,7 +55,7 @@ class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
   Widget _TotalIncome() {
     return const Center(
       child: Text(
-        "${"₹10009876543"}",
+        "₹10009876543",
         style: TextStyle(
           color: Colors.green,
           fontSize: TextSizes.mediumHeadingMax,
@@ -59,7 +65,38 @@ class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
     );
   }
 
+  Widget _buildExpensesIncomesButton(GeneralProvider generalProvider, Size size) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CustomPeriodButton(
+          isSelected: generalProvider.isExpensesSelected,
+          label: 'Expenses',
+          onPressed: () {
+            if (!generalProvider.isExpensesSelected) {
+              generalProvider.toggleSelection();
+            }
+          },
+        ),
+        SizedBox(width: size.width*.1),
+        CustomPeriodButton(
+          isSelected: !generalProvider.isExpensesSelected,
+          label: 'Income',
+          onPressed: () {
+            if (generalProvider.isExpensesSelected) {
+              generalProvider.toggleSelection();
+            }
+          },
+        ),
+      ],
+    );
+  }
+
 }
+
+
+
+
 
 class _TopBar extends StatefulWidget {
   @override
@@ -90,13 +127,12 @@ class _TopBarState extends State<_TopBar> {
         const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.savings_outlined),
-            SizedBox(width: 5,),
+
             Text(
-              "Total",
+              "Money Minder",
               style: TextStyle(
                 fontSize: TextSizes.mediumHeadingMax,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ],
@@ -132,7 +168,7 @@ class HomeTabView extends StatelessWidget {
   final Size size;
   final TabController tabController;
 
-  HomeTabView({super.key, required this.size, required this.tabController});
+  const HomeTabView({super.key, required this.size, required this.tabController});
 
   @override
   Widget build(BuildContext context) {
