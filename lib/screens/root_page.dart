@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:money_minder/models/add_transactions_data.dart';
-import 'package:money_minder/models/category_list.dart';
-import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/screens/adding_data.dart';
 import 'package:money_minder/screens/home_page.dart';
 import 'package:money_minder/screens/profile_page.dart';
-import 'package:money_minder/screens/report_page.dart';
 import 'package:money_minder/screens/stat_page.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:provider/provider.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});

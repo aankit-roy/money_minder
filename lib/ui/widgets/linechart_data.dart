@@ -54,7 +54,6 @@ class LineChartWidget extends StatelessWidget {
 
     // Set minY to slightly below the minimum non-zero value
     final double minY = minExpense < minIncome ? minExpense : minIncome;
-    final double adjustedMinY = minY > 0 ? minY * 0.95 : 0; // Adjust to add margin below the smallest value
 
     // Calculate interval and ensure it is not zero
     final double interval = calculateInterval(maxY + margin, 5); // Example with 5 intervals
