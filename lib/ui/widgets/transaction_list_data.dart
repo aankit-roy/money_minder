@@ -33,8 +33,30 @@ class TransactionDataList extends StatelessWidget {
     final transByDate =isExpenses ? _filterTransactionsByPeriod(
         expensesProvider.transactionList, timePeriod) : _filterTransactionsByPeriod(incomeProvider.incomeList, timePeriod);
 
+    // final sortedDates = transByDate.keys.toList()
+    //   ..sort((a, b) => b.compareTo(a)); // Sort dates in descending order
+    final dateFormat = _getDateFormat(timePeriod);
     final sortedDates = transByDate.keys.toList()
-      ..sort((a, b) => b.compareTo(a)); // Sort dates in descending order
+      ..sort((a, b) {
+        final aDate = dateFormat.parse(a);
+        final bDate = dateFormat.parse(b);
+
+        if (timePeriod == TimePeriod.weekly) {
+          final now = DateTime.now();
+          final startOfCurrentWeek = now.subtract(Duration(days: now.weekday - 1));
+          final endOfCurrentWeek = startOfCurrentWeek.add(const Duration(days: 7));
+
+          if (aDate.isAfter(startOfCurrentWeek) && aDate.isBefore(endOfCurrentWeek)) {
+            return -1; // Move current week to the top
+          } else if (bDate.isAfter(startOfCurrentWeek) && bDate.isBefore(endOfCurrentWeek)) {
+            return 1; // Move current week to the top
+          }
+        }
+        return bDate.compareTo(aDate); // Default descending order
+      });
+
+
+
 
     return SizedBox(
       height: size.height * .5,
@@ -121,6 +143,20 @@ class TransactionDataList extends StatelessWidget {
     );
   }
 }
+DateFormat _getDateFormat(TimePeriod timePeriod) {
+  switch (timePeriod) {
+    case TimePeriod.daily:
+      return DateFormat('d MMM yyyy');
+    case TimePeriod.weekly:
+      return DateFormat('d MMM yyyy');
+    case TimePeriod.monthly:
+      return DateFormat('MMM yyyy');
+    case TimePeriod.yearly:
+      return DateFormat('yyyy');
+    default:
+      throw ArgumentError('Invalid TimePeriod');
+  }
+}
 
 class ExpenseAndIncomeWidget extends StatelessWidget {
   const ExpenseAndIncomeWidget({
@@ -171,6 +207,8 @@ class ExpenseAndIncomeWidget extends StatelessWidget {
       ),
     );
   }
+  // Convert string key to DateTime
+
 }
 
 class DateWidget extends StatelessWidget {
@@ -199,24 +237,40 @@ class DateWidget extends StatelessWidget {
 Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
     List<AddTransactionsData> transactions, TimePeriod period) {
   Map<String, List<AddTransactionsData>> filteredTransactions = {};
+  final DateFormat dateFormat;
+
+  switch (period) {
+    case TimePeriod.daily:
+      dateFormat = DateFormat('d MMM yyyy');
+      break;
+    case TimePeriod.weekly:
+      dateFormat = DateFormat('d MMM yyyy');
+      break;
+    case TimePeriod.monthly:
+      dateFormat = DateFormat('MMM yyyy');
+      break;
+    case TimePeriod.yearly:
+      dateFormat = DateFormat('yyyy');
+      break;
+  }
 
   for (var transaction in transactions) {
     String key = '';
 
     switch (period) {
       case TimePeriod.daily:
-        key = DateFormat('d MMM yyyy').format(transaction.date);
+        key = dateFormat.format(transaction.date);
         break;
       case TimePeriod.weekly:
         final weekStart = transaction.date
             .subtract(Duration(days: transaction.date.weekday - 1));
-        key = DateFormat('d MMM yyyy').format(weekStart);
+        key = dateFormat.format(weekStart);
         break;
       case TimePeriod.monthly:
-        key = DateFormat('MMM yyyy').format(transaction.date);
+        key = dateFormat.format(transaction.date);
         break;
       case TimePeriod.yearly:
-        key = DateFormat('yyyy').format(transaction.date);
+        key = dateFormat.format(transaction.date);
         break;
     }
 
@@ -229,6 +283,83 @@ Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
 
   return filteredTransactions;
 }
+
+
+// Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
+//     List<AddTransactionsData> transactions, TimePeriod period) {
+//   Map<String, List<AddTransactionsData>> filteredTransactions = {};
+//
+//   for (var transaction in transactions) {
+//     String key = '';
+//
+//     switch (period) {
+//       case TimePeriod.daily:
+//         key = DateFormat('d MMM yyyy').format(transaction.date);
+//         break;
+//       case TimePeriod.weekly:
+//         final weekStart = transaction.date
+//             .subtract(Duration(days: transaction.date.weekday - 1));
+//         key = DateFormat('d MMM yyyy').format(weekStart);
+//         break;
+//       case TimePeriod.monthly:
+//         key = DateFormat('MMM yyyy').format(transaction.date);
+//         break;
+//       case TimePeriod.yearly:
+//         key = DateFormat('yyyy').format(transaction.date);
+//         break;
+//     }
+//
+//     if (filteredTransactions[key] == null) {
+//       filteredTransactions[key] = [];
+//     }
+//
+//     filteredTransactions[key]!.add(transaction);
+//   }
+//
+//   return filteredTransactions;
+// }
+
+
+
+
+
+Future<void> _showDeleteConfirmationDialog(
+    BuildContext context,
+    bool isExpenses, // Added parameter
+    dynamic provider, // Changed to dynamic type
+    AddTransactionsData transactionsData) async {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Delete Data'),
+        content: const Text('Are you sure you want to delete this item?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (isExpenses) {
+                // Remove expense data
+                (provider as TransactionAmountProvider).removeTransactonsAmount(transactionsData);
+              } else {
+                // Remove income data
+                (provider as IncomeTransactionProvider).removeIncome(transactionsData);
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
 void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
     AddTransactionsData oldTransaction) {
@@ -281,43 +412,3 @@ void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
     },
   );
 }
-
-
-
-Future<void> _showDeleteConfirmationDialog(
-    BuildContext context,
-    bool isExpenses, // Added parameter
-    dynamic provider, // Changed to dynamic type
-    AddTransactionsData transactionsData) async {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Delete Data'),
-        content: const Text('Are you sure you want to delete this item?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (isExpenses) {
-                // Remove expense data
-                (provider as TransactionAmountProvider).removeTransactonsAmount(transactionsData);
-              } else {
-                // Remove income data
-                (provider as IncomeTransactionProvider).removeIncome(transactionsData);
-              }
-              Navigator.pop(context);
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      );
-    },
-  );
-}
-

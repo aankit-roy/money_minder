@@ -196,8 +196,8 @@ class BalanceWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          '$currencySymbol${availableBalance == 0 ? '00.00' : availableBalance.toStringAsFixed(2)}',
-          style:  TextStyle(
+          '${availableBalance < 0 ? '-' : ''}$currencySymbol${availableBalance.abs().toStringAsFixed(2)}',
+          style: TextStyle(
             fontSize: TextSizes.mediumHeadingMax,
             fontWeight: FontWeight.w800,
             color: textColor,
@@ -214,8 +214,6 @@ class BalanceWidget extends StatelessWidget {
             ),
           ),
         ),
-
-
       ],
     );
   }

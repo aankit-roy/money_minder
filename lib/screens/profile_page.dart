@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
-
+import 'package:money_minder/res/constants/all_links.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -10,7 +13,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Define the list of items with titles and icons
+  final InAppReview _inAppReview = InAppReview.instance;
+
   final List<Map<String, dynamic>> items = [
     {'title': 'Recommend to friends', 'icon': Icons.thumb_up_alt_sharp},
     {'title': 'Rate us', 'icon': Icons.star_rate},
@@ -19,17 +23,16 @@ class _ProfilePageState extends State<ProfilePage> {
     {'title': 'Contact us', 'icon': Icons.contact_mail},
   ];
 
-
   @override
   Widget build(BuildContext context) {
-    Size size= MediaQuery.sizeOf(context);
+    Size size = MediaQuery.sizeOf(context);
     return Scaffold(
-      body:Stack(
+      body: Stack(
         children: [
           ProfileBackground(size: size),
-          ProfileDetailsCard(size: size, items: items)
+          ProfileDetailsCard(size: size, items: items, inAppReview: _inAppReview),
         ],
-      )
+      ),
     );
   }
 }
@@ -39,24 +42,26 @@ class ProfileDetailsCard extends StatelessWidget {
     super.key,
     required this.size,
     required this.items,
+    required this.inAppReview,
   });
 
   final Size size;
   final List<Map<String, dynamic>> items;
+  final InAppReview inAppReview;
 
   @override
   Widget build(BuildContext context) {
+    const appLink= AllUrl.appLink;
+    const privacyPolicyUrl= AllUrl.privacyPolicyLink;
+    const rateUrl= AllUrl.rateUrl;
     return Center(
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
-
         ),
-
         child: SizedBox(
-
-          height: size.height*.5,
-          width: size.width*.85,
+          height: size.height * .5,
+          width: size.width * .85,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -64,48 +69,71 @@ class ProfileDetailsCard extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: items.length,
                   shrinkWrap: true,
-                  itemBuilder: (context,index){
-                    final item= items[index];
+                  itemBuilder: (context, index) {
+                    final item = items[index];
                     return Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: ListTile(
                         leading: Icon(item['icon'], color: Colors.blue),
                         title: Text(item['title']),
                         trailing: const Icon(Icons.arrow_right),
-                        onTap: (){
+                        onTap: () {
+                          if (item['title'] == 'Recommend to friends') {
+                           // Replace with your app's Play Store URL
+                            Share.share('Check out this amazing app: $appLink');
+                          } else if (item['title'] == 'Rate us') {
+                            _rateApp(rateUrl);
+                          } else if (item['title'] == 'Check for updates') {
+                            // Implement update checking if needed
+                          } else if (item['title'] == 'Privacy Policy') {
 
-                          // if (item['title'] == 'Recommend to friends') {
-                          //   // Share app link
-                          //   final appLink = 'https://play.google.com/store/apps/details?id=com.ankitkumar.quotebook&hl=en'; // Replace with your app's Play Store URL
-                          //   // Or use the App Store URL for iOS
-                          //   // final appLink = 'https://apps.apple.com/app/idYOUR_APP_ID'; // Replace with your app's App Store URL
-                          //   Share.share('Check out this amazing app: $appLink');
-                          // }
-                          // Handle other ListTile taps if needed
-
+                            _launchURL(privacyPolicyUrl);
+                          } else if (item['title'] == 'Contact us') {
+                            final contactEmail = 'support@example.com'; // Replace with your contact email
+                            _sendEmail(contactEmail);
+                          }
                         },
-
                       ),
                     );
-
                   },
-
-
                 ),
-              )
-
-
-
-
-
+              ),
             ],
           ),
-
-
-
         ),
       ),
     );
+  }
+
+  void _rateApp(String rateUrl) async {
+    if (await inAppReview.isAvailable()) {
+      inAppReview.requestReview();
+    } else {
+      // Open app store page if in-app review is not available
+
+      _launchURL(rateUrl);
+    }
+  }
+
+  void _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _sendEmail(String email) async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: email,
+      query: 'subject=Feedback&body=Hello,',
+    );
+    if (await canLaunch(emailUri.toString())) {
+      await launch(emailUri.toString());
+    } else {
+      throw 'Could not send email';
+    }
   }
 }
 
@@ -120,14 +148,11 @@ class ProfileBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: size.height*.38,
+      height: size.height * .38,
       decoration: const BoxDecoration(
         color: ColorsPalette.primaryColor,
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(180)),
       ),
-
     );
   }
 }
-
-

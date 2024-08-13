@@ -27,16 +27,32 @@ class BarChartWidget extends StatelessWidget {
         .toList()
       ..sort((a, b) => int.parse(a).compareTo(int.parse(b))); // Sort years numerically
 
-    final double maxY = (chartData.isNotEmpty)
-        ? chartData.map((data) => data.expense).reduce((a, b) => a > b ? a : b) * 1.2
-        : 10000;
-    final interval = maxY / 5; // Avoid zero interval
 
+
+    final double maxExpense = chartData.isNotEmpty
+        ? chartData.map((data) => data.expense).reduce((a, b) => a > b ? a : b)
+        : 0;
+
+    final double maxIncome = chartData.isNotEmpty
+        ? chartData.map((data) => data.income).reduce((a, b) => a > b ? a : b)
+        : 0;
+    // final interval = maxY / 5; // Avoid zero interval
+
+
+    final double maxY = (maxExpense > maxIncome) ? maxExpense : maxIncome;
+
+    // Calculate the interval and ensure it is not zero
+    final double interval = calculateInterval(maxY, 5); // Example with 5 intervals
+
+    // Set a minimum interval if calculated interval is zero
+    final double minInterval = 1000; // Minimum interval to prevent zero
 
     final List<BarChartGroupData> barGroups = chartData.map((data) {
       final xIndex = isMonthly
           ? data.month - 1 // For monthly data, zero-based index
           : yearLabels.indexOf(data.month.toString()); // For yearly data
+
+
 
       return BarChartGroupData(
         x: xIndex,
@@ -66,9 +82,7 @@ class BarChartWidget extends StatelessWidget {
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
-          maxY: (chartData.isNotEmpty)
-              ? chartData.map((data) => data.expense).reduce((a, b) => a > b ? a : b) * 1.1
-              : 10000,
+          maxY: maxY*1.2,
           borderData: FlBorderData(
             show: false,
           ),
@@ -110,7 +124,7 @@ class BarChartWidget extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 45,
-                interval:  4000,// Adjust this as needed
+                interval: (interval > 0) ? interval : minInterval, // Ensure interval is not zero
                 getTitlesWidget: (value, meta) {
                   String formattedValue;
                   if (value >= 1000) {
@@ -147,5 +161,9 @@ class BarChartWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+  double calculateInterval(double maxY, int numIntervals) {
+    // Divide the max value by the number of intervals and round up
+    return (maxY / numIntervals).ceilToDouble();
   }
 }

@@ -9,6 +9,7 @@ import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/currency_symbol.dart';
+import 'package:money_minder/res/constants/text_size.dart';
 import 'package:money_minder/ui/widgets/custome_period_button.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -67,6 +68,25 @@ class _StatPageState extends State<StatPage> {
 
     double totalExpenses=_showMonthly?totalExpensesCurrentYear :totalExpensesAllYear;
     double totalIncomes= _showMonthly? totalIncomesCurrentYear :totalIncomesAllYear;
+    double profitLoss = totalIncomes - totalExpenses;
+    double profitLossText;
+    Color profitLossColor;
+    String title;
+
+    if (profitLoss > 0) {
+      title="Total Profit";
+      profitLossText = profitLoss;
+      profitLossColor = Colors.blue;
+    } else if (profitLoss < 0) {
+      title="Total Loss";
+      profitLossText = (-profitLoss);
+      profitLossColor = Colors.orange;
+    } else {
+      title ="Profit/Loss";
+      profitLossText = 0.00 ;
+      profitLossColor = Colors.grey;
+    }
+
     return Scaffold(
 
       body: Column(
@@ -124,11 +144,12 @@ class _StatPageState extends State<StatPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildSummaryCard('Total Income',
-                        '${CurrencySymbols.rupee}$totalIncomes', Colors.green),
+                        totalIncomes, Colors.green),
                     _buildSummaryCard('Total Expenses',
-                        '${CurrencySymbols.rupee}$totalExpenses', Colors.red),
-                    _buildSummaryCard('Profit/Loss',
-                        '${CurrencySymbols.rupee}2,000', Colors.blue),
+                        totalExpenses, Colors.red),
+                    _buildSummaryCard(title,
+                        profitLossText,
+                        profitLossColor),
                   ],
                 ),
               ),
@@ -203,7 +224,7 @@ class _StatPageState extends State<StatPage> {
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, Color color) {
+  Widget _buildSummaryCard(String title, double value, Color color) {
     return Card(
       // color: color.withOpacity(0.1),
       color: Colors.white,
@@ -214,15 +235,28 @@ class _StatPageState extends State<StatPage> {
           children: [
             Text(title,
                 style:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             const SizedBox(height: 10),
-            Text(value,
-                style: TextStyle(
-                    fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+            Text(
+              formatValue(value),
+              style: TextStyle(
+                  fontSize: TextSizes.smallHeadingMax,
+                  fontWeight: FontWeight.w500,
+                  color: color),
+            ),
           ],
         ),
       ),
     );
+  }
+  String formatValue(double value) {
+    if (value >= 1000000) {
+      return '${(value / 1000000).toStringAsFixed(1)}M'; // For millions
+    } else if (value >= 1000) {
+      return '${(value / 1000).toStringAsFixed(1)}K'; // For thousands
+    } else {
+      return value.toStringAsFixed(2); // For values less than 1000
+    }
   }
 
 

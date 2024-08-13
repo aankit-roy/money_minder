@@ -133,7 +133,7 @@ class IncomeTransactionProvider extends ChangeNotifier {
         endDate = startDate.add(const Duration(days: 1));
         break;
       case TimePeriod.weekly:
-        startDate = now.subtract(Duration(days: now.weekday - 1));
+        startDate = now.subtract(Duration(days: now.weekday ));
         endDate = startDate.add(const Duration(days: 7));
         break;
       case TimePeriod.monthly:

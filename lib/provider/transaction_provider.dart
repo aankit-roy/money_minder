@@ -151,7 +151,7 @@ class TransactionAmountProvider extends ChangeNotifier {
         endDate = startDate.add(const Duration(days: 1));
         break;
       case TimePeriod.weekly:
-        startDate = now.subtract(Duration(days: now.weekday - 1));
+        startDate = now.subtract(Duration(days: now.weekday ));
         endDate = startDate.add(const Duration(days: 7));
         break;
       case TimePeriod.monthly:
@@ -164,18 +164,18 @@ class TransactionAmountProvider extends ChangeNotifier {
         break;
     }
 
-    // print("Filtering from######################################### $startDate to $endDate");
-    // print('Filtering for period: $timePeriod');
-    // Filter transactions
+    print("Filtering from######################################### $startDate to $endDate");
+    print('Filtering for period: $timePeriod');
+
     List<AddTransactionsData> filteredTransactions = _transactionList.where((transaction) {
       return transaction.date.isAfter(startDate) && transaction.date.isBefore(endDate);
     }).toList();
 
     // Debug prints to check filtered transactions count
-    // print('Filtered transactions count: ${filteredTransactions.length}');
-    // for (var transaction in filteredTransactions) {
-    //   print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
-    // }
+    print('Filtered transactions count: ${filteredTransactions.length}');
+    for (var transaction in filteredTransactions) {
+      print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
+    }
 
     return filteredTransactions;
   }

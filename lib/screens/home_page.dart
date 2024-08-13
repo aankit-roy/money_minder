@@ -4,6 +4,7 @@ import 'package:money_minder/models/time_period.dart';
 import 'package:money_minder/provider/general_provider.dart';
 import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
+import 'package:money_minder/ui/widgets/current_timeperiod_list.dart';
 import 'package:money_minder/ui/widgets/custome_home_app_bar.dart';
 import 'package:money_minder/ui/widgets/pie_chart_widget.dart';
 import 'package:money_minder/ui/widgets/transaction_list_data.dart';
@@ -83,8 +84,8 @@ class _HomePageState extends State<HomePage>
                 ),
                 const SizedBox(height: 20),
 
-                 // ExpensesDataList(size: size, selectedPeriod: timePeriod),
                 TransactionDataList(size: size, isExpenses: generalProvider.isExpensesSelected),
+                // AggregatedDataList(size: size, isExpenses: generalProvider.isExpensesSelected),
 
                  const SizedBox(height: 20),
 
@@ -98,84 +99,4 @@ class _HomePageState extends State<HomePage>
 }
 
 
-void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
-    AddTransactionsData oldTransaction) {
-  TextEditingController amountController =
-      TextEditingController(text: oldTransaction.expensesPrice.toString());
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Update Expense'),
-        content: TextField(
-          controller: amountController,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          decoration: InputDecoration(
-            label: const Text("New Amount"),
-            prefixIcon: Icon(
-              oldTransaction.categoryData.icon,
-              color: oldTransaction.categoryData.color,
-            ),
-            hintText: "100 e.g",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final newAmount = double.tryParse(amountController.text);
-              if (newAmount != null && newAmount > 0) {
-                final newTransaction = AddTransactionsData(
-                    id: oldTransaction.id,
-                    categoryData: oldTransaction.categoryData,
-                    expensesPrice: newAmount,
-                    date: oldTransaction.date);
-                // provider.updateTransaction(newTransaction);
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Update'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-Future<void> _showDeleteConfirmationDialog(
-    BuildContext context,
-    TransactionAmountProvider provider,
-    AddTransactionsData transactionsData) async {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Delete Expense'),
-        content: const Text('Are you sure you want to delete this expense?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              provider.removeTransactonsAmount(transactionsData);
-              Navigator.pop(context);
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      );
-    },
-  );
-}
