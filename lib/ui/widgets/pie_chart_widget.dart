@@ -7,6 +7,7 @@ import 'package:money_minder/models/time_period.dart';
 import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
+import 'package:money_minder/res/components/formated_value.dart';
 import 'package:money_minder/res/constants/currency_symbol.dart';
 import 'package:money_minder/res/constants/text_size.dart';
 import 'package:provider/provider.dart';
@@ -84,14 +85,8 @@ class _PieChartWidgetState extends State<PieChartWidget> {
                 ),
               ),
             ),
-            Text(
-              '₹${widget.totalAmount.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: TextSizes.mediumHeadingMin,
-                fontWeight: FontWeight.bold,
-                color: ColorsPalette.textPrimary,
-              ),
-            ),
+
+             FormattedValueWidget(value: widget.totalAmount, color: ColorsPalette.textPrimary),
           ],
         )
             : const Text(

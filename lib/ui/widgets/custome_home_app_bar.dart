@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:money_minder/provider/general_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
@@ -52,18 +53,7 @@ class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
     );
   }
 
-  Widget _TotalIncome() {
-    return const Center(
-      child: Text(
-        "₹10009876543",
-        style: TextStyle(
-          color: Colors.green,
-          fontSize: TextSizes.mediumHeadingMax,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildExpensesIncomesButton(GeneralProvider generalProvider, Size size) {
     return Row(
@@ -97,37 +87,49 @@ class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
 
 
 
-
 class _TopBar extends StatefulWidget {
   @override
-  State<_TopBar> createState() => _TopBarState();
+  _TopBarState createState() => _TopBarState();
 }
 
 class _TopBarState extends State<_TopBar> {
-
   DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
+    // Format the current month and year
+    String formattedMonth = DateFormat('MMM').format(selectedDate);  // Short month
+    String formattedYear = DateFormat('yyyy').format(selectedDate); // Year
+    // Format the current date as day.month.year
+    String formattedDate = DateFormat('dd.MM.yyyy').format(selectedDate);
+
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        InkWell(
-          onTap: () {
-
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: const Icon(
-              Icons.search_rounded,
-              color: ColorsPalette.textPrimary,
+        // Display current month and year
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              formattedMonth,  // Short month
+              style: const TextStyle(
+                fontSize: TextSizes.mediumHeadingMax,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
+            Text(
+              formattedYear,  // Year
+              style: const TextStyle(
+                fontSize: TextSizes.mediumHeadingMin,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ],
         ),
         const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             Text(
               "Money Minder",
               style: TextStyle(
@@ -143,11 +145,13 @@ class _TopBarState extends State<_TopBar> {
           },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: const Icon(Icons.date_range_outlined)),
+            child: const Icon(Icons.date_range_outlined),
+          ),
         ),
       ],
     );
   }
+
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -161,7 +165,6 @@ class _TopBarState extends State<_TopBar> {
       });
     }
   }
-
 }
 
 class HomeTabView extends StatelessWidget {

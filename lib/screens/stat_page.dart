@@ -8,6 +8,7 @@ import 'package:money_minder/models/line_chart_datamodel.dart';
 import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
+import 'package:money_minder/res/components/formated_value.dart';
 import 'package:money_minder/res/constants/text_size.dart';
 import 'package:money_minder/ui/widgets/custome_period_button.dart';
 import 'package:provider/provider.dart';
@@ -236,27 +237,21 @@ class _StatPageState extends State<StatPage> {
                 style:
                 const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             const SizedBox(height: 10),
-            Text(
-              formatValue(value),
-              style: TextStyle(
-                  fontSize: TextSizes.smallHeadingMax,
-                  fontWeight: FontWeight.w500,
-                  color: color),
-            ),
+             FormattedValueWidget(value: value, color: color),
           ],
         ),
       ),
     );
   }
-  String formatValue(double value) {
-    if (value >= 1000000) {
-      return '${(value / 1000000).toStringAsFixed(1)}M'; // For millions
-    } else if (value >= 1000) {
-      return '${(value / 1000).toStringAsFixed(1)}K'; // For thousands
-    } else {
-      return value.toStringAsFixed(2); // For values less than 1000
-    }
-  }
+  // String formatValue(double value) {
+  //   if (value >= 1000000) {
+  //     return '${(value / 1000000).toStringAsFixed(1)}M'; // For millions
+  //   } else if (value >= 1000) {
+  //     return '${(value / 1000).toStringAsFixed(1)}K'; // For thousands
+  //   } else {
+  //     return value.toStringAsFixed(2); // For values less than 1000
+  //   }
+  // }
 
 
   Widget _buildChartCard(Widget chart, Size size, bool isMonthly) {

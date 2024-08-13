@@ -37,8 +37,7 @@ class _HomePageState extends State<HomePage>
     // TimePeriod timePeriod =
         // context.watch<TransactionAmountProvider>().currentPeriod;
     final generalProvider = context.watch<GeneralProvider>();
-    TimePeriod timePeriod =
-        generalProvider.selectedPeriod;
+
     final transactionProvider = context.watch<TransactionAmountProvider>();
     final incomeProvider = context.watch<IncomeTransactionProvider>();
 

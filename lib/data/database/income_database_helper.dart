@@ -31,6 +31,7 @@ class IncomeDatabaseHelper {
     );
   }
 
+
   Future<void> _onCreate(Database db, int version) async {
     print(' its time to create second database **********************((((((((((((((((((((((((((((((( Creating database and tables');
     await db.execute('''
@@ -55,11 +56,24 @@ class IncomeDatabaseHelper {
     _insertInitialData(db);
   }
 
+
+
+
   Future<void> _insertInitialData(Database db) async {
     final List<CategoryData> categories = [
       CategoryData(name: 'Salary', icon: Icons.monetization_on, color: Colors.green),
       CategoryData(name: 'Investment Returns', icon: Icons.trending_up, color: Colors.blue),
       CategoryData(name: 'Gifts', icon: Icons.card_giftcard, color: Colors.pink),
+      CategoryData(name: 'Gifts', icon: Icons.card_giftcard, color: Colors.pink),
+      CategoryData(name: 'Freelance Work', icon: Icons.work, color: Colors.orange),
+      CategoryData(name: 'Rental Income', icon: Icons.house, color: Colors.teal),
+      CategoryData(name: 'Dividends', icon: Icons.attach_money, color: Colors.amber),
+      CategoryData(name: 'Interest', icon: Icons.savings, color: Colors.cyan),
+      CategoryData(name: 'Royalties', icon: Icons.music_note, color: Colors.purple),
+      CategoryData(name: 'Bonuses', icon: Icons.star, color: Colors.red),
+      CategoryData(name: 'Refunds', icon: Icons.undo, color: Colors.indigo),
+      CategoryData(name: 'Side Hustles', icon: Icons.local_activity, color: Colors.deepOrange),
+      CategoryData(name: 'Stock Sales', icon: Icons.show_chart, color: Colors.blueGrey),
       // Add more categories as needed
     ];
 
