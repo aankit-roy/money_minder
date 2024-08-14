@@ -200,17 +200,7 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> updateTransaction(AddTransactionsData transaction) async {
-    final db = await database;
-    print(
-        'Updating transaction in DB****************************************: ${transaction.id} with new amount: ${transaction.expensesPrice}');
-    await db.update(
-      'transactions',
-      transaction.toMap(),
-      where: 'id = ?',
-      whereArgs: [transaction.id],
-    );
-  }
+
 
   Future<void> deleteTransaction(int id) async {
     final db = await database;
@@ -218,6 +208,16 @@ class DatabaseHelper {
       'transactions',
       where: 'id = ?',
       whereArgs: [id],
+    );
+  }
+  // Update a transaction
+  Future<void> updateTransaction(AddTransactionsData transaction) async {
+    final db = await database;
+    await db.update(
+      'transactions',
+      transaction.toMap(),
+      where: 'id = ?',
+      whereArgs: [transaction.id],
     );
   }
 

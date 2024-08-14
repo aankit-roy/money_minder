@@ -88,6 +88,17 @@ class TransactionAmountProvider extends ChangeNotifier {
     notifyListeners();
 
   }
+  // Update a transaction
+  Future<void> updateTransaction(AddTransactionsData transaction) async {
+    // Implement the logic to update the transaction in your database
+    // For example:
+    DatabaseHelper dbHelper = DatabaseHelper();
+    dbHelper.updateTransaction(transaction);
+    _transactionList = await _getTransactionsWithCategories();
+
+    notifyListeners();
+  }
+
   Future<void> updateExpensesSameCategoryExpenses(AddTransactionsData transaction) async {
      await DatabaseHelper().updateExpensesSameCategoryTransactionBySameDate(transaction);
 

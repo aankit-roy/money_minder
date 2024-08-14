@@ -9,22 +9,23 @@ import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/ui/widgets/custome_period_button.dart';
 import 'package:money_minder/ui/widgets/expenses_category_grid.dart';
 import 'package:money_minder/ui/widgets/incomes_category_grid.dart';
+
 import 'package:provider/provider.dart';
 
 class AddingData extends StatefulWidget {
-  const AddingData({super.key});
+
+ final AddTransactionsData? transactions;
+
+  const AddingData({super.key, this.transactions});
+
 
   @override
   State<AddingData> createState() => _AddingDataState();
 }
 
 class _AddingDataState extends State<AddingData> {
-  final List<AddingPieChartData> pieChartData = [];
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController valueController = TextEditingController();
-  Color selectedColor = ColorsPalette.secondaryColor;
-  CategoryData? selectedCategory;
-  List<AddTransactionsData> transactions = [];
+
+
   List<CategoryData> categories = [];
   List<CategoryData> incomeCategories = [];
 
@@ -45,10 +46,7 @@ class _AddingDataState extends State<AddingData> {
         categories = loadedCategories;
       });
     } else {
-      // Fetch income categories
-      // final incomeProvider = context.read<IncomeTransactionProvider>();
-      // List<CategoryData> loadedIncomeCategories = await incomeProvider
-      //     .getIncomeCategories();
+
       IncomeDatabaseHelper ibHelper =  IncomeDatabaseHelper();
       List<CategoryData> loadedIncomeCategories = await ibHelper.getCategories();
 
@@ -60,13 +58,13 @@ class _AddingDataState extends State<AddingData> {
 
 
 
-
-  @override
-  void dispose() {
-    titleController.dispose();
-    valueController.dispose();
-    super.dispose();
-  }
+  //
+  // @override
+  // void dispose() {
+  //   titleController.dispose();
+  //   valueController.dispose();
+  //   super.dispose();
+  // }
 
   @override
 
@@ -116,63 +114,11 @@ class _AddingDataState extends State<AddingData> {
           ),
         ),
 
-        // Container(
-        //   height: 100,
-        //   decoration: const BoxDecoration(
-        //     color: ColorsPalette.primaryColor,
-        //     borderRadius: BorderRadius.only(
-        //       topLeft: Radius.circular(20),
-        //       topRight: Radius.circular(20),
-        //     ),
-        //   ),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-        //     children: [
-        //       ElevatedButton(
-        //         onPressed: () {
-        //           setState(() {
-        //             _isExpensesSelected = true;
-        //           });
-        //         },
-        //         style: ElevatedButton.styleFrom(
-        //           backgroundColor: _isExpensesSelected ? ColorsPalette.primaryColor : Colors.grey,
-        //           shape: RoundedRectangleBorder(
-        //             borderRadius: BorderRadius.circular(20),
-        //           ),
-        //         ),
-        //         child: Text(
-        //           'Expenses',
-        //           style: TextStyle(
-        //             color: _isExpensesSelected ? ColorsPalette.textPrimary : Colors.white,
-        //           ),
-        //         ),
-        //       ),
-        //       ElevatedButton(
-        //         onPressed: () {
-        //           setState(() {
-        //             _isExpensesSelected = false;
-        //           });
-        //         },
-        //         style: ElevatedButton.styleFrom(
-        //           backgroundColor: !_isExpensesSelected ? ColorsPalette.primaryColor : Colors.grey,
-        //           shape: RoundedRectangleBorder(
-        //             borderRadius: BorderRadius.circular(20),
-        //           ),
-        //         ),
-        //         child: Text(
-        //           'Income',
-        //           style: TextStyle(
-        //             color: !_isExpensesSelected ? ColorsPalette.textPrimary : Colors.white,
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
+
         Expanded(
           child: _isExpensesSelected
-              ? ExpensesCategoryGrid(categories: categories)
-              :  IncomeCategoryGrid(categories: incomeCategories)
+              ? ExpensesCategoryGrid(categories: categories,transactionData:widget.transactions ,)
+              :  IncomeCategoryGrid(categories: incomeCategories,transactionData: widget.transactions,)
         ),
       ],
     );

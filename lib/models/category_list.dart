@@ -11,6 +11,20 @@ class CategoryData {
 
   CategoryData({this.id, required this.name, required this.icon, required this.color});
 
+  CategoryData copyWith({
+    int? id,
+    String? name,
+    IconData? icon,
+    Color? color,
+  }) {
+    return CategoryData(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+      color: color ?? this.color,
+    );
+  }
+
 
   @override
   bool operator ==(Object other) =>

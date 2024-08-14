@@ -82,6 +82,16 @@ class IncomeTransactionProvider extends ChangeNotifier {
     _incomeList = await _getTransactionsWithCategories();
     notifyListeners();
   }
+  // Update a transaction
+  Future<void> updateIncome(AddTransactionsData transaction) async {
+    // Implement the logic to update the transaction in your database
+    // For example:
+    IncomeDatabaseHelper dbHelper = IncomeDatabaseHelper();
+    dbHelper.updateTransaction(transaction);
+    _incomeList = await _getTransactionsWithCategories();
+
+    notifyListeners();
+  }
 
   Future<void> updateIncomeSameCategoryExpenses(AddTransactionsData transaction) async {
     await IncomeDatabaseHelper().updateIncomesSameCategoryTransactionBySameDate(transaction);

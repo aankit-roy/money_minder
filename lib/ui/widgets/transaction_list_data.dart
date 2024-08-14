@@ -7,8 +7,8 @@ import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
+import 'package:money_minder/screens/adding_data.dart';
 import 'package:provider/provider.dart';
-
 
 class TransactionDataList extends StatelessWidget {
   const TransactionDataList({
@@ -26,12 +26,13 @@ class TransactionDataList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final expensesProvider = Provider.of<TransactionAmountProvider>(context);
     final incomeProvider = Provider.of<IncomeTransactionProvider>(context);
     final timePeriod = Provider.of<GeneralProvider>(context).selectedPeriod;
-    final transByDate =isExpenses ? _filterTransactionsByPeriod(
-        expensesProvider.transactionList, timePeriod) : _filterTransactionsByPeriod(incomeProvider.incomeList, timePeriod);
+    final transByDate = isExpenses
+        ? _filterTransactionsByPeriod(
+            expensesProvider.transactionList, timePeriod)
+        : _filterTransactionsByPeriod(incomeProvider.incomeList, timePeriod);
 
     // final sortedDates = transByDate.keys.toList()
     //   ..sort((a, b) => b.compareTo(a)); // Sort dates in descending order
@@ -43,20 +44,21 @@ class TransactionDataList extends StatelessWidget {
 
         if (timePeriod == TimePeriod.weekly) {
           final now = DateTime.now();
-          final startOfCurrentWeek = now.subtract(Duration(days: now.weekday - 1));
-          final endOfCurrentWeek = startOfCurrentWeek.add(const Duration(days: 7));
+          final startOfCurrentWeek =
+              now.subtract(Duration(days: now.weekday - 1));
+          final endOfCurrentWeek =
+              startOfCurrentWeek.add(const Duration(days: 7));
 
-          if (aDate.isAfter(startOfCurrentWeek) && aDate.isBefore(endOfCurrentWeek)) {
+          if (aDate.isAfter(startOfCurrentWeek) &&
+              aDate.isBefore(endOfCurrentWeek)) {
             return -1; // Move current week to the top
-          } else if (bDate.isAfter(startOfCurrentWeek) && bDate.isBefore(endOfCurrentWeek)) {
+          } else if (bDate.isAfter(startOfCurrentWeek) &&
+              bDate.isBefore(endOfCurrentWeek)) {
             return 1; // Move current week to the top
           }
         }
         return bDate.compareTo(aDate); // Default descending order
       });
-
-
-
 
     return SizedBox(
       height: size.height * .5,
@@ -66,7 +68,7 @@ class TransactionDataList extends StatelessWidget {
           String date = sortedDates[index];
           List<AddTransactionsData> transactions = transByDate[date]!;
           double totalAmount =
-          transactions.fold(0.0, (sum, item) => sum + item.expensesPrice);
+              transactions.fold(0.0, (sum, item) => sum + item.expensesPrice);
 
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -123,14 +125,16 @@ class TransactionDataList extends StatelessWidget {
                         ),
                       ),
                       onLongPress: () {
-                        final provider = isExpenses
-                            ? expensesProvider
-                            : incomeProvider;
+                        final provider =
+                            isExpenses ? expensesProvider : incomeProvider;
                         _showDeleteConfirmationDialog(
                             context, isExpenses, provider, transaction);
                       },
                       onTap: () {
-                        // _showUpdateDialog(context, transactionProvider, transaction);
+                        final provider =
+                            isExpenses ? expensesProvider : incomeProvider;
+                        _showUpdateBottomSheet(
+                            context, transaction, isExpenses, provider);
                       },
                     );
                   }),
@@ -143,6 +147,7 @@ class TransactionDataList extends StatelessWidget {
     );
   }
 }
+
 DateFormat _getDateFormat(TimePeriod timePeriod) {
   switch (timePeriod) {
     case TimePeriod.daily:
@@ -170,8 +175,6 @@ class ExpenseAndIncomeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
       child: Row(
@@ -208,7 +211,6 @@ class ExpenseAndIncomeWidget extends StatelessWidget {
     );
   }
   // Convert string key to DateTime
-
 }
 
 class DateWidget extends StatelessWidget {
@@ -284,45 +286,6 @@ Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
   return filteredTransactions;
 }
 
-
-// Map<String, List<AddTransactionsData>> _filterTransactionsByPeriod(
-//     List<AddTransactionsData> transactions, TimePeriod period) {
-//   Map<String, List<AddTransactionsData>> filteredTransactions = {};
-//
-//   for (var transaction in transactions) {
-//     String key = '';
-//
-//     switch (period) {
-//       case TimePeriod.daily:
-//         key = DateFormat('d MMM yyyy').format(transaction.date);
-//         break;
-//       case TimePeriod.weekly:
-//         final weekStart = transaction.date
-//             .subtract(Duration(days: transaction.date.weekday - 1));
-//         key = DateFormat('d MMM yyyy').format(weekStart);
-//         break;
-//       case TimePeriod.monthly:
-//         key = DateFormat('MMM yyyy').format(transaction.date);
-//         break;
-//       case TimePeriod.yearly:
-//         key = DateFormat('yyyy').format(transaction.date);
-//         break;
-//     }
-//
-//     if (filteredTransactions[key] == null) {
-//       filteredTransactions[key] = [];
-//     }
-//
-//     filteredTransactions[key]!.add(transaction);
-//   }
-//
-//   return filteredTransactions;
-// }
-
-
-
-
-
 Future<void> _showDeleteConfirmationDialog(
     BuildContext context,
     bool isExpenses, // Added parameter
@@ -345,10 +308,12 @@ Future<void> _showDeleteConfirmationDialog(
             onPressed: () {
               if (isExpenses) {
                 // Remove expense data
-                (provider as TransactionAmountProvider).removeTransactonsAmount(transactionsData);
+                (provider as TransactionAmountProvider)
+                    .removeTransactonsAmount(transactionsData);
               } else {
                 // Remove income data
-                (provider as IncomeTransactionProvider).removeIncome(transactionsData);
+                (provider as IncomeTransactionProvider)
+                    .removeIncome(transactionsData);
               }
               Navigator.pop(context);
             },
@@ -360,54 +325,23 @@ Future<void> _showDeleteConfirmationDialog(
   );
 }
 
-
-void _showUpdateDialog(BuildContext context, TransactionAmountProvider provider,
-    AddTransactionsData oldTransaction) {
-  TextEditingController amountController =
-  TextEditingController(text: oldTransaction.expensesPrice.toString());
-
-  showDialog(
+Future<void> _showUpdateBottomSheet(
+  BuildContext context,
+  AddTransactionsData transaction,
+    bool isExpenses, // Added parameter
+    dynamic provider, // Changed to dynamic type
+) async {
+  await showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
+    backgroundColor: ColorsPalette.backgroundLight,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+    ),
     builder: (context) {
-      return AlertDialog(
-        title: const Text('Update Expense'),
-        content: TextField(
-          controller: amountController,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          decoration: InputDecoration(
-            label: const Text("New Amount"),
-            prefixIcon: Icon(
-              oldTransaction.categoryData.icon,
-              color: oldTransaction.categoryData.color,
-            ),
-            hintText: "100 e.g",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // final newAmount = double.tryParse(amountController.text);
-              // if (newAmount != null && newAmount > 0) {
-              //   final newTransaction = AddTransactionsData(
-              //       id: oldTransaction.id,
-              //       categoryData: oldTransaction.categoryData,
-              //       expensesPrice: newAmount,
-              //       date: oldTransaction.date);
-              //   provider.updateTransaction(newTransaction);
-              //   Navigator.pop(context);
-              // }
-            },
-            child: const Text('Update'),
-          ),
-        ],
+      return FractionallySizedBox(
+        heightFactor: 0.9,
+        child: AddingData(transactions: transaction,)
       );
     },
   );

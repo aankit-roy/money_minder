@@ -14,6 +14,20 @@ class AddTransactionsData {
     required this.date,
   });
 
+  AddTransactionsData copyWith({
+    int? id,
+    CategoryData? categoryData,
+    double? expensesPrice,
+    DateTime? date,
+  }) {
+    return AddTransactionsData(
+      id: id ?? this.id,
+      categoryData: categoryData ?? this.categoryData,
+      expensesPrice: expensesPrice ?? this.expensesPrice,
+      date: date ?? this.date,
+    );
+  }
+
  
 
 

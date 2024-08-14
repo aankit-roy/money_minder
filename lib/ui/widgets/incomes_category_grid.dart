@@ -9,20 +9,54 @@ import 'package:money_minder/models/add_transactions_data.dart'; // Assuming you
 
 class IncomeCategoryGrid extends StatefulWidget {
   final List<CategoryData> categories;
+  final AddTransactionsData? transactionData;
 
-  const IncomeCategoryGrid({super.key, required this.categories});
+  const IncomeCategoryGrid({
+    super.key,
+    required this.categories,
+    this.transactionData,
+  });
 
   @override
   State<IncomeCategoryGrid> createState() => _IncomeCategoryGridState();
 }
 
 class _IncomeCategoryGridState extends State<IncomeCategoryGrid> {
-  TextEditingController amountController = TextEditingController();
-  final TextEditingController categoryController = TextEditingController();
-
+  late TextEditingController amountController;
+  late TextEditingController categoryController;
   CategoryData? selectedCategory;
   final FocusNode categoryFocusNode = FocusNode();
   final FocusNode amountFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize controllers and selected category based on transactionData if available
+    amountController = TextEditingController(
+      text: widget.transactionData != null
+          ? widget.transactionData!.expensesPrice.toString()
+          : '',
+    );
+    categoryController = TextEditingController(
+      text: widget.transactionData != null
+          ? widget.transactionData!.categoryData.name
+          : '',
+    );
+    selectedCategory = widget.transactionData?.categoryData;
+  }
+
+  @override
+  // void initState() {
+  //   super.initState();
+  //   amountController = TextEditingController(
+  //     text: widget.transactionData?.expensesPrice.toString() ?? '',
+  //   );
+  //   categoryController = TextEditingController(
+  //     text: widget.transactionData?.categoryData.name ?? '',
+  //   );
+  //   selectedCategory = widget.transactionData?.categoryData;
+  // }
 
   @override
   void dispose() {
@@ -86,9 +120,12 @@ class _IncomeCategoryGridState extends State<IncomeCategoryGrid> {
             child: const Text("Cancel")),
         ElevatedButton(
           onPressed: () {
-            _addIncome(context);
+            widget.transactionData != null
+                ? _updateIncomeTransaction(context)
+                : _addIncome(context);
           },
-          child: const Text('Add Income'),
+          child: Text(
+              widget.transactionData != null ? 'Update Income' : 'Add Income'),
         ),
       ],
     );
@@ -182,7 +219,9 @@ class _IncomeCategoryGridState extends State<IncomeCategoryGrid> {
         keyboardType: TextInputType.number,
         textInputAction: TextInputAction.done,
         onSubmitted: (value) {
-          _addIncome(context);
+          widget.transactionData != null
+          ? _updateIncomeTransaction(context)
+          : _addIncome(context);
         },
         decoration: InputDecoration(
           label: const Text("  Income"),
@@ -219,4 +258,36 @@ class _IncomeCategoryGridState extends State<IncomeCategoryGrid> {
       amountFocusNode.requestFocus();
     }
   }
+
+  void _updateIncomeTransaction(BuildContext context){
+
+    final amount = double.tryParse(amountController.text);
+    if (selectedCategory == null) {
+      Fluttertoast.showToast(msg: "Please select your category");
+      categoryFocusNode.requestFocus();
+      return;
+    }
+    if (amount != null && amount > 0 && selectedCategory != null) {
+      final updatedTransaction = widget.transactionData!.copyWith(
+        categoryData: selectedCategory!,
+        expensesPrice: amount,
+      );
+
+      context
+          .read<IncomeTransactionProvider>()
+          .updateIncome(updatedTransaction);
+
+      print('Updated Transaction:');
+      print('Categor^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^y: ${updatedTransaction.categoryData.name}');
+      print('Expenses^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^: ${updatedTransaction.expensesPrice}');
+      Navigator.pop(context);
+    } else {
+      Fluttertoast.showToast(msg: "Please enter a valid amount");
+      amountFocusNode.requestFocus();
+    }
+  }
+
+
+
+
 }

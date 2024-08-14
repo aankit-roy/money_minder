@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:money_minder/data/database/database_helper.dart';
@@ -10,21 +11,53 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class ExpensesCategoryGrid extends StatefulWidget {
   final List<CategoryData> categories;
+  final AddTransactionsData? transactionData; // Optional parameter for editing
 
-  const ExpensesCategoryGrid({super.key, required this.categories});
+  const ExpensesCategoryGrid({
+    super.key,
+    required this.categories,
+    this.transactionData,
+  });
 
   @override
   State<ExpensesCategoryGrid> createState() => _ExpensesCategoryGridState();
 }
 
 class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
-  TextEditingController amountController = TextEditingController();
-
-  final TextEditingController categoryController = TextEditingController();
-
+  late TextEditingController amountController;
+  late TextEditingController categoryController;
   CategoryData? selectedCategory;
   final FocusNode categoryFocusNode = FocusNode();
   final FocusNode amountFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize controllers and selected category based on transactionData if available
+    amountController = TextEditingController(
+      text: widget.transactionData != null
+          ? widget.transactionData!.expensesPrice.toString()
+          : '',
+    );
+    categoryController = TextEditingController(
+      text: widget.transactionData != null
+          ? widget.transactionData!.categoryData.name
+          : '',
+    );
+    selectedCategory = widget.transactionData?.categoryData;
+  }
+  @override
+  // void initState() {
+  //   super.initState();
+  //   amountController = TextEditingController(
+  //     text: widget.transactionData?.expensesPrice.toString() ?? '',
+  //   );
+  //   categoryController = TextEditingController(
+  //     text: widget.transactionData?.categoryData.name ?? '',
+  //   );
+  //   selectedCategory = widget.transactionData?.categoryData;
+  // }
 
   @override
   void dispose() {
@@ -46,7 +79,9 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
           Container(
             height: size.height * .3,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12), color: Colors.white),
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -65,7 +100,7 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
                 ),
                 amountTextField(context),
                 const SizedBox(height: 16),
-                cancelAndAddButton(context),
+                cancelAndActionButton(context),
               ],
             ),
           ),
@@ -77,7 +112,7 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
     );
   }
 
-  Row cancelAndAddButton(BuildContext context) {
+  Row cancelAndActionButton(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -88,9 +123,13 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
             child: const Text("Cancel")),
         ElevatedButton(
           onPressed: () {
-            _addTransaction3(context);
+            widget.transactionData != null
+                ? _updateTransaction(context)
+                : _addTransaction(context);
           },
-          child: const Text('Add Expense'),
+          child: Text(widget.transactionData != null
+              ? 'Update Expense'
+              : 'Add Expense'),
         ),
       ],
     );
@@ -100,7 +139,8 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
       BuildContext context,
       TextEditingController textEditingController,
       FocusNode focusNode,
-      VoidCallback onFieldSubmitted) {
+      VoidCallback onFieldSubmitted,
+      ) {
     return Padding(
       padding: const EdgeInsets.all(14.0),
       child: CategoryTextField(textEditingController, focusNode, context),
@@ -108,7 +148,8 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
   }
 
   FutureOr<Iterable<CategoryData>> optionBuilder(
-      TextEditingValue textEditingValue) {
+      TextEditingValue textEditingValue,
+      ) {
     return widget.categories.where((CategoryData option) {
       return option.name
           .toLowerCase()
@@ -119,7 +160,8 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
   Widget optionsViewBuilder(
       BuildContext context,
       AutocompleteOnSelected<CategoryData> onSelected,
-      Iterable<CategoryData> options) {
+      Iterable<CategoryData> options,
+      ) {
     return Align(
       alignment: Alignment.topLeft,
       child: Material(
@@ -134,9 +176,6 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
               return GestureDetector(
                 onTap: () {
                   onSelected(option);
-                  // setState(() {
-                  //   selectedCategory = option;
-                  // });
                   FocusScope.of(context).requestFocus(amountFocusNode);
                   categoryController.text = option.name;
                 },
@@ -152,15 +191,45 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
     );
   }
 
-  TextField CategoryTextField(TextEditingController textEditingController,
-      FocusNode focusNode, BuildContext context) {
+  // TextField CategoryTextField(
+  //   TextEditingController textEditingController,
+  //   FocusNode focusNode,
+  //   BuildContext context,
+  // ) {
+  //   return TextField(
+  //     controller: textEditingController,
+  //     autofocus: true,
+  //     focusNode: focusNode,
+  //     keyboardType: TextInputType.text,
+  //     decoration: InputDecoration(
+  //       label: const Text("Category"),
+  //       prefixIcon: selectedCategory != null
+  //           ? Icon(selectedCategory!.icon, color: selectedCategory!.color)
+  //           : null,
+  //       hintText: "Category",
+  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+  //     ),
+  //     onSubmitted: (value) {
+  //       if (selectedCategory != null) {
+  //         FocusScope.of(context).requestFocus(amountFocusNode);
+  //       } else {
+  //         Fluttertoast.showToast(msg: "Please select a category");
+  //         categoryFocusNode.requestFocus();
+  //       }
+  //     },
+  //   );
+  // }
+
+  TextField CategoryTextField(
+      TextEditingController textEditingController,
+      FocusNode focusNode,
+      BuildContext context,
+      ) {
     return TextField(
       controller: textEditingController,
       autofocus: true,
       focusNode: focusNode,
       keyboardType: TextInputType.text,
-      // onSubmitted: onSubmitted ,
-
       decoration: InputDecoration(
         label: const Text("Category"),
         prefixIcon: selectedCategory != null
@@ -180,22 +249,22 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
     );
   }
 
+
   Padding amountTextField(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(14.0),
       child: TextField(
         controller: amountController,
         focusNode: amountFocusNode,
-        // autofocus: true,
         keyboardType: TextInputType.number,
-        // onSubmitted: onSubmitted ,
         textInputAction: TextInputAction.done,
         onSubmitted: (value) {
-          _addTransaction3(context);
+          widget.transactionData != null
+              ? _updateTransaction(context)
+              : _addTransaction(context);
         },
-
         decoration: InputDecoration(
-          label: const Text("  Expense"),
+          label: const Text("Expense"),
           prefixIcon: const Icon(
             Icons.currency_rupee_outlined,
             color: ColorsPalette.primaryColor,
@@ -207,7 +276,7 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
     );
   }
 
-  _addTransaction3(BuildContext context) async {
+  void _addTransaction(BuildContext context) async {
     final amount = double.tryParse(amountController.text);
     if (selectedCategory == null) {
       Fluttertoast.showToast(msg: "Please select your category");
@@ -216,48 +285,45 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
     }
     if (amount != null && amount > 0 && selectedCategory != null) {
       final transaction = AddTransactionsData(
-          categoryData: selectedCategory!,
-          expensesPrice: amount,
-          date: DateTime.now());
-
-      // Insert transaction into the database
-      // DatabaseHelper dbHelper = DatabaseHelper();
-      //  dbHelper.insertTransaction2(transaction);
-
-
+        categoryData: selectedCategory!,
+        expensesPrice: amount,
+        date: DateTime.now(),
+      );
 
       context
           .read<TransactionAmountProvider>()
           .addTransactonsAmount(transaction);
-      Navigator.pop(context); // Go back to the previous screen
+      Navigator.pop(context);
     } else {
       Fluttertoast.showToast(msg: "Please enter a valid amount");
       amountFocusNode.requestFocus();
     }
   }
 
-  Future<bool> _updateExistingTransaction(
-      AddTransactionsData newTransaction) async {
-    // Assuming DatabaseHelper has a method to get transactions by category and date
-    DatabaseHelper dbHelper = DatabaseHelper();
-    final existingTransactions =
-        await dbHelper.getTransactionsByCategoryAndDate(
-      newTransaction.categoryData.name,
-      newTransaction.date,
-    );
-
-    if (existingTransactions.isNotEmpty) {
-      // Update the existing entry with the new amount
-      final existingTransaction = existingTransactions.first;
-      existingTransaction.expensesPrice += newTransaction.expensesPrice;
-      await dbHelper.updateTransaction(
-          existingTransaction); // Assuming DatabaseHelper has an update method
-      // context
-      //     .read<TransactionAmountProvider>()
-      //     .updateTransaction(existingTransaction); // Update provider data
-      return true;
+  void _updateTransaction(BuildContext context) async {
+    final amount = double.tryParse(amountController.text);
+    if (selectedCategory == null) {
+      Fluttertoast.showToast(msg: "Please select your category");
+      categoryFocusNode.requestFocus();
+      return;
     }
+    if (amount != null && amount > 0 && selectedCategory != null) {
+      final updatedTransaction = widget.transactionData!.copyWith(
+        categoryData: selectedCategory!,
+        expensesPrice: amount,
+      );
 
-    return false;
+      context
+          .read<TransactionAmountProvider>()
+          .updateTransaction(updatedTransaction);
+
+      print('Updated Transaction:');
+      print('Categor^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^y: ${updatedTransaction.categoryData.name}');
+      print('Expenses^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^: ${updatedTransaction.expensesPrice}');
+      Navigator.pop(context);
+    } else {
+      Fluttertoast.showToast(msg: "Please enter a valid amount");
+      amountFocusNode.requestFocus();
+    }
   }
 }
