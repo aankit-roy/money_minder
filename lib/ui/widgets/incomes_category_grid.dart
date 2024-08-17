@@ -275,9 +275,7 @@ class _IncomeCategoryGridState extends State<IncomeCategoryGrid> {
           .read<IncomeTransactionProvider>()
           .updateIncome(updatedTransaction);
 
-      print('Updated Transaction:');
-      print('Categor^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^y: ${updatedTransaction.categoryData.name}');
-      print('Expenses^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^: ${updatedTransaction.expensesPrice}');
+
       Navigator.pop(context);
     } else {
       Fluttertoast.showToast(msg: "Please enter a valid amount");
