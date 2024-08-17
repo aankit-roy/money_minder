@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:money_minder/data/database/database_helper.dart';
 import 'package:money_minder/data/database/income_database_helper.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
@@ -6,6 +7,8 @@ import 'package:money_minder/models/category_list.dart';
 import 'package:money_minder/models/pie_chart_data.dart';
 import 'package:money_minder/provider/general_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
+import 'package:money_minder/services/Ads_Services/admob_services.dart';
+import 'package:money_minder/ui/widgets/banner_ad_widget.dart';
 import 'package:money_minder/ui/widgets/custome_period_button.dart';
 import 'package:money_minder/ui/widgets/expenses_category_grid.dart';
 import 'package:money_minder/ui/widgets/incomes_category_grid.dart';
@@ -30,11 +33,15 @@ class _AddingDataState extends State<AddingData> {
   List<CategoryData> incomeCategories = [];
 
   late bool _isExpensesSelected;
+  final AdSize adSize= AdSize.largeBanner;
+  final AddingDataBannerAdId= AdmobServices.BANNER_Ad_Unit;
+
 
   @override
   void initState() {
     super.initState();
     _loadCategories();
+
   }
 
   Future<void> _loadCategories() async {
@@ -57,14 +64,6 @@ class _AddingDataState extends State<AddingData> {
   }
 
 
-
-  //
-  // @override
-  // void dispose() {
-  //   titleController.dispose();
-  //   valueController.dispose();
-  //   super.dispose();
-  // }
 
   @override
 
@@ -115,14 +114,19 @@ class _AddingDataState extends State<AddingData> {
         ),
 
 
-        Expanded(
-          child: _isExpensesSelected
-              ? ExpensesCategoryGrid(categories: categories,transactionData:widget.transactions ,)
-              :  IncomeCategoryGrid(categories: incomeCategories,transactionData: widget.transactions,)
-        ),
+        _isExpensesSelected
+            ? ExpensesCategoryGrid(categories: categories,transactionData:widget.transactions ,)
+            :  IncomeCategoryGrid(categories: incomeCategories,transactionData: widget.transactions,),
+
+         BannerAdWidget(adSize:adSize,adUnitId:  AddingDataBannerAdId),
+
+
+
       ],
     );
   }
+
+
 
 
 

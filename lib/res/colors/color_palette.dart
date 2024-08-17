@@ -1,6 +1,8 @@
 
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class ColorsPalette{
   // Primary Colors
   static const Color primaryColor = Color(0xFF87CEEB); // Sky Blue
@@ -34,6 +36,11 @@ class ColorsPalette{
   static const Color borderColor = Color(0xFFB0C4DE); // Light Steel Blue
   static const Color greencColor = Color(0xFF5EDE13); // Light Steel Blue
   static const Color blueColor = Color(0xff2196f3ff); // Light Steel Blue
+
+
+
+// some extra color
+  static var blackColor= Colors.black54;
 
 
 

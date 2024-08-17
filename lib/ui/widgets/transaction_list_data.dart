@@ -131,11 +131,13 @@ class TransactionDataList extends StatelessWidget {
                             context, isExpenses, provider, transaction);
                       },
                       onTap: () {
+
                         final provider =
                             isExpenses ? expensesProvider : incomeProvider;
                         _showUpdateBottomSheet(
                             context, transaction, isExpenses, provider);
                       },
+
                     );
                   }),
                 ],

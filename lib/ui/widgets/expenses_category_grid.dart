@@ -104,9 +104,7 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 12,
-          ),
+
         ],
       ),
     );

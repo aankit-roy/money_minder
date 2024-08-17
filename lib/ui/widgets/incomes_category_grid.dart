@@ -101,9 +101,7 @@ class _IncomeCategoryGridState extends State<IncomeCategoryGrid> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 12,
-          ),
+
         ],
       ),
     );

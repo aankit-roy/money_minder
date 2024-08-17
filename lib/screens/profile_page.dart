@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/all_links.dart';
+import 'package:money_minder/ui/widgets/banner_ad_widget.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../services/Ads_Services/admob_services.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -14,6 +18,10 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final InAppReview _inAppReview = InAppReview.instance;
+
+  final AdSize adSize= AdSize.largeBanner;
+  final profileBannerAdId= AdmobServices.BANNER_Ad_Unit;
+
 
   final List<Map<String, dynamic>> items = [
     {'title': 'Recommend to friends', 'icon': Icons.thumb_up_alt_sharp},
@@ -30,7 +38,24 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Stack(
         children: [
           ProfileBackground(size: size),
-          ProfileDetailsCard(size: size, items: items, inAppReview: _inAppReview),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+               // Card(
+               //   shape: RoundedRectangleBorder(
+               //     borderRadius: BorderRadius.circular(12),
+               //   ),
+               //   child: SizedBox(
+               //     height: 60,
+               //       width: size.width*.85,
+               //   ),
+               //
+               // ),
+              ProfileDetailsCard(size: size, items: items, inAppReview: _inAppReview),
+              BannerAdWidget(adUnitId: profileBannerAdId, adSize: adSize),
+            ],
+          ),
+
         ],
       ),
     );
