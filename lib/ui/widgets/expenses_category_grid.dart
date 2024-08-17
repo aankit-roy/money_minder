@@ -264,7 +264,7 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
         decoration: InputDecoration(
           label: const Text("Expense"),
           prefixIcon: const Icon(
-            Icons.currency_rupee_outlined,
+            Icons.monetization_on_outlined,
             color: ColorsPalette.primaryColor,
           ),
           hintText: "100 e.g",

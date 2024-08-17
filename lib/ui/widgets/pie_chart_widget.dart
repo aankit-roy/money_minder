@@ -1,5 +1,7 @@
 
 
+
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/category_list.dart';
@@ -10,6 +12,7 @@ import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/components/formated_value.dart';
 import 'package:money_minder/res/constants/currency_symbol.dart';
 import 'package:money_minder/res/constants/text_size.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class PieChartWidget extends StatefulWidget {
@@ -89,10 +92,10 @@ class _PieChartWidgetState extends State<PieChartWidget> {
              FormattedValueWidget(value: widget.totalAmount, color: ColorsPalette.textPrimary),
           ],
         )
-            : const Text(
+            :   Text(
           'No data',
           style: TextStyle(
-            fontSize: TextSizes.mediumHeadingMin,
+            fontSize: TextSizes.mediumHeadingMin(context),
             fontWeight: FontWeight.bold,
             color: ColorsPalette.textPrimary,
           ),
@@ -191,19 +194,19 @@ class BalanceWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          '${availableBalance < 0 ? '-' : ''}$currencySymbol${availableBalance.abs().toStringAsFixed(2)}',
+          '${availableBalance < 0 ? '-' : ''}${availableBalance.abs().toStringAsFixed(2)}',
           style: TextStyle(
-            fontSize: TextSizes.mediumHeadingMax,
+            fontSize: TextSizes.mediumHeadingMax(context),
             fontWeight: FontWeight.w800,
             color: textColor,
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.all(8.0),
+         Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Text(
             'Available Balance:',
             style: TextStyle(
-              fontSize: TextSizes.normalBodyTextMax,
+              fontSize: TextSizes.normalBodyTextMax(context),
               fontWeight: FontWeight.w400,
               color: ColorsPalette.textSecondary,
             ),

@@ -18,7 +18,7 @@ class FormattedValueWidget extends StatelessWidget {
     return Text(
       formattedValue,
       style: TextStyle(
-          fontSize: TextSizes.smallHeadingMax,
+          fontSize: TextSizes.smallHeadingMax(context),
           fontWeight: FontWeight.w500,
           color: color),
 

@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:money_minder/models/time_period.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 
@@ -54,9 +57,9 @@ class PieChart2State extends State {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildPeriodButton('Daily', TimePeriod.daily),
-              _buildPeriodButton('Weekly', TimePeriod.weekly),
-              _buildPeriodButton('Monthly', TimePeriod.monthly),
+              _buildPeriodButton('Daily', TimePeriod.daily,context),
+              _buildPeriodButton('Weekly', TimePeriod.weekly,context),
+              _buildPeriodButton('Monthly', TimePeriod.monthly,context),
             ],
           ),
         ),
@@ -98,20 +101,20 @@ class PieChart2State extends State {
             Text(
               '₹${totalAmount.toStringAsFixed(2)}',
 
-              style: const TextStyle(
-                fontSize: TextSizes.mediumHeadingMin,
+              style:  TextStyle(
+                fontSize: TextSizes.mediumHeadingMin(context),
                 fontWeight: FontWeight.bold,
                 color: ColorsPalette.textPrimary,
               ),),
           ],
         ),
         SizedBox(height: size.height* .1), // Add some space between the pie chart and the text below
-        const Column(
+         Column(
           children: [
             Text(
               "Available balance",
               style: TextStyle(
-                fontSize: TextSizes.mediumHeadingMax,
+                fontSize: TextSizes.mediumHeadingMax(context),
                 fontWeight: FontWeight.w800,
                 color: ColorsPalette.textSecondary,
               ),
@@ -121,7 +124,7 @@ class PieChart2State extends State {
               child: Text(
                 "₹4000",
                 style: TextStyle(
-                  fontSize: TextSizes.mediumHeadingMin,
+                  fontSize: TextSizes.mediumHeadingMin(context),
                   fontWeight: FontWeight.w400,
                   color: ColorsPalette.greencColor,
                 ),
@@ -178,7 +181,7 @@ class PieChart2State extends State {
 
     return sections;
   }
-  Widget _buildPeriodButton(String text, TimePeriod period) {
+  Widget _buildPeriodButton(String text, TimePeriod period, BuildContext context) {
 
     final isSelected = selectedPeriod == period;
     final buttonColor = isSelected ? ColorsPalette.primaryDark: Colors.white;

@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
@@ -8,6 +10,7 @@ import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
 import 'package:money_minder/screens/adding_data.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class TransactionDataList extends StatelessWidget {
@@ -112,15 +115,15 @@ class TransactionDataList extends StatelessWidget {
                       ),
                       title: Text(
                         transaction.categoryData.name,
-                        style: const TextStyle(
-                            fontSize: TextSizes.smallHeadingMax,
+                        style: TextStyle(
+                            fontSize: TextSizes.smallHeadingMax(context),
                             fontWeight: FontWeight.w600,
                             color: ColorsPalette.textSecondary),
                       ),
                       trailing: Text(
-                        '₹${transaction.expensesPrice.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: TextSizes.smallHeadingMax,
+                        transaction.expensesPrice.toStringAsFixed(2),
+                        style:  TextStyle(
+                          fontSize: TextSizes.smallHeadingMax(context),
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -197,7 +200,7 @@ class ExpenseAndIncomeWidget extends StatelessWidget {
               style: TextStyle(
                 color: isExpenses ? Colors.red : ColorsPalette.greencColor,
                 fontWeight: FontWeight.w600,
-                fontSize: TextSizes.smallHeadingMin,
+                fontSize: TextSizes.smallHeadingMin(context),
               ),
             ),
           ),
@@ -229,8 +232,8 @@ class DateWidget extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: Text(
         date,
-        style: const TextStyle(
-            fontSize: TextSizes.normalBodyTextMax,
+        style:  TextStyle(
+            fontSize: TextSizes.normalBodyTextMax(context),
             fontWeight: FontWeight.bold,
             color: ColorsPalette.textSecondary),
       ),

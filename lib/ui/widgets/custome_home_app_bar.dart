@@ -1,4 +1,5 @@
 
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money_minder/provider/general_provider.dart';
@@ -113,27 +114,27 @@ class _TopBarState extends State<_TopBar> {
           children: [
             Text(
               formattedMonth,  // Short month
-              style: const TextStyle(
-                fontSize: TextSizes.mediumHeadingMax,
+              style: TextStyle(
+                fontSize: TextSizes.mediumHeadingMax(context),
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               formattedYear,  // Year
-              style: const TextStyle(
-                fontSize: TextSizes.mediumHeadingMin,
+              style:  TextStyle(
+                fontSize: TextSizes.mediumHeadingMin(context),
                 fontWeight: FontWeight.w300,
               ),
             ),
           ],
         ),
-        const Row(
+         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               "Money Minder",
               style: TextStyle(
-                fontSize: TextSizes.mediumHeadingMax,
+                fontSize: TextSizes.mediumHeadingMax(context),
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -167,32 +168,3 @@ class _TopBarState extends State<_TopBar> {
   }
 }
 
-class HomeTabView extends StatelessWidget {
-  final Size size;
-  final TabController tabController;
-
-  const HomeTabView({super.key, required this.size, required this.tabController});
-
-  @override
-  Widget build(BuildContext context) {
-    return TabBar(
-      controller: tabController,
-      labelColor: ColorsPalette.textPrimary,
-      unselectedLabelColor: ColorsPalette.textSecondary,
-      indicatorColor: ColorsPalette.white,
-      indicatorWeight: 0,
-      labelStyle: const TextStyle(
-        fontSize: TextSizes.smallHeadingMax,
-        fontWeight: FontWeight.w400,
-      ),
-      indicator: const BoxDecoration(
-        color: ColorsPalette.white,
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-      ),
-      tabs: const [
-        Tab(text: "Expenses"),
-        Tab(text: "Income"),
-      ],
-    );
-  }
-}

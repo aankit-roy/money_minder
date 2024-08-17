@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "537014703002",
+    "project_id": "money-minder-3bc35",
+    "storage_bucket": "money-minder-3bc35.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537014703002:android:73158f19a3d306daace023",
+        "android_client_info": {
+          "package_name": "com.ankit.money_minder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC84zmBaMYnb-_qB1nH0s4qzra4n_GFeJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
