@@ -6,6 +6,7 @@ import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
+import 'package:money_minder/services/analytic_services/analytics_services.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -276,6 +277,7 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
 
   void _addTransaction(BuildContext context) async {
     final amount = double.tryParse(amountController.text);
+    // final  AnalyticServices _analyticsService = AnalyticServices();
     if (selectedCategory == null) {
       Fluttertoast.showToast(msg: "Please select your category");
       categoryFocusNode.requestFocus();
@@ -291,6 +293,10 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
       context
           .read<TransactionAmountProvider>()
           .addTransactonsAmount(transaction);
+
+      // Log the event to Firebase Analytics
+      // await _analyticsService.logAddExpenses("Expenses added");
+
       Navigator.pop(context);
     } else {
       Fluttertoast.showToast(msg: "Please enter a valid amount");

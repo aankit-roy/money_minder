@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:money_minder/models/category_list.dart';
-import 'package:money_minder/models/add_transactions_data.dart'; // Assuming you have this file
+import 'package:money_minder/models/add_transactions_data.dart'; // Assuming you have this file9
 
 class IncomeCategoryGrid extends StatefulWidget {
   final List<CategoryData> categories;
@@ -45,18 +45,6 @@ class _IncomeCategoryGridState extends State<IncomeCategoryGrid> {
     );
     selectedCategory = widget.transactionData?.categoryData;
   }
-
-  @override
-  // void initState() {
-  //   super.initState();
-  //   amountController = TextEditingController(
-  //     text: widget.transactionData?.expensesPrice.toString() ?? '',
-  //   );
-  //   categoryController = TextEditingController(
-  //     text: widget.transactionData?.categoryData.name ?? '',
-  //   );
-  //   selectedCategory = widget.transactionData?.categoryData;
-  // }
 
   @override
   void dispose() {

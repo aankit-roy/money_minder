@@ -63,92 +63,91 @@ class TransactionDataList extends StatelessWidget {
         return bDate.compareTo(aDate); // Default descending order
       });
 
-    return SizedBox(
-      height: size.height * .5,
-      child: ListView.builder(
-        itemCount: sortedDates.length,
-        itemBuilder: (context, index) {
-          String date = sortedDates[index];
-          List<AddTransactionsData> transactions = transByDate[date]!;
-          double totalAmount =
-              transactions.fold(0.0, (sum, item) => sum + item.expensesPrice);
+    return ListView.builder(
+      itemCount: sortedDates.length,
+      physics: const NeverScrollableScrollPhysics(), // Disable the internal scrolling
+      shrinkWrap: true, // Make ListView occupy only the space it needs
+      itemBuilder: (context, index) {
+        String date = sortedDates[index];
+        List<AddTransactionsData> transactions = transByDate[date]!;
+        double totalAmount =
+            transactions.fold(0.0, (sum, item) => sum + item.expensesPrice);
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                color: ColorsPalette.white,
-                borderRadius: BorderRadius.circular(18.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 5.0,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  DateWidget(date: date),
-                  ExpenseAndIncomeWidget(
-                    totalAmount: totalAmount,
-                    isExpenses: isExpenses,
-                  ),
-                  ...transactions.map((transaction) {
-                    return ListTile(
-                      leading: Container(
-                        width: 40.0, // Adjust the size as needed
-                        height: 40.0, // Adjust the size as needed
-                        decoration: BoxDecoration(
-                          color: transaction.categoryData.color.withOpacity(
-                              0.2), // Light background color for the icon
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            transaction.categoryData.icon,
-                            color: transaction.categoryData.color,
-                            size: 24.0, // Adjust the icon size as needed
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        transaction.categoryData.name,
-                        style: TextStyle(
-                            fontSize: TextSizes.smallHeadingMax(context),
-                            fontWeight: FontWeight.w600,
-                            color: ColorsPalette.textSecondary),
-                      ),
-                      trailing: Text(
-                        transaction.expensesPrice.toStringAsFixed(2),
-                        style:  TextStyle(
-                          fontSize: TextSizes.smallHeadingMax(context),
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      onLongPress: () {
-                        final provider =
-                            isExpenses ? expensesProvider : incomeProvider;
-                        _showDeleteConfirmationDialog(
-                            context, isExpenses, provider, transaction);
-                      },
-                      onTap: () {
-
-                        final provider =
-                            isExpenses ? expensesProvider : incomeProvider;
-                        _showUpdateBottomSheet(
-                            context, transaction, isExpenses, provider);
-                      },
-
-                    );
-                  }),
-                ],
-              ),
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: ColorsPalette.white,
+              borderRadius: BorderRadius.circular(18.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 5.0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                DateWidget(date: date),
+                ExpenseAndIncomeWidget(
+                  totalAmount: totalAmount,
+                  isExpenses: isExpenses,
+                ),
+                ...transactions.map((transaction) {
+                  return ListTile(
+                    leading: Container(
+                      width: 40.0, // Adjust the size as needed
+                      height: 40.0, // Adjust the size as needed
+                      decoration: BoxDecoration(
+                        color: transaction.categoryData.color.withOpacity(
+                            0.2), // Light background color for the icon
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          transaction.categoryData.icon,
+                          color: transaction.categoryData.color,
+                          size: 24.0, // Adjust the icon size as needed
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      transaction.categoryData.name,
+                      style: TextStyle(
+                          fontSize: TextSizes.smallHeadingMax(context),
+                          fontWeight: FontWeight.w600,
+                          color: ColorsPalette.textSecondary),
+                    ),
+                    trailing: Text(
+                      transaction.expensesPrice.toStringAsFixed(2),
+                      style:  TextStyle(
+                        fontSize: TextSizes.smallHeadingMax(context),
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    onLongPress: () {
+                      final provider =
+                          isExpenses ? expensesProvider : incomeProvider;
+                      _showDeleteConfirmationDialog(
+                          context, isExpenses, provider, transaction);
+                    },
+                    onTap: () {
+
+                      final provider =
+                          isExpenses ? expensesProvider : incomeProvider;
+                      _showUpdateBottomSheet(
+                          context, transaction, isExpenses, provider);
+                    },
+
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

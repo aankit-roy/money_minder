@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final InAppReview _inAppReview = InAppReview.instance;
 
   final AdSize adSize= AdSize.largeBanner;
-  final profileBannerAdId= AdmobServices.BANNER_Ad_Unit;
+  final profileBannerAdId= AdmobServices.BANNER_Ad_Unit2;
 
 
   final List<Map<String, dynamic>> items = [

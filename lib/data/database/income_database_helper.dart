@@ -25,9 +25,10 @@ class IncomeDatabaseHelper {
     String path = join(await getDatabasesPath(), 'income_minder.db');
     print('Database path ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++: $path');  // Add this line
     return openDatabase(
-      path, version: 1,
+      path, version: 3,
       onCreate: _onCreate,
-      // onUpgrade: _onUpgrade
+
+      onUpgrade: _onUpgrade
     );
   }
 
@@ -55,6 +56,12 @@ class IncomeDatabaseHelper {
 
     _insertInitialData(db);
   }
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 3) {
+      // Adding the new categories
+      await _insertInitialData(db);
+    }
+  }
 
 
 
@@ -63,7 +70,6 @@ class IncomeDatabaseHelper {
     final List<CategoryData> categories = [
       CategoryData(name: 'Salary', icon: Icons.monetization_on, color: Colors.green),
       CategoryData(name: 'Investment Returns', icon: Icons.trending_up, color: Colors.blue),
-      CategoryData(name: 'Gifts', icon: Icons.card_giftcard, color: Colors.pink),
       CategoryData(name: 'Gifts', icon: Icons.card_giftcard, color: Colors.pink),
       CategoryData(name: 'Freelance Work', icon: Icons.work, color: Colors.orange),
       CategoryData(name: 'Rental Income', icon: Icons.house, color: Colors.teal),
@@ -74,6 +80,15 @@ class IncomeDatabaseHelper {
       CategoryData(name: 'Refunds', icon: Icons.undo, color: Colors.indigo),
       CategoryData(name: 'Side Hustles', icon: Icons.local_activity, color: Colors.deepOrange),
       CategoryData(name: 'Stock Sales', icon: Icons.show_chart, color: Colors.blueGrey),
+      CategoryData(name: 'Consulting Fees', icon: Icons.business_center, color: Colors.deepPurple),
+      CategoryData(name: 'Sales Commission', icon: Icons.trending_up, color: Colors.lightBlue),
+      CategoryData(name: 'Cashback Rewards', icon: Icons.credit_card, color: Colors.yellow),
+      CategoryData(name: 'Lottery Winnings', icon: Icons.attach_money, color: Colors.orangeAccent),
+      CategoryData(name: 'Rental Rebate', icon: Icons.home, color: Colors.brown),
+      CategoryData(name: 'Crowdfunding', icon: Icons.people, color: Colors.lime),
+      CategoryData(name: 'Patent Royalties', icon: Icons.lightbulb, color: Colors.amberAccent),
+      CategoryData(name: 'Earnings from Ads', icon: Icons.ads_click, color: Colors.blueAccent),
+      CategoryData(name: 'App Earnings', icon: Icons.app_registration, color: Colors.greenAccent),
       // Add more categories as needed
     ];
 

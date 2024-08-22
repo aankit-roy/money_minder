@@ -102,6 +102,7 @@ class _PieChartWidgetState extends State<PieChartWidget> {
         ),
         SizedBox(height: size.height * .1),
         const BalanceWidget(),
+        const SizedBox(height: 10,),
       ],
     );
   }
