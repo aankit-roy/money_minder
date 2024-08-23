@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -8,7 +7,6 @@ import 'package:money_minder/provider/stats_periods_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/screens/onboarding_page.dart';
-import 'package:money_minder/screens/root_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {

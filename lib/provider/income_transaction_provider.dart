@@ -123,9 +123,7 @@ class IncomeTransactionProvider extends ChangeNotifier {
         aggregatedData[income.categoryData] = income.expensesPrice;
       }
     }
-    print('Income Aggregated Data for************************************************ $timePeriod:');
     aggregatedData.forEach((category, amount) {
-      print('*************${category.name}: $amount');
     });
 
 
@@ -156,17 +154,13 @@ class IncomeTransactionProvider extends ChangeNotifier {
         break;
     }
 
-    print("Filtering from######################################### $startDate to $endDate");
-    print('Filtering for period: $timePeriod');
     // Filter transactions
     List<AddTransactionsData> filteredTransactions = _incomeList.where((transaction) {
       return transaction.date.isAfter(startDate) && transaction.date.isBefore(endDate);
     }).toList();
 
     // Debug prints to check filtered transactions count
-    print('Filtered Income  transactions count: ${filteredTransactions.length}');
     for (var transaction in filteredTransactions) {
-      print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
     }
 
     return filteredTransactions;
@@ -258,7 +252,6 @@ class IncomeTransactionProvider extends ChangeNotifier {
     return monthlyData.values.fold(0.0, (sum, value) => sum + value);
   }
   void printMonthlyExpenses() async {
-    print('Monthly Data for the Current Year:');
     final monthlyData = getMonthlyIncomesForCurrentYear();
 
     final monthNames = [
@@ -268,17 +261,14 @@ class IncomeTransactionProvider extends ChangeNotifier {
 
     monthlyData.forEach((month, total) {
       final monthName = monthNames[month - 1]; // Adjust for zero-based index
-      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$monthName: \$${total.toStringAsFixed(2)}');
     });
   }
   void printYearlyMonthExpenses() async {
 
     // Print Yearly Data for the Past 10 Years
-    print('Yearly Data for the Past 10 Years:');
     final yearlyData = getYearlyIncomesForPast10Years();
 
     yearlyData.forEach((year, total) {
-      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$year: \$${total.toStringAsFixed(2)}');
     });
   }
 

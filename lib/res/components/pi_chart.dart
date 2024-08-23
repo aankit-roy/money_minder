@@ -1,4 +1,3 @@
-import 'dart:js';
 
 import 'package:fl_chart/fl_chart.dart';
 
@@ -9,7 +8,6 @@ import 'package:money_minder/models/time_period.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 
@@ -45,7 +43,6 @@ class PieChart2State extends State {
     final totalAmount = transactionProvider.getTotalAmountForPeriod(selectedPeriod);
     final sections = _generateSections(aggregatedData,totalAmount);
 
-    print("total daily amount***************************************$totalAmount");
 
     return  Column(
       // mainAxisAlignment: MainAxisAlignment.center,

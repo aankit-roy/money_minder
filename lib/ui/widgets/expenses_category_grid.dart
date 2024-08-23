@@ -1,12 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:money_minder/data/database/database_helper.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
-import 'package:money_minder/services/analytic_services/analytics_services.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -321,9 +318,6 @@ class _ExpensesCategoryGridState extends State<ExpensesCategoryGrid> {
           .read<TransactionAmountProvider>()
           .updateTransaction(updatedTransaction);
 
-      print('Updated Transaction:');
-      print('Categor^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^y: ${updatedTransaction.categoryData.name}');
-      print('Expenses^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^: ${updatedTransaction.expensesPrice}');
       Navigator.pop(context);
     } else {
       Fluttertoast.showToast(msg: "Please enter a valid amount");

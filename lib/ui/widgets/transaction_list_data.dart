@@ -10,7 +10,6 @@ import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
 import 'package:money_minder/screens/adding_data.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class TransactionDataList extends StatelessWidget {

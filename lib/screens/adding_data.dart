@@ -4,7 +4,6 @@ import 'package:money_minder/data/database/database_helper.dart';
 import 'package:money_minder/data/database/income_database_helper.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
 import 'package:money_minder/models/category_list.dart';
-import 'package:money_minder/models/pie_chart_data.dart';
 import 'package:money_minder/provider/general_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/services/Ads_Services/admob_services.dart';

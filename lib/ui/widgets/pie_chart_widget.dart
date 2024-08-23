@@ -12,7 +12,6 @@ import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/components/formated_value.dart';
 import 'package:money_minder/res/constants/currency_symbol.dart';
 import 'package:money_minder/res/constants/text_size.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class PieChartWidget extends StatefulWidget {

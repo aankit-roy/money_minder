@@ -23,7 +23,6 @@ class IncomeDatabaseHelper {
 
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'income_minder.db');
-    print('Database path ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++: $path');  // Add this line
     return openDatabase(
       path, version: 3,
       onCreate: _onCreate,

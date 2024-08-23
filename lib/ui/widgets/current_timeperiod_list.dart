@@ -1,4 +1,3 @@
-import 'dart:js';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class CurrentTimeDataList extends StatelessWidget {

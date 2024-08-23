@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/provider/general_provider.dart';
 import 'package:money_minder/provider/income_transaction_provider.dart';
 import 'package:money_minder/provider/transaction_provider.dart';
-import 'package:money_minder/services/analytic_services/analytics_services.dart';
 import 'package:money_minder/ui/widgets/custome_home_app_bar.dart';
 import 'package:money_minder/ui/widgets/pie_chart_widget.dart';
 import 'package:money_minder/ui/widgets/transaction_list_data.dart';
@@ -23,7 +22,6 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late final TabController tabController;
 
-  final AnalyticServices _analyticsService = AnalyticServices();
 
   @override
   void initState() {

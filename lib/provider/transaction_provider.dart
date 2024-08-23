@@ -175,17 +175,13 @@ class TransactionAmountProvider extends ChangeNotifier {
         break;
     }
 
-    print("Filtering from######################################### $startDate to $endDate");
-    print('Filtering for period: $timePeriod');
 
     List<AddTransactionsData> filteredTransactions = _transactionList.where((transaction) {
       return transaction.date.isAfter(startDate) && transaction.date.isBefore(endDate);
     }).toList();
 
     // Debug prints to check filtered transactions count
-    print('Filtered transactions count: ${filteredTransactions.length}');
     for (var transaction in filteredTransactions) {
-      print('Transaction: ${transaction.date}, ${transaction.categoryData.name}, ${transaction.expensesPrice}');
     }
 
     return filteredTransactions;
@@ -281,7 +277,6 @@ class TransactionAmountProvider extends ChangeNotifier {
     return monthlyData.values.fold(0.0, (sum, value) => sum + value);
   }
   void printMonthlyExpenses() async {
-    print('Monthly Data for the Current Year:');
     final monthlyData = getMonthlyDataForCurrentYear();
 
     final monthNames = [
@@ -291,17 +286,14 @@ class TransactionAmountProvider extends ChangeNotifier {
 
     monthlyData.forEach((month, total) {
       final monthName = monthNames[month - 1]; // Adjust for zero-based index
-      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$monthName: \$${total.toStringAsFixed(2)}');
     });
   }
   void printYearlyMonthExpenses() async {
 
     // Print Yearly Data for the Past 10 Years
-    print('Yearly Data for the Past 10 Years:');
     final yearlyData = getYearlyDataForPast10Years();
 
     yearlyData.forEach((year, total) {
-      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$year: \$${total.toStringAsFixed(2)}');
     });
   }
 

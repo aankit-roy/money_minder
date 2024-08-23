@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
-import 'package:path/path.dart';
 
 class CustomPeriodButton extends StatelessWidget {
   final bool isSelected;

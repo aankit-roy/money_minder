@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:money_minder/services/Ads_Services/admob_services.dart';
 
 class BannerAdWidget extends StatefulWidget {
   final String adUnitId;
   final AdSize adSize;
 
   const BannerAdWidget({
-    Key? key,
+    super.key,
     required this.adUnitId,
     required this.adSize,
-  }) : super(key: key);
-
+  });
 
   @override
   _BannerAdWidgetState createState() => _BannerAdWidgetState();
@@ -36,21 +34,15 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
           setState(() {
             _isAdLoaded = true; // Set flag to true when the ad is loaded
           });
-
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           ad.dispose();
           setState(() {
             _isAdLoaded = false; // Handle ad load failure
           });
-
         },
-        onAdOpened: (Ad ad) {
-
-        },
-        onAdClosed: (Ad ad) {
-
-        },
+        onAdOpened: (Ad ad) {},
+        onAdClosed: (Ad ad) {},
       ),
       request: const AdRequest(),
     )..load();
