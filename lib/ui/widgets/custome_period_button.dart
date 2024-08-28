@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_size.dart';
@@ -22,7 +20,8 @@ class CustomPeriodButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? ColorsPalette.primaryDark : Colors.white,
-        foregroundColor: isSelected ? ColorsPalette.white : ColorsPalette.textPrimary,
+        foregroundColor:
+            isSelected ? ColorsPalette.white : ColorsPalette.textPrimary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -30,8 +29,8 @@ class CustomPeriodButton extends StatelessWidget {
       ),
       child: Text(
         label,
-        style:  TextStyle(
-          fontSize: TextSizes.mediumHeadingMax(context),
+        style: const TextStyle(
+          fontSize: TextSizes.mediumHeadingMax,
           fontWeight: FontWeight.w600,
         ),
       ),

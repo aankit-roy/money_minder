@@ -1,7 +1,3 @@
-
-
-
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/category_list.dart';
@@ -38,7 +34,8 @@ class _PieChartWidgetState extends State<PieChartWidget> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
-    final sections = _generateSections(widget.aggregatedData, widget.totalAmount);
+    final sections =
+        _generateSections(widget.aggregatedData, widget.totalAmount);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -58,55 +55,61 @@ class _PieChartWidgetState extends State<PieChartWidget> {
         SizedBox(height: size.height * .08),
         widget.totalAmount > 0.0
             ? Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              height: 90,
-              width: 90,
-              child: PieChart(
-                PieChartData(
-                  pieTouchData: PieTouchData(
-                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                      setState(() {
-                        if (!event.isInterestedForInteractions ||
-                            pieTouchResponse == null ||
-                            pieTouchResponse.touchedSection == null) {
-                          touchedIndex = -1;
-                          return;
-                        }
-                        touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                      });
-                    },
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    height: 90,
+                    width: 90,
+                    child: PieChart(
+                      PieChartData(
+                        pieTouchData: PieTouchData(
+                          touchCallback:
+                              (FlTouchEvent event, pieTouchResponse) {
+                            setState(() {
+                              if (!event.isInterestedForInteractions ||
+                                  pieTouchResponse == null ||
+                                  pieTouchResponse.touchedSection == null) {
+                                touchedIndex = -1;
+                                return;
+                              }
+                              touchedIndex = pieTouchResponse
+                                  .touchedSection!.touchedSectionIndex;
+                            });
+                          },
+                        ),
+                        borderData: FlBorderData(
+                          show: false,
+                        ),
+                        sectionsSpace: 2,
+                        centerSpaceRadius: 60,
+                        sections: sections,
+                      ),
+                    ),
                   ),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  sectionsSpace: 2,
-                  centerSpaceRadius: 60,
-                  sections: sections,
+                  FormattedValueWidget(
+                      value: widget.totalAmount,
+                      color: ColorsPalette.textPrimary),
+                ],
+              )
+            : const Text(
+                'No data',
+                style: TextStyle(
+                  fontSize: TextSizes.mediumHeadingMin,
+                  fontWeight: FontWeight.bold,
+                  color: ColorsPalette.textPrimary,
                 ),
               ),
-            ),
-
-             FormattedValueWidget(value: widget.totalAmount, color: ColorsPalette.textPrimary),
-          ],
-        )
-            :   Text(
-          'No data',
-          style: TextStyle(
-            fontSize: TextSizes.mediumHeadingMin(context),
-            fontWeight: FontWeight.bold,
-            color: ColorsPalette.textPrimary,
-          ),
-        ),
         SizedBox(height: size.height * .1),
         const BalanceWidget(),
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
       ],
     );
   }
 
-  List<PieChartSectionData> _generateSections(Map<CategoryData, double> aggregatedData, double totalAmount) {
+  List<PieChartSectionData> _generateSections(
+      Map<CategoryData, double> aggregatedData, double totalAmount) {
     List<PieChartSectionData> sections = [];
     int index = 0;
 
@@ -138,7 +141,8 @@ class _PieChartWidgetState extends State<PieChartWidget> {
     final isSelected = widget.selectedPeriod == period;
     final buttonColor = isSelected ? ColorsPalette.primaryDark : Colors.white;
     final textColor = isSelected ? Colors.white : ColorsPalette.textPrimary;
-    final borderColor = isSelected ? ColorsPalette.primaryDark : ColorsPalette.primaryDark;
+    final borderColor =
+        isSelected ? ColorsPalette.primaryDark : ColorsPalette.primaryDark;
     final buttonSize = isSelected ? 110.0 : 100.0;
 
     return SizedBox(
@@ -169,19 +173,17 @@ class _PieChartWidgetState extends State<PieChartWidget> {
   }
 }
 
-
-
 class BalanceWidget extends StatelessWidget {
   const BalanceWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Read providers for total income and total expenses
-    final incomeProvider= context.watch<IncomeTransactionProvider>();
-    final expensesProvider= context.watch<TransactionAmountProvider>();
+    final incomeProvider = context.watch<IncomeTransactionProvider>();
+    final expensesProvider = context.watch<TransactionAmountProvider>();
 
-    double totalIncome= incomeProvider.getTotalIncomesForPast10Years();
-    double totalExpenses= expensesProvider.getTotalExpensesForPast10Years();
+    double totalIncome = incomeProvider.getTotalIncomesForPast10Years();
+    double totalExpenses = expensesProvider.getTotalExpensesForPast10Years();
 
     // Calculate the available balance
     final availableBalance = totalIncome - totalExpenses;
@@ -196,17 +198,17 @@ class BalanceWidget extends StatelessWidget {
         Text(
           '${availableBalance < 0 ? '-' : ''}${availableBalance.abs().toStringAsFixed(2)}',
           style: TextStyle(
-            fontSize: TextSizes.mediumHeadingMax(context),
+            fontSize: TextSizes.mediumHeadingMax,
             fontWeight: FontWeight.w800,
             color: textColor,
           ),
         ),
-         Padding(
-          padding: const EdgeInsets.all(8.0),
+        const Padding(
+          padding: EdgeInsets.all(8.0),
           child: Text(
             'Available Balance:',
             style: TextStyle(
-              fontSize: TextSizes.normalBodyTextMax(context),
+              fontSize: TextSizes.normalBodyTextMax,
               fontWeight: FontWeight.w400,
               color: ColorsPalette.textSecondary,
             ),

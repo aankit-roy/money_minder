@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -84,15 +83,15 @@ class CurrentTimeDataList extends StatelessWidget {
                       ),
                       title: Text(
                         category.name,
-                        style:  TextStyle(
-                            fontSize: TextSizes.smallHeadingMax(context),
+                        style: const TextStyle(
+                            fontSize: TextSizes.smallHeadingMax,
                             fontWeight: FontWeight.w600,
                             color: ColorsPalette.textSecondary),
                       ),
                       trailing: Text(
                         '₹${amount.toStringAsFixed(2)}',
-                        style:   TextStyle(
-                          fontSize: TextSizes.smallHeadingMax(context),
+                        style: const TextStyle(
+                          fontSize: TextSizes.smallHeadingMax,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -143,12 +142,12 @@ class _HeaderWidget extends StatelessWidget {
       children: [
         Text(
           dateRange,
-          style:  TextStyle(
-              fontSize: TextSizes.normalBodyTextMax(context),
+          style: const TextStyle(
+              fontSize: TextSizes.normalBodyTextMax,
               fontWeight: FontWeight.bold,
               color: ColorsPalette.textSecondary),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         CurrentExpenseAndIncomeWidget(
             totalAmount: totalAmount, isExpenses: isExpenses)
       ],
@@ -227,7 +226,7 @@ class CurrentExpenseAndIncomeWidget extends StatelessWidget {
               style: TextStyle(
                 color: isExpenses ? Colors.red : ColorsPalette.greencColor,
                 fontWeight: FontWeight.w600,
-                fontSize: TextSizes.smallHeadingMin(context),
+                fontSize: TextSizes.smallHeadingMin,
               ),
             ),
           ),
@@ -243,5 +242,3 @@ class CurrentExpenseAndIncomeWidget extends StatelessWidget {
     );
   }
 }
-
-

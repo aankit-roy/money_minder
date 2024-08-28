@@ -58,7 +58,8 @@ class CategoryData {
   // Convert a map to a CategoryData object
   factory CategoryData.fromMap(Map<String, dynamic> map) {
     Map<String, dynamic> iconDataMap = jsonDecode(map['icon']);
-    IconData iconData = IconData(
+
+    final IconData iconData =  IconData(
       iconDataMap['codePoint'],
       fontFamily: iconDataMap['fontFamily'],
       fontPackage: iconDataMap['fontPackage'],

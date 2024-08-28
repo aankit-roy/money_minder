@@ -98,20 +98,20 @@ class PieChart2State extends State {
             Text(
               '₹${totalAmount.toStringAsFixed(2)}',
 
-              style:  TextStyle(
-                fontSize: TextSizes.mediumHeadingMin(context),
+              style:  const TextStyle(
+                fontSize: TextSizes.mediumHeadingMin,
                 fontWeight: FontWeight.bold,
                 color: ColorsPalette.textPrimary,
               ),),
           ],
         ),
         SizedBox(height: size.height* .1), // Add some space between the pie chart and the text below
-         Column(
+         const Column(
           children: [
             Text(
               "Available balance",
               style: TextStyle(
-                fontSize: TextSizes.mediumHeadingMax(context),
+                fontSize: TextSizes.mediumHeadingMax,
                 fontWeight: FontWeight.w800,
                 color: ColorsPalette.textSecondary,
               ),
@@ -121,7 +121,7 @@ class PieChart2State extends State {
               child: Text(
                 "₹4000",
                 style: TextStyle(
-                  fontSize: TextSizes.mediumHeadingMin(context),
+                  fontSize: TextSizes.mediumHeadingMin,
                   fontWeight: FontWeight.w400,
                   color: ColorsPalette.greencColor,
                 ),

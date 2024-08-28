@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money_minder/models/add_transactions_data.dart';
@@ -64,7 +62,8 @@ class TransactionDataList extends StatelessWidget {
 
     return ListView.builder(
       itemCount: sortedDates.length,
-      physics: const NeverScrollableScrollPhysics(), // Disable the internal scrolling
+      physics:
+          const NeverScrollableScrollPhysics(), // Disable the internal scrolling
       shrinkWrap: true, // Make ListView occupy only the space it needs
       itemBuilder: (context, index) {
         String date = sortedDates[index];
@@ -114,15 +113,15 @@ class TransactionDataList extends StatelessWidget {
                     ),
                     title: Text(
                       transaction.categoryData.name,
-                      style: TextStyle(
-                          fontSize: TextSizes.smallHeadingMax(context),
+                      style: const TextStyle(
+                          fontSize: TextSizes.smallHeadingMax,
                           fontWeight: FontWeight.w600,
                           color: ColorsPalette.textSecondary),
                     ),
                     trailing: Text(
                       transaction.expensesPrice.toStringAsFixed(2),
-                      style:  TextStyle(
-                        fontSize: TextSizes.smallHeadingMax(context),
+                      style: const TextStyle(
+                        fontSize: TextSizes.smallHeadingMax,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -133,13 +132,11 @@ class TransactionDataList extends StatelessWidget {
                           context, isExpenses, provider, transaction);
                     },
                     onTap: () {
-
                       final provider =
                           isExpenses ? expensesProvider : incomeProvider;
                       _showUpdateBottomSheet(
                           context, transaction, isExpenses, provider);
                     },
-
                   );
                 }),
               ],
@@ -198,7 +195,7 @@ class ExpenseAndIncomeWidget extends StatelessWidget {
               style: TextStyle(
                 color: isExpenses ? Colors.red : ColorsPalette.greencColor,
                 fontWeight: FontWeight.w600,
-                fontSize: TextSizes.smallHeadingMin(context),
+                fontSize: TextSizes.smallHeadingMin,
               ),
             ),
           ),
@@ -230,8 +227,8 @@ class DateWidget extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: Text(
         date,
-        style:  TextStyle(
-            fontSize: TextSizes.normalBodyTextMax(context),
+        style: const TextStyle(
+            fontSize: TextSizes.normalBodyTextMax,
             fontWeight: FontWeight.bold,
             color: ColorsPalette.textSecondary),
       ),
@@ -331,8 +328,8 @@ Future<void> _showDeleteConfirmationDialog(
 Future<void> _showUpdateBottomSheet(
   BuildContext context,
   AddTransactionsData transaction,
-    bool isExpenses, // Added parameter
-    dynamic provider, // Changed to dynamic type
+  bool isExpenses, // Added parameter
+  dynamic provider, // Changed to dynamic type
 ) async {
   await showModalBottomSheet(
     context: context,
@@ -343,9 +340,10 @@ Future<void> _showUpdateBottomSheet(
     ),
     builder: (context) {
       return FractionallySizedBox(
-        heightFactor: 0.9,
-        child: AddingData(transactions: transaction,)
-      );
+          heightFactor: 0.9,
+          child: AddingData(
+            transactions: transaction,
+          ));
     },
   );
 }

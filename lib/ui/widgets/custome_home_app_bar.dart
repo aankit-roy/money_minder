@@ -1,6 +1,6 @@
-
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:money_minder/provider/general_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
@@ -8,27 +8,25 @@ import 'package:money_minder/res/constants/text_size.dart';
 import 'package:money_minder/ui/widgets/custome_period_button.dart';
 import 'package:provider/provider.dart';
 
-
-
 class CustomeHomeAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final Size size;
-  final TabController tabController;
 
-  const CustomeHomeAppBar({super.key, required this.size, required this.tabController});
+  double appBarHeight;
+
+   CustomeHomeAppBar(
+      {super.key,   required this.appBarHeight});
 
   @override
-  Size get preferredSize => const Size.fromHeight(140);
+  Size get preferredSize =>  Size.fromHeight(appBarHeight);
 
   @override
   _CustomeHomeAppBarState createState() => _CustomeHomeAppBarState();
 }
 
 class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
-    final generalProvider= context.watch<GeneralProvider>();
+    final generalProvider = context.watch<GeneralProvider>();
     return PreferredSize(
       preferredSize: widget.preferredSize,
       child: Container(
@@ -46,7 +44,7 @@ class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
               // _TotalIncome(),
 
               // HomeTabView(size: widget.size, tabController: widget.tabController),
-              _buildExpensesIncomesButton(generalProvider,size),
+              _buildExpensesIncomesButton(generalProvider, size),
             ],
           ),
         ),
@@ -54,39 +52,40 @@ class _CustomeHomeAppBarState extends State<CustomeHomeAppBar> {
     );
   }
 
-
-
-  Widget _buildExpensesIncomesButton(GeneralProvider generalProvider, Size size) {
+  Widget _buildExpensesIncomesButton(
+      GeneralProvider generalProvider, Size size) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CustomPeriodButton(
-          isSelected: generalProvider.isExpensesSelected,
-          label: 'Expenses',
-          onPressed: () {
-            if (!generalProvider.isExpensesSelected) {
-              generalProvider.toggleSelection();
-            }
-          },
+        Flexible(
+
+          child: CustomPeriodButton(
+            isSelected: generalProvider.isExpensesSelected,
+            label: 'Expenses',
+            onPressed: () {
+              if (!generalProvider.isExpensesSelected) {
+                generalProvider.toggleSelection();
+              }
+            },
+          ),
         ),
-        SizedBox(width: size.width*.1),
-        CustomPeriodButton(
-          isSelected: !generalProvider.isExpensesSelected,
-          label: 'Income',
-          onPressed: () {
-            if (generalProvider.isExpensesSelected) {
-              generalProvider.toggleSelection();
-            }
-          },
+        SizedBox(width: size.width * .05),
+        Flexible(
+
+          child: CustomPeriodButton(
+            isSelected: !generalProvider.isExpensesSelected,
+            label: 'Income',
+            onPressed: () {
+              if (generalProvider.isExpensesSelected) {
+                generalProvider.toggleSelection();
+              }
+            },
+          ),
         ),
       ],
     );
   }
-
 }
-
-
-
 
 class _TopBar extends StatefulWidget {
   @override
@@ -99,11 +98,11 @@ class _TopBarState extends State<_TopBar> {
   @override
   Widget build(BuildContext context) {
     // Format the current month and year
-    String formattedMonth = DateFormat('MMM').format(selectedDate);  // Short month
+    String formattedMonth =
+        DateFormat('MMM').format(selectedDate); // Short month
     String formattedYear = DateFormat('yyyy').format(selectedDate); // Year
     // Format the current date as day.month.year
     String formattedDate = DateFormat('dd.MM.yyyy').format(selectedDate);
-
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,32 +112,31 @@ class _TopBarState extends State<_TopBar> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              formattedMonth,  // Short month
-              style: TextStyle(
-                fontSize: TextSizes.mediumHeadingMax(context),
+              formattedMonth, // Short month
+              style: const TextStyle(
+                fontSize: TextSizes.mediumHeadingMax,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              formattedYear,  // Year
-              style:  TextStyle(
-                fontSize: TextSizes.mediumHeadingMin(context),
+              formattedYear, // Year
+              style: const TextStyle(
+                fontSize: TextSizes.mediumHeadingMin,
                 fontWeight: FontWeight.w300,
               ),
             ),
           ],
         ),
-         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
+        const Expanded(
+          child: Center(
+            child: Text(
               "Money Minder",
               style: TextStyle(
-                fontSize: TextSizes.mediumHeadingMax(context),
+                fontSize: TextSizes.mediumHeadingMax,
                 fontWeight: FontWeight.w800,
               ),
             ),
-          ],
+          ),
         ),
         InkWell(
           onTap: () {
@@ -167,4 +165,3 @@ class _TopBarState extends State<_TopBar> {
     }
   }
 }
-

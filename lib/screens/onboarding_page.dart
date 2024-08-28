@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:money_minder/provider/general_provider.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_constants.dart';
@@ -160,38 +162,46 @@ class createPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 50, right: 50, bottom: 80),
+      padding: const EdgeInsets.only(left: 50, right: 50, bottom: 100),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
-            height: 380,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(image), fit: BoxFit.cover)),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            title,
-            style: const TextStyle(
-                fontSize: 35,
-                color: ColorsPalette.primaryColor,
-                fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            description,
-            style: const TextStyle(
-              fontSize: 20,
-              color: Colors.grey,
-              fontWeight: FontWeight.w500,
+          Flexible(
+            flex: 3,
+
+            child: Container(
+
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage(image), fit: BoxFit.cover)),
             ),
-            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Flexible(
+            child: Text(
+              title,
+              style: const TextStyle(
+                  fontSize: 35,
+                  color: ColorsPalette.primaryColor,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Flexible(
+            child: Text(
+              description,
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),

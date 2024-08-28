@@ -42,11 +42,12 @@ class _HomePageState extends State<HomePage>
     final incomeProvider = context.watch<IncomeTransactionProvider>();
 
     Size size = MediaQuery.of(context).size;
+    double appbarHeight= size.height * 0.18;
 
     return Scaffold(
       appBar: CustomeHomeAppBar(
-        size: size,
-        tabController: tabController,
+         appBarHeight: appbarHeight,
+
       ),
       body: SingleChildScrollView(
 
