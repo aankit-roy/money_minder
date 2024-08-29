@@ -1,8 +1,10 @@
 
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/widgets.dart';
 import 'package:money_minder/models/bar_chart_data.dart';
 import 'package:money_minder/models/line_chart_datamodel.dart';
 import 'package:money_minder/provider/income_transaction_provider.dart';
@@ -109,24 +111,28 @@ class _StatPageState extends State<StatPage> {
                     children: [
 
 
-                      CustomPeriodButton(
-                        isSelected: _showMonthly,
-                        label: 'Monthly',
-                        onPressed: () {
-                          setState(() {
-                            _showMonthly = true;
-                          });
-                        },
+                      Flexible(
+                        child: CustomPeriodButton(
+                          isSelected: _showMonthly,
+                          label: 'Monthly',
+                          onPressed: () {
+                            setState(() {
+                              _showMonthly = true;
+                            });
+                          },
+                        ),
                       ),
-                      SizedBox(width: size.width * 0.1),
-                      CustomPeriodButton(
-                        isSelected: !_showMonthly,
-                        label: 'Yearly',
-                        onPressed: () {
-                          setState(() {
-                            _showMonthly = false;
-                          });
-                        },
+                      SizedBox(width: size.width * 0.05),
+                      Flexible(
+                        child: CustomPeriodButton(
+                          isSelected: !_showMonthly,
+                          label: 'Yearly',
+                          onPressed: () {
+                            setState(() {
+                              _showMonthly = false;
+                            });
+                          },
+                        ),
                       ),
 
                     ],
@@ -232,9 +238,14 @@ class _StatPageState extends State<StatPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(title,
-                style:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                title,
+                style: const TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w700),
+              ),
+            ),
             const SizedBox(height: 10),
              FormattedValueWidget(value: value, color: color),
           ],
@@ -242,15 +253,7 @@ class _StatPageState extends State<StatPage> {
       ),
     );
   }
-  // String formatValue(double value) {
-  //   if (value >= 1000000) {
-  //     return '${(value / 1000000).toStringAsFixed(1)}M'; // For millions
-  //   } else if (value >= 1000) {
-  //     return '${(value / 1000).toStringAsFixed(1)}K'; // For thousands
-  //   } else {
-  //     return value.toStringAsFixed(2); // For values less than 1000
-  //   }
-  // }
+
 
 
   Widget _buildChartCard(Widget chart, Size size, bool isMonthly) {
@@ -262,14 +265,21 @@ class _StatPageState extends State<StatPage> {
       children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(
-            displayTitle,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              displayTitle,
+              style: const TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          child: chart,
+        Expanded(
+
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: chart,
+          ),
         ),
         if (isMonthly)
           Padding(
@@ -280,7 +290,7 @@ class _StatPageState extends State<StatPage> {
             ),
           ),
         const IncomeExpensesIcon(),
-        const SizedBox(height: 5),
+        const SizedBox(height: 20),
       ],
     );
   }
