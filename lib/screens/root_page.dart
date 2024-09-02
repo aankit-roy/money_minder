@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/screens/adding_data.dart';
 import 'package:money_minder/screens/home_page.dart';
@@ -14,8 +15,20 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  int bottomNavIndex = 0;
 
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeMobileAds();
+  }
+
+  Future<void> _initializeMobileAds() async {
+    // Delay the MobileAds initialization until after the UI has loaded.
+    await MobileAds.instance.initialize();
+  }
+
+  int bottomNavIndex = 0;
   List<Widget> pages = [
     const HomePage(),
     const StatPage(),
@@ -46,9 +59,9 @@ class _RootPageState extends State<RootPage> {
           lastPressedAt = DateTime.now();
           // Show a snackbar with a message
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Press back again to exit'),
-              duration: const Duration(seconds: 2),
+            const SnackBar(
+              content: Text('Press back again to exit'),
+              duration: Duration(seconds: 2),
             ),
           );
           return Future.value(false);

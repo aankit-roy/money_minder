@@ -6,6 +6,7 @@ import 'package:money_minder/res/colors/color_palette.dart';
 import 'package:money_minder/res/constants/text_constants.dart';
 import 'package:money_minder/screens/root_page.dart';
 import 'package:provider/provider.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 
 
 
@@ -21,18 +22,69 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController(initialPage: 0);
   int counterIndex = 0;
 
-  void _navigateToRoot(BuildContext context) {
+  // void _navigateToRoot(BuildContext context) {
+  //   final loadingProvider = Provider.of<GeneralProvider>(context, listen: false);
+  //   loadingProvider.setLoading(true); // Set loading to true when navigation starts
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => const RootPage(),
+  //     ),
+  //   ).then((_) {
+  //     loadingProvider.setLoading(false); // Reset loading state when done
+  //   });
+  // }
+  SharedPreferences? _prefs;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _initializePreferences();
+  // }
+  //
+  // Future<void> _initializePreferences() async {
+  //   _prefs = await SharedPreferences.getInstance();
+  // }
+
+  bool _isLoading = false; // Add loading state
+
+  void _navigateToRoot(BuildContext context) async {
+    setState(() {
+      _isLoading = true; // Set loading to true when navigation starts
+    });
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final loadingProvider = Provider.of<GeneralProvider>(context, listen: false);
-    loadingProvider.setLoading(true); // Set loading to true when navigation starts
+    loadingProvider.setLoading(true);
+    prefs.setBool('isFirstTimeOpen', false); // Set the flag to false after onboarding
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (_) => const RootPage(),
       ),
     ).then((_) {
-      loadingProvider.setLoading(false); // Reset loading state when done
+      loadingProvider.setLoading(false);
+      setState(() {
+        _isLoading = false; // Reset loading state when done
+      });
     });
   }
+
+  // Future<void> _navigateToRoot(BuildContext context) async {
+  //   final loadingProvider = Provider.of<GeneralProvider>(context, listen: false);
+  //   loadingProvider.setLoading(true); // Set loading to true when navigation starts
+  //   _prefs?.setBool('isFirstTimeOpen', false); // Set the flag to false after onboarding
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => const RootPage(),
+  //     ),
+  //   ).then((_) {
+  //     loadingProvider.setLoading(false); // Reset loading state when done
+  //   });
+  // }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +168,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       }
                     }
                     else{
-                       return _navigateToRoot(context);
+                        _navigateToRoot(context);
                     }
                   });
 
@@ -126,6 +178,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             ),
           ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(
+                color: ColorsPalette.primaryColor,
+              ), // Show loading indicator during navigation
+            ),
+
         ],
       ),
     );

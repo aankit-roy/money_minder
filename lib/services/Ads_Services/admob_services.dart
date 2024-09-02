@@ -17,9 +17,9 @@ class AdmobServices{
 
 
 
-  // // for real time app
-  // static String  get BANNER_Ad_Unit => 'ca-app-pub-9015238437204660/5358866058';
-  // static String  get BANNER_Ad_Unit2 => 'ca-app-pub-9015238437204660/4651089938';
+  // for real time app
+  // static String  get BANNER_Ad_Unit => 'ca-app-pub-9015238437204660/4141178808';
+  // static String  get BANNER_Ad_Unit2 => 'ca-app-pub-9015238437204660/9201933790';
 
 
 

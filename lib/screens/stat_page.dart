@@ -142,7 +142,7 @@ class _StatPageState extends State<StatPage> {
               ),
 
               Positioned(
-                top: 150,
+                top:  size.height * 0.16, // Adjusted positioning based on container height
                 left: 0,
                 right: 0,
                 child: Row(
@@ -222,7 +222,7 @@ class _StatPageState extends State<StatPage> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
 
         ],
       ),

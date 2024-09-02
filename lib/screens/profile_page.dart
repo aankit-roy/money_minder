@@ -21,9 +21,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   final AdSize adSize= AdSize.largeBanner;
   final profileBannerAdId= AdmobServices.BANNER_Ad_Unit2;
+  final List<Map<String, dynamic>> items2 = [
+
+  {'title': 'Recommend to friends', 'icon': const Icon(Icons.thumb_up_alt_sharp)}];
 
 
-  final List<Map<String, dynamic>> items = [
+final List<Map<String, dynamic>> items = [
     {'title': 'Recommend to friends', 'icon': Icons.thumb_up_alt_sharp},
     {'title': 'Rate us', 'icon': Icons.star_rate},
     {'title': 'Check for updates', 'icon': Icons.update},
@@ -51,8 +54,14 @@ class _ProfilePageState extends State<ProfilePage> {
                //   ),
                //
                // ),
-              ProfileDetailsCard(size: size, items: items, inAppReview: _inAppReview),
-              BannerAdWidget(adUnitId: profileBannerAdId, adSize: adSize),
+              Flexible(
+                flex: 5,
+                child: ProfileDetailsCard(size: size, items: items, inAppReview: _inAppReview),
+              ),
+              Flexible(
+                flex: 1,
+                child: BannerAdWidget(adUnitId: profileBannerAdId, adSize: adSize),
+              ),
             ],
           ),
 
