@@ -36,7 +36,8 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.ankit.money_minder"
-    compileSdk flutter.compileSdkVersion
+//    compileSdk flutter.compileSdkVersion
+    compileSdkVersion 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
