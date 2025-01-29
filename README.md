@@ -108,7 +108,7 @@ flutter run
 ---
 
 ## 📥 Download & Try Money Minder
-**[Download APK](<APK_File_Link>)**
+**[Download APK](<https://github.com/aankit-roy/money_minder/releases/download/v1.1.0/app-release.apk>)**
 
 🔗 **GitHub Repository:** [Money Minder](<https://github.com/aankit-roy/money_minder>)
 
