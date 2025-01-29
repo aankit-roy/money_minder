@@ -58,10 +58,11 @@ final List<Map<String, dynamic>> items = [
                 flex: 5,
                 child: ProfileDetailsCard(size: size, items: items, inAppReview: _inAppReview),
               ),
-              Flexible(
-                flex: 1,
-                child: BannerAdWidget(adUnitId: profileBannerAdId, adSize: adSize),
-              ),
+
+              // Flexible(
+              //   flex: 1,
+              //   child: BannerAdWidget(adUnitId: profileBannerAdId, adSize: adSize),
+              // ),
             ],
           ),
 

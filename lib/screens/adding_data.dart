@@ -126,7 +126,7 @@ class _AddingDataState extends State<AddingData> {
               ? ExpensesCategoryGrid(categories: categories,transactionData:widget.transactions ,)
               :  IncomeCategoryGrid(categories: incomeCategories,transactionData: widget.transactions,),
 
-           BannerAdWidget(adSize:adSize,adUnitId:  AddingDataBannerAdId),
+           // BannerAdWidget(adSize:adSize,adUnitId:  AddingDataBannerAdId),
 
 
 
